@@ -74,6 +74,10 @@
 <span class="material-symbols-outlined text-[16px]">shopping_bag</span>
             Periksa Keranjang
           </button>
+<button class="px-3.5 py-2.5 rounded-lg bg-white/90 hover:bg-white text-primary font-label-caps text-label-caps tracking-wider font-bold transition-all shadow-md flex items-center justify-center gap-1.5" onclick="openCustomerTrackModal()">
+<span class="material-symbols-outlined text-[16px]">search_check</span>
+            Lacak Pesanan
+          </button>
 </div>
 </div>
 </div>
@@ -790,7 +794,98 @@
     }, 3200);
   }
 
+  function openCustomerTrackModal() {
+    const m = document.getElementById('customer-track-modal');
+    m.classList.remove('opacity-0', 'pointer-events-none');
+  }
+
+  function closeCustomerTrackModal() {
+    const m = document.getElementById('customer-track-modal');
+    m.classList.add('opacity-0', 'pointer-events-none');
+  }
+
+  function doCustomerTrack() {
+    const q = document.getElementById('custTrackQuery').value.trim().toLowerCase();
+    const resBox = document.getElementById('custTrackResult');
+    if (!q) {
+      alert('Silakan masukkan Nomor Order atau Nomor HP Anda.');
+      return;
+    }
+
+    const mockOrders = [
+      { id: 'ORD-20261107-101', name: 'Rian Prasetyo', phone: '081234567890', status: 'COOKING', label: 'Sedang Dimasak Dapur', table: 'Meja 03', items: '2x Kopi Susu Aren, 1x Croissant Butter' },
+      { id: 'ORD-20261107-102', name: 'Siti Rahma', phone: '085678912345', status: 'READY', label: 'Siap Diantar ke Meja', table: 'Meja 07', items: '1x Matcha Latte' },
+      { id: 'ORD-20261107-103', name: 'Budi Santoso', phone: '087712345678', status: 'WASHING', label: 'Sedang Dicuci & Dikeringkan', weight: '4.5 Kg', items: 'Cuci Kering Setrika' }
+    ];
+
+    const match = mockOrders.find(o => o.id.toLowerCase().includes(q) || o.phone.includes(q));
+    if (!match) {
+      resBox.innerHTML = '<div class="text-center text-red-600 font-bold py-3">Pesanan tidak ditemukan. Cek kembali nomor pesanan Anda.</div>';
+      return;
+    }
+
+    const s1 = true;
+    const s2 = match.status === 'COOKING' || match.status === 'WASHING' || match.status === 'READY';
+    const s3 = match.status === 'READY';
+
+    resBox.innerHTML = `
+      <div class="space-y-3">
+        <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+          <div>
+            <div class="font-black text-sm text-[#003b4b]">${match.id}</div>
+            <div class="text-[11px] text-slate-500">${match.name} • ${match.table || match.weight || 'Takeaway'}</div>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-xs font-bold ${match.status === 'READY' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+            ${match.label}
+          </span>
+        </div>
+        <div class="text-[11px] text-slate-600"><strong>Pesanan:</strong> ${match.items}</div>
+        <div class="grid grid-cols-3 gap-2 text-center pt-2">
+          <div class="flex flex-col items-center">
+            <div class="w-7 h-7 rounded-full ${s1 ? 'bg-[#003b4b] text-white' : 'bg-slate-200 text-slate-500'} flex items-center justify-center font-bold text-xs mb-1">1</div>
+            <span class="text-[10px] font-bold">Diterima</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="w-7 h-7 rounded-full ${s2 ? 'bg-[#003b4b] text-white' : 'bg-slate-200 text-slate-500'} flex items-center justify-center font-bold text-xs mb-1">2</div>
+            <span class="text-[10px] font-bold">Diproses</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="w-7 h-7 rounded-full ${s3 ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-500'} flex items-center justify-center font-bold text-xs mb-1">3</div>
+            <span class="text-[10px] font-bold">Siap Saji</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     updateCartUI();
   });
-</script></main><footer class="w-full bg-surface-container-low border-t border-surface-variant py-space-md"><div class="w-full px-gutter-desktop flex flex-col md:flex-row items-center justify-between gap-space-sm text-center md:text-left"><div class="flex items-center gap-space-xs"><span class="font-body-sm text-body-sm text-text-muted">© 2025 RASH Mitra Multi-Vertikal Suite • Engine by RASH WebApp Builder. Licensed for Retail, F&amp;B &amp; Laundry Operations.</span></div><div class="flex items-center gap-space-md text-body-sm font-body-sm text-on-surface-variant"><span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-status-success"></span> Standalone Core Active</span><span class="text-outline-variant">|</span><span>v4.8.2-Enterprise</span></div></div></footer></body></html>
+</script>
+
+<!-- MODAL LACAK STATUS PESANAN PELANGGAN -->
+<div id="customer-track-modal" class="fixed inset-0 z-50 bg-[#003b4b]/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none">
+  <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gold-soft/40 relative">
+    <button onclick="closeCustomerTrackModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-800">&times;</button>
+    <div class="text-center mb-5">
+      <div class="w-12 h-12 rounded-2xl bg-[#003b4b]/10 text-[#003b4b] mx-auto flex items-center justify-center mb-2">
+        <span class="material-symbols-outlined text-[24px]">receipt_long</span>
+      </div>
+      <h3 class="text-lg font-black text-[#003b4b]">Lacak Status Pesanan</h3>
+      <p class="text-xs text-text-muted">Pantau proses pembuatan pesanan Anda secara realtime.</p>
+    </div>
+
+    <div class="flex gap-2 mb-4">
+      <input type="text" id="custTrackQuery" placeholder="Ketik No. Order (cth: ORD-20261107-101)..." class="flex-1 text-xs rounded-xl border-slate-300 p-2.5 bg-slate-50" />
+      <button onclick="doCustomerTrack()" class="px-4 py-2.5 rounded-xl bg-[#003b4b] text-white font-bold text-xs hover:bg-[#073a49]">
+        Lacak 🔍
+      </button>
+    </div>
+
+    <div id="custTrackResult" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+      <div class="text-center text-text-muted">Masukkan nomor order Anda di atas untuk melihat progres dapur/kasir.</div>
+    </div>
+  </div>
+</div>
+
+</main><footer class="w-full bg-surface-container-low border-t border-surface-variant py-space-md"><div class="w-full px-gutter-desktop flex flex-col md:flex-row items-center justify-between gap-space-sm text-center md:text-left"><div class="flex items-center gap-space-xs"><span class="font-body-sm text-body-sm text-text-muted">© 2025 RASH Mitra Multi-Vertikal Suite • Engine by RASH WebApp Builder. Licensed for Retail, F&amp;B &amp; Laundry Operations.</span></div><div class="flex items-center gap-space-md text-body-sm font-body-sm text-on-surface-variant"><span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-status-success"></span> Standalone Core Active</span><span class="text-outline-variant">|</span><span>v4.8.2-Enterprise</span></div></div></footer></body></html>

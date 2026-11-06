@@ -3,695 +3,740 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RASH Mitra — Solusi Mini ERP & POS Multi-Vertikal UMKM (Lifetime License)</title>
-  <meta name="description" content="Aplikasi web manajemen bisnis & kasir POS multi-vertikal untuk UMKM. Sekali bayar seumur hidup, tanpa biaya langganan bulanan, 100% database milik Anda di Google Workspace." />
+  <title>RASH Mitra — Sistem Operasional POS & Mini ERP UMKM</title>
+  <meta name="description" content="Aplikasi kasir POS pintar, manajemen inventaris, absensi staf, dan pelacakan pesanan multi-vertikal UMKM." />
   
-  <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-
-  <!-- Typography: Plus Jakarta Sans -->
+  
+  <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
-  <!-- Main Stylesheet -->
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#003b4b",
+            "primary-container": "#095368",
+            "primary-dark": "#072e3b",
+            "primary-active": "#0e627d",
+            "secondary": "#775a19",
+            "gold-soft": "#E5C07B",
+            "gold-shimmer": "#D4AF37",
+            "gold-tint": "#F5ECD7",
+            "surface": "#f9f9f7",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f4f4f2",
+            "surface-container": "#eeeeec",
+            "surface-container-high": "#e8e8e6",
+            "status-success": "#16A34A",
+            "status-alert": "#DC2626",
+            "text-muted": "#64748B",
+            "text-body": "#334155"
+          }
+        }
+      }
+    };
+  </script>
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body class="bg-[#F8F9FA] font-['Plus Jakarta Sans'] text-[#1E293B] min-h-screen">
 
   <!-- ========================================================================= -->
-  <!-- NAVBAR                                                                    -->
+  <!-- 1. HALAMAN LOGIN UTAMA (ENTRY POINT APLIKASI)                             -->
   <!-- ========================================================================= -->
-  <header class="navbar">
-    <div class="container nav-container">
-      <div class="brand-logo">
-        <div class="logo-badge">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
+  <div id="authGateView" class="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-[#003b4b] via-[#095368] to-[#04283b] relative overflow-hidden">
+    <!-- Ambient Decor -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gold-shimmer/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-primary-active/20 blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gold-soft/30 p-8 relative z-10">
+      
+      <!-- Logo Brand -->
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-container mx-auto flex items-center justify-center text-gold-shimmer shadow-lg mb-3 border border-gold-soft/40">
+          <span class="material-symbols-outlined text-[34px]">point_of_sale</span>
         </div>
-        <div class="logo-text">
-          <h1>RASH <span>Mitra</span></h1>
-          <p>By RASH WebApp Builder</p>
-        </div>
+        <h1 class="text-2xl font-black text-primary tracking-tight">RASH <span class="text-secondary">Mitra</span></h1>
+        <p class="text-xs font-semibold text-text-muted uppercase tracking-widest mt-1">Sistem Operasional Kasir & Mini ERP</p>
       </div>
 
-      <ul class="nav-links">
-        <li><a href="katalog.html" class="nav-link">Katalog Menu</a></li>
-        <li><a href="pos.html" class="nav-link">Mesin Kasir (POS)</a></li>
-        <li><a href="admin.html" class="nav-link">Super Admin</a></li>
-        <li><a href="#fitur" class="nav-link">Fitur Lengkap</a></li>
-        <li><a href="#perbandingan" class="nav-link">Hemat Biaya</a></li>
-      </ul>
-
-      <div class="nav-cta">
-        <a href="pos.html" class="btn btn-outline">Buka Kasir ⚡</a>
-        <a href="admin.html" class="btn btn-primary" title="Masuk ke Panel Super Admin">Super Admin 🔐</a>
-        <a href="#daftar" class="btn btn-gold">Miliki Lisensi</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- ========================================================================= -->
-  <!-- HERO SECTION                                                              -->
-  <!-- ========================================================================= -->
-  <section class="hero-section">
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-content">
-          <div class="hero-pill-badge">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-            <span>Model Standalone Instance • Sekali Bayar Selamanya</span>
-          </div>
-
-          <h2>Mini ERP & Kasir POS Cerdas untuk <span class="highlight-gold">Operasional UMKM</span> Tanpa Beban Bulanan</h2>
-          
-          <p class="hero-description">
-            Solusi digitalisasi bisnis terintegrasi: Katalog Digital Self-Order, Kasir POS Cepat dengan Printer Thermal 58mm, Pembayaran Dynamic QRIS, Otomasi Struk WhatsApp, dan Penggajian Karyawan. 100% database milik Anda sendiri di Google Sheets.
-          </p>
-
-          <div class="hero-actions">
-            <a href="#simulator" class="btn btn-gold" style="padding: 13px 28px; font-size: 15px;">
-              ⚡ Coba Simulator Interaktif
-            </a>
-            <a href="#daftar" class="btn btn-outline" style="padding: 13px 26px; font-size: 15px;">
-              Daftar Lisensi Lifetime
-            </a>
-          </div>
-
-          <div class="hero-features-list">
-            <div class="feature-check-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <span>Zero Subscription (Rp 0 / Bulan)</span>
-            </div>
-            <div class="feature-check-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <span>Otomasi WhatsApp Fonnte</span>
-            </div>
-            <div class="feature-check-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <span>Absensi Staf & Auto-Payroll</span>
-            </div>
-            <div class="feature-check-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <span>Cepat 0ms Lag (gas-scale-turbo)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Hero Showcase Card -->
-        <div class="hero-card-preview">
-          <div class="preview-header">
-            <div>
-              <div style="font-weight: 800; font-size: 16px; color: var(--primary-dark);">RASH Mitra Dashboard</div>
-              <div style="font-size: 12px; color: var(--text-muted);">Status Server: Google Apps Script Terkoneksi 🟢</div>
-            </div>
-            <span class="preview-status-pill">TURBO SPEED</span>
-          </div>
-
-          <div class="preview-kpi-grid">
-            <div class="kpi-mini-box">
-              <div class="label">Omzet Hari Ini</div>
-              <div class="value">Rp 3.850.000</div>
-              <div style="font-size: 11px; color: var(--success); font-weight: 700; margin-top: 2px;">+18% vs kemarin</div>
-            </div>
-            <div class="kpi-mini-box">
-              <div class="label">Transaksi Sukses</div>
-              <div class="value">48 Pesanan</div>
-              <div style="font-size: 11px; color: var(--gold); font-weight: 700; margin-top: 2px;">QRIS & Tunai</div>
-            </div>
-            <div class="kpi-mini-box">
-              <div class="label">Staf Bertugas</div>
-              <div class="value">4 / 4 Hadir</div>
-              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Clock-in Tepat Waktu</div>
-            </div>
-            <div class="kpi-mini-box">
-              <div class="label">Biaya Server Bulanan</div>
-              <div class="value" style="color: var(--success);">Rp 0,-</div>
-              <div style="font-size: 11px; color: var(--primary); font-weight: 700; margin-top: 2px;">Serverless Google</div>
-            </div>
-          </div>
-
-          <div class="preview-mockup-action">
-            📲 <strong>Otomasi E-Receipt Aktif:</strong> Setiap transaksi otomatis mengirim nota digital ke WhatsApp pelanggan & laporan tutup kasir ke Owner!
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- MULTI-VERTICAL ENGINE SHOWCASE                                            -->
-  <!-- ========================================================================= -->
-  <section id="vertikal" class="verticals-section">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-tag">KONFIGURASI MULTI-VERTIKAL</div>
-        <h3 class="section-title">Satu Aplikasi, Adaptif untuk Segala Jenis Usaha UMKM Anda</h3>
-        <p class="section-subtitle">
-          Cukup ubah pengaturan vertikal di Master Settings, sistem akan bertransformasi secara instan menyesuaikan alur bisnis Anda tanpa menulis kode baru.
-        </p>
-      </div>
-
-      <div class="vertical-tabs-nav">
-        <button class="vert-tab-btn active" data-vertical="RESTO">
-          <span class="tab-icon">🍽️</span> Mode Restoran & Kafe
+      <!-- Tab Peran Login -->
+      <div class="flex p-1.5 bg-slate-100 rounded-2xl mb-6">
+        <button id="authTabStaffBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-primary text-white shadow-sm transition-all flex items-center justify-center gap-1.5" onclick="window.switchAuthTab('staff')">
+          <span class="material-symbols-outlined text-[16px]">badge</span>
+          Staf Kasir
         </button>
-        <button class="vert-tab-btn" data-vertical="RETAIL">
-          <span class="tab-icon">🏬</span> Mode Retail & Warung
-        </button>
-        <button class="vert-tab-btn" data-vertical="LAUNDRY">
-          <span class="tab-icon">🧺</span> Mode Laundry & Jasa
+        <button id="authTabOwnerBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-600 hover:text-primary transition-all flex items-center justify-center gap-1.5" onclick="window.switchAuthTab('owner')">
+          <span class="material-symbols-outlined text-[16px]">shield_person</span>
+          Super Admin
         </button>
       </div>
-    </div>
-  </section>
 
-  <!-- ========================================================================= -->
-  <!-- INTERACTIVE SIMULATOR (CORE EXPERIENCE)                                   -->
-  <!-- ========================================================================= -->
-  <section id="simulator" class="simulator-section">
-    <div class="container">
-      <div class="section-header" style="margin-bottom: 30px;">
-        <div class="section-tag">INTERACTIVE LIVE SIMULATOR</div>
-        <h3 class="section-title">Coba Langsung Pengalaman 3 Pengguna</h3>
-        <p class="section-subtitle">
-          Klik tab di bawah untuk mencoba antarmuka Pengunjung (Katalog & Self-Order), Kasir (POS & Absensi Masuk), dan Owner (Dashboard & Slip Gaji).
-        </p>
-      </div>
-
-      <div class="simulator-box">
-        <!-- Simulator Topbar -->
-        <div class="simulator-topbar">
-          <div class="simulator-title-group">
-            <span style="font-size: 20px;">⚡</span>
-            <h4>RASH Mitra Simulator Engine</h4>
-            <span id="simulatorModeIndicator" class="simulator-mode-indicator">Mode: Restoran / Kafe</span>
-          </div>
-
-          <div class="simulator-role-nav">
-            <button class="role-tab-btn active" data-role="customer">1. Pengunjung (Katalog)</button>
-            <button class="role-tab-btn" data-role="staff">2. Kasir POS (Staf)</button>
-            <button class="role-tab-btn" data-role="owner">3. Owner (Dashboard)</button>
-          </div>
-        </div>
-
-        <!-- Viewport -->
-        <div class="simulator-content-viewport">
-
-          <!-- --------------------------------------------------------------- -->
-          <!-- ROLE 1: PENGUNJUNG (CUSTOMER VIEW)                             -->
-          <!-- --------------------------------------------------------------- -->
-          <div id="viewCustomer">
-            <div class="catalog-controls">
-              <div class="catalog-search-box">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" placeholder="Cari menu / produk favorit..." />
-              </div>
-              <div class="catalog-category-pills">
-                <span class="cat-pill active">Semua Menu</span>
-                <span class="cat-pill">Favorit</span>
-                <span class="cat-pill">Promo</span>
-              </div>
-            </div>
-
-            <!-- Products Grid -->
-            <div id="customerProductsGrid" class="products-grid">
-              <!-- Rendered via js/app.js -->
-            </div>
-
-            <!-- Floating Cart Bar -->
-            <div id="floatingCartBar" class="floating-cart-bar" style="display: none;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 20px;">🛍️</span>
-                <div>
-                  <div id="floatingCartCount" style="font-weight: 800; font-size: 14px;">0 Menu Dipilih</div>
-                  <div id="floatingCartTotal" style="font-size: 16px; font-weight: 800; color: var(--gold-light);">Rp 0</div>
-                </div>
-              </div>
-              <button class="btn btn-gold" onclick="window.openCustomerCheckoutModal()">
-                Lihat Keranjang & Checkout →
-              </button>
-            </div>
-          </div>
-
-          <!-- --------------------------------------------------------------- -->
-          <!-- ROLE 2: KASIR POS & GATED CLOCK-IN (STAFF VIEW)                -->
-          <!-- --------------------------------------------------------------- -->
-          <div id="viewStaff" style="display: none;">
-            
-            <!-- Gated Lock Screen (Before Clock-In) -->
-            <div id="posLockScreen" class="gated-lock-screen">
-              <div class="lock-badge-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-              </div>
-              <h3 style="font-size: 20px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">Akses Kasir Terkunci</h3>
-              <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px;">
-                Staf kasir wajib melakukan <strong>Absensi Masuk (Clock-In)</strong> terlebih dahulu untuk membuka mesin kasir POS.
-              </p>
-
-              <div class="form-group" style="text-align: left;">
-                <label>Pilih Shift Kerja:</label>
-                <select id="clockInShiftSelect">
-                  <option value="Shift Pagi (08:00 - 16:00)">Shift Pagi (08:00 - 16:00)</option>
-                  <option value="Shift Siang (14:00 - 22:00)">Shift Siang (14:00 - 22:00)</option>
-                </select>
-              </div>
-
-              <button class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="window.doStaffClockIn()">
-                🔓 Absen Masuk & Buka Kasir POS Sekarang
-              </button>
-            </div>
-
-            <!-- Actual POS Register (After Clock-In) -->
-            <div id="posActualStation" style="display: none;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <div>
-                  <span style="font-weight: 800; color: var(--primary-dark);">KASIR POS AKTIF</span>
-                  <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">Staf: Budi Santoso (Shift Pagi)</span>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                  <span style="font-size: 12px; font-weight: 700; color: var(--success); background: #ecfdf5; padding: 4px 10px; border-radius: 999px;">
-                    🖨️ Printer Thermal 58mm: Siap
-                  </span>
-                  <button class="btn btn-outline" style="padding: 4px 12px; font-size: 12px;" onclick="window.openCloseShiftModal()">
-                    Tutup Shift Kasir 🔒
-                  </button>
-                </div>
-              </div>
-
-              <div class="pos-workspace-grid">
-                <!-- Left: Catalog & Barcode Scanner -->
-                <div class="pos-catalog-panel">
-                  <div class="pos-barcode-row">
-                    <input type="text" id="posBarcodeInput" placeholder="Scan Barcode / Ketik SKU produk lalu tekan Enter..." />
-                  </div>
-                  <div id="posProductItems" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 380px; overflow-y: auto;">
-                    <!-- Rendered via js/app.js -->
-                  </div>
-                </div>
-
-                <!-- Right: Register & Bill -->
-                <div class="pos-cart-panel">
-                  <h4 style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: var(--primary-dark);">Tagihan Transaksi</h4>
-                  <div id="posCartItemList" class="pos-cart-items-list">
-                    <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">Klik produk di sebelah kiri atau scan barcode untuk menambah pesanan.</div>
-                  </div>
-
-                  <div class="pos-summary-box">
-                    <div class="pos-summary-row grand-total">
-                      <span>Total Tagihan:</span>
-                      <span id="posGrandTotalDisplay">Rp 0</span>
-                    </div>
-                  </div>
-
-                  <div class="pos-payment-tabs">
-                    <button class="pay-tab-btn active" data-method="CASH" onclick="window.setPosPayMethod('CASH')">💵 Tunai (F4)</button>
-                    <button class="pay-tab-btn" data-method="DYNAMIC_QRIS" onclick="window.setPosPayMethod('DYNAMIC_QRIS')">📱 Dynamic QRIS</button>
-                    <button class="pay-tab-btn" data-method="BANK_TRANSFER" onclick="window.setPosPayMethod('BANK_TRANSFER')">🏦 Transfer (F9)</button>
-                  </div>
-
-                  <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 15px;" onclick="window.executePosCheckout()">
-                    ⚡ Bayar & Cetak Struk Thermal (Enter)
-                  </button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- --------------------------------------------------------------- -->
-          <!-- ROLE 3: OWNER DASHBOARD & SETTINGS (OWNER VIEW)                -->
-          <!-- --------------------------------------------------------------- -->
-          <div id="viewOwner" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-              <div>
-                <h3 id="ownerStoreName" style="font-size: 20px; font-weight: 800; color: var(--primary-dark);">RASH Mitra UMKM Center</h3>
-                <p style="font-size: 12px; color: var(--text-muted);">Executive Managerial Dashboard & Settings</p>
-              </div>
-              <span class="preview-status-pill">LIFETIME LICENSE ACTIVE</span>
-            </div>
-
-            <!-- KPI Row -->
-            <div class="owner-dashboard-grid">
-              <div class="owner-stat-card">
-                <div class="label">Total Omzet Bulan Ini</div>
-                <div class="value">Rp 48.750.000</div>
-              </div>
-              <div class="owner-stat-card">
-                <div class="label">Total Transaksi</div>
-                <div class="value">640 Struk</div>
-              </div>
-              <div class="owner-stat-card">
-                <div class="label">Estimasi Payroll Staf</div>
-                <div class="value">Rp 8.500.000</div>
-              </div>
-              <div class="owner-stat-card">
-                <div class="label">Peringatan Stok Rendah</div>
-                <div class="value" style="color: var(--danger);">2 Produk</div>
-              </div>
-            </div>
-
-            <!-- Feature Showcase inside Owner View -->
-            <div style="background: #fff; border: 1px solid var(--border-gold); border-radius: var(--radius-md); padding: 20px;">
-              <h4 style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: var(--primary-dark);">
-                ⚙️ Master Settings Terintegrasi (Multi-Vertikal & API WhatsApp)
-              </h4>
-              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-                Owner memiliki kendali penuh: Menghubungkan Token API WhatsApp (Fonnte), mengatur Rekening QRIS, dan memilih vertikal bisnis yang langsung mengubah antarmuka POS kasir dan nota belanja.
-              </p>
-              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <span class="preview-status-pill">🟢 Fonnte WhatsApp API: Terhubung</span>
-                <span class="preview-status-pill">💳 Dynamic QRIS Engine: Aktif</span>
-                <span class="preview-status-pill">📊 Auto-Sync Google Sheets: Realtime</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- FITUR LENGKAP MINI ERP                                                    -->
-  <!-- ========================================================================= -->
-  <section id="fitur" style="padding: 90px 0; background: #fff; border-bottom: 1px solid var(--border-gold);">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-tag">ARSITEKTUR & FITUR UNGGULAN</div>
-        <h3 class="section-title">Teknologi Teruji untuk Pertumbuhan Usaha Anda</h3>
-        <p class="section-subtitle">
-          Semua modul dirancang terpadu tanpa saling membebani kinerja server.
-        </p>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
-        <div class="compare-card">
-          <div style="font-size: 28px; margin-bottom: 12px;">📲</div>
-          <h4 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">Otomasi WhatsApp (Fonnte)</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">
-            Kirim struk digital otomatis ke nomor pelanggan setelah transaksi lunas, dan terima laporan rekap tutup kasir harian langsung ke WhatsApp Owner.
-          </p>
-        </div>
-
-        <div class="compare-card">
-          <div style="font-size: 28px; margin-bottom: 12px;">🖨️</div>
-          <h4 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">Thermal Printer 58mm & Barcode</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">
-            Dukungan cetak thermal langsung via Web Bluetooth atau browser print tanpa dialog ribet, lengkap dengan pemindaian barcode USB dan kamera.
-          </p>
-        </div>
-
-        <div class="compare-card">
-          <div style="font-size: 28px; margin-bottom: 12px;">👥</div>
-          <h4 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">Gated Absensi & Kalkulasi Gaji</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">
-            Kasir terkunci sebelum absensi masuk. Total hari kerja dan tunjangan harian otomatis dihitung menjadi slip gaji bulanan karyawan.
-          </p>
-        </div>
-
-        <div class="compare-card">
-          <div style="font-size: 28px; margin-bottom: 12px;">🛡️</div>
-          <h4 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">Standalone Database (Google Drive)</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">
-            Satu instance terisolasi di akun Google Anda sendiri. Tidak ada pihak ketiga yang memegang atau menyalahgunakan data pelanggan Anda.
-          </p>
-        </div>
-
-        <div class="compare-card">
-          <div style="font-size: 28px; margin-bottom: 12px;">⚡</div>
-          <h4 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">Kecepatan Turbo (gas-scale-turbo)</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">
-            Caching bertingkat (LocalStorage SWR + CacheX) memastikan perpindahan menu dan klik antarmuka 0ms tanpa menunggu loading server Google.
-          </p>
-        </div>
-
-        <div class="compare-card">
-          <div style="font-size: 28px; margin-bottom: 12px;">🔄</div>
-          <h4 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">Migrasi Data Mudah (1-Klik)</h4>
-          <p style="font-size: 14px; color: var(--text-muted);">
-            Dilengkapi utilitas impor spreadsheet lama yang aman diulang, delta-sync, dan normalisasi nomor WhatsApp otomatis.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- PERBANDINGAN BIAYA (COST COMPARISON)                                      -->
-  <!-- ========================================================================= -->
-  <section id="perbandingan" class="comparison-section">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-tag">HEMAT INVESTASI JANGKA PANJANG</div>
-        <h3 class="section-title">Bandingkan Pengeluaran Anda Setiap Tahun</h3>
-        <p class="section-subtitle">Mengapa model Lifetime License RASH Mitra adalah pilihan paling bijak untuk UMKM.</p>
-      </div>
-
-      <div class="comparison-grid">
-        <div class="compare-card">
-          <h4 style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">Aplikasi POS SaaS Bulanan</h4>
-          <div style="font-size: 32px; font-weight: 900; color: var(--danger); margin: 16px 0;">
-            Rp 300.000 <span style="font-size: 14px; color: var(--text-muted); font-weight: normal;">/ bulan</span>
-          </div>
-          <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-            Setiap tahun Anda menghabiskan <strong>Rp 3.600.000,-</strong> hanya untuk sewa aplikasi. Jika telat bayar, data terkunci!
-          </p>
-          <ul style="list-style: none; font-size: 14px; color: var(--text-muted); display: grid; gap: 10px;">
-            <li>❌ Terus bayar selamanya</li>
-            <li>❌ Database di server penyedia</li>
-            <li>❌ Biaya tambahan per outlet/kasir</li>
-          </ul>
-        </div>
-
-        <div class="compare-card highlight">
-          <h4 style="font-size: 20px; font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;">RASH Mitra (Lifetime License)</h4>
-          <div style="font-size: 32px; font-weight: 900; color: var(--gold); margin: 16px 0;">
-            Sekali Bayar <span style="font-size: 14px; color: var(--text-muted); font-weight: normal;">(Rp 0 / bulan)</span>
-          </div>
-          <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-            Investasi 1x seumur hidup. Milik Anda selamanya di Google Workspace pribadi, bebas biaya server dan bebas langganan!
-          </p>
-          <ul style="list-style: none; font-size: 14px; color: var(--text-main); font-weight: 600; display: grid; gap: 10px;">
-            <li>✅ Milik seumur hidup tanpa biaya sewa</li>
-            <li>✅ 100% Kedaulatan data di Google Sheets Anda</li>
-            <li>✅ Otomasi WhatsApp & Struk Thermal 58mm</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- FORM PENDAFTARAN & KONSULTASI LISENSI                                     -->
-  <!-- ========================================================================= -->
-  <section id="daftar" class="lead-form-section">
-    <div class="container">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+      <!-- FORM LOGIN KASIR / STAF -->
+      <div id="authStaffForm" class="space-y-4">
         <div>
-          <div class="section-tag" style="color: var(--gold-light);">DAPATKAN LISENSI STANDALONE</div>
-          <h3 class="section-title">Mulai Digitalisasi Bisnis Anda Hari Ini Bersama RASH Mitra</h3>
-          <p class="section-subtitle">
-            Dapatkan paket lengkap: Instalasi standalone ke akun Google Anda, panduan penggunaan, template WhatsApp Fonnte, dan dukungan setup printer thermal.
-          </p>
-          <div style="margin-top: 30px; display: grid; gap: 14px;">
-            <div style="display: flex; gap: 12px; align-items: center;">
-              <span style="font-size: 20px;">⚡</span>
-              <span>Proses instalasi cepat kurang dari 15 menit</span>
-            </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
-              <span style="font-size: 20px;">🛡️</span>
-              <span>Garansi kompatibilitas & backup Google Drive otomatis</span>
-            </div>
-          </div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Petugas Kasir:</label>
+          <select id="loginStaffSelect" class="w-full text-sm rounded-xl border-slate-200 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent font-medium">
+            <option value="Budi Santoso">Budi Santoso (Kasir 1 - Shift Pagi)</option>
+            <option value="Siti Rahayu">Siti Rahayu (Kasir 2 - Shift Siang)</option>
+            <option value="Dewi Lestari">Dewi Lestari (Operator POS)</option>
+          </select>
         </div>
 
-        <div class="lead-form-box">
-          <h4 style="font-size: 20px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">
-            Formulir Peminat Lisensi Mitra
-          </h4>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-            Isi formulir ini untuk konsultasi langsung dengan konsultan RASH WebApp Builder:
-          </p>
-
-          <form id="leadRegistrationForm">
-            <div class="form-group">
-              <label>Nama Pemilik / Mitra:</label>
-              <input type="text" id="leadName" placeholder="Contoh: Budi Prasetyo" required />
-            </div>
-
-            <div class="form-group">
-              <label>Nomor WhatsApp Aktif:</label>
-              <input type="tel" id="leadPhone" placeholder="Contoh: 08123456789" required />
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-              <div class="form-group">
-                <label>Nama Usaha / Toko:</label>
-                <input type="text" id="leadBusinessName" placeholder="Contoh: Kopi Sedap Rasa" required />
-              </div>
-              <div class="form-group">
-                <label>Jenis Bisnis:</label>
-                <select id="leadBusinessType">
-                  <option value="Restoran / Kafe">Restoran / Kafe</option>
-                  <option value="Retail / Toko / Warung">Retail / Toko / Warung</option>
-                  <option value="Laundry & Jasa">Laundry & Jasa</option>
-                  <option value="Lainnya">Lainnya</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Kota / Domisili Usaha:</label>
-              <input type="text" id="leadCity" placeholder="Contoh: Surabaya" required />
-            </div>
-
-            <button type="submit" class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 16px;">
-              Daftar & Hubungi Tim RASH via WhatsApp 🚀
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- FOOTER                                                                    -->
-  <!-- ========================================================================= -->
-  <footer class="footer">
-    <div class="container">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;">
-        <div class="brand-logo">
-          <div class="logo-badge">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-          </div>
-          <div class="logo-text">
-            <h1 style="color: #fff;">RASH <span style="color: var(--gold);">Mitra</span></h1>
-            <p style="color: rgba(255, 255, 255, 0.6);">By RASH WebApp Builder</p>
-          </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">PIN Kasir (Default: 1234):</label>
+          <input type="password" id="loginStaffPin" class="w-full text-sm rounded-xl border-slate-200 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent font-mono tracking-widest text-center text-lg" value="1234" maxlength="6" />
         </div>
 
-        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">
-          Arsitektur: Google Apps Script REST API + GitHub Pages Static Frontend
+        <button onclick="window.handleStaffLogin()" class="w-full py-3.5 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2">
+          <span>Buka Mesin Kasir POS</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+
+        <div class="pt-2">
+          <button onclick="window.quickDemoLogin('staff')" class="w-full py-2.5 rounded-xl border border-dashed border-primary/40 bg-primary/5 text-primary text-xs font-bold hover:bg-primary/10 transition-all">
+            ⚡ Masuk Cepat Demo Kasir (1-Klik)
+          </button>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div>© 2026 RASH Mitra by RASH WebApp Builder. Hak Cipta Dilindungi.</div>
-        <div>Model Standalone Instance • Zero Subscription Fees</div>
+      <!-- FORM LOGIN SUPER ADMIN (OWNER) -->
+      <div id="authOwnerForm" class="hidden space-y-4">
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200/80 text-xs text-amber-900 leading-relaxed">
+          Super Admin memiliki hak akses penuh untuk Master Produk, Gaji Staf, dan pengaturan model vertikal (Resto / Retail / Laundry).
+        </div>
+
+        <!-- Google OAuth -->
+        <button onclick="window.handleGoogleLogin()" class="w-full py-3 px-4 rounded-xl border border-slate-300 hover:bg-slate-50 font-bold text-xs text-slate-800 flex items-center justify-center gap-2.5 shadow-sm transition-all">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+          Masuk dengan Akun Google (Owner)
+        </button>
+
+        <div class="relative flex items-center justify-center my-3">
+          <div class="border-t border-slate-200 w-full"></div>
+          <span class="bg-white px-2 text-[10px] text-text-muted uppercase font-bold tracking-wider">Atau Sandi Darurat</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Username Master:</label>
+          <input type="text" id="ownerUser" class="w-full text-sm rounded-xl border-slate-200 p-2.5 bg-slate-50" value="darurat" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Password Master:</label>
+          <input type="password" id="ownerPass" class="w-full text-sm rounded-xl border-slate-200 p-2.5 bg-slate-50" value="demo-master-2026" />
+        </div>
+
+        <button onclick="window.handleOwnerLogin()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container hover:brightness-110 text-white font-bold text-sm shadow-md transition-all">
+          Buka Panel Super Admin 🔓
+        </button>
+
+        <div class="pt-2">
+          <button onclick="window.quickDemoLogin('owner')" class="w-full py-2.5 rounded-xl border border-dashed border-gold-shimmer/60 bg-gold-tint/40 text-secondary text-xs font-bold hover:bg-gold-tint transition-all">
+            ⚡ Masuk Cepat Demo Super Admin
+          </button>
+        </div>
       </div>
-    </div>
-  </footer>
 
-  <!-- ========================================================================= -->
-  <!-- MODAL: CHECKOUT PENGUNJUNG                                                -->
-  <!-- ========================================================================= -->
-  <div id="customerCheckoutModal" class="modal-overlay">
-    <div class="modal-card">
-      <button class="modal-close-btn">&times;</button>
-      <h3 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 4px;">Konfirmasi Pesanan Mandiri</h3>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Struk digital otomatis dikirim ke nomor WhatsApp Anda.</p>
-
-      <div id="checkoutItemsList" style="margin-bottom: 16px; max-height: 200px; overflow-y: auto;"></div>
-
-      <div id="checkoutVerticalFields"></div>
-
-      <div class="form-group">
-        <label>Nama Pemesan:</label>
-        <input type="text" id="custName" placeholder="Nama Anda" value="Ahmad Mitra" />
+      <!-- Footer Info & Link Landing Page -->
+      <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-text-muted">
+        <a href="katalog.html" class="hover:text-primary font-semibold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">restaurant_menu</span>
+          Buka Katalog Tamu
+        </a>
+        <a href="landing.html" class="hover:text-primary font-semibold flex items-center gap-1">
+          <span>Info Lisensi</span>
+          <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+        </a>
       </div>
-
-      <div class="form-group">
-        <label>Nomor WhatsApp (untuk E-Receipt):</label>
-        <input type="tel" id="custPhone" placeholder="Contoh: 08123456789" value="08123456789" />
-      </div>
-
-      <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; display: flex; justify-content: space-between; font-weight: 800; font-size: 16px;">
-        <span>Total Pembayaran:</span>
-        <span id="checkoutTotalDisplay" style="color: var(--primary-dark);">Rp 0</span>
-      </div>
-
-      <button class="btn btn-gold" style="width: 100%; padding: 13px;" onclick="window.submitCustomerOrder()">
-        Kirim Pesanan & Tampilkan QRIS / Struk ⚡
-      </button>
     </div>
   </div>
 
+
   <!-- ========================================================================= -->
-  <!-- MODAL: STRUK DIGITAL & VIRTUAL THERMAL PRINTER (58MM)                     -->
+  <!-- 2. APLIKASI OPERASIONAL LENGKAP (TAMPIL SETELAH LOGIN)                    -->
   <!-- ========================================================================= -->
-  <div id="thermalReceiptModal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 360px;">
+  <div id="mainAppView" class="hidden min-h-screen flex flex-col">
+    
+    <!-- TOP OPERATIONAL BAR -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+      <div class="px-4 lg:px-8 h-18 flex items-center justify-between gap-4 py-2.5">
+        
+        <!-- Brand & User Identity -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary text-gold-shimmer flex items-center justify-center font-black text-lg shadow-sm">
+            ⚡
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="appStoreName" class="font-extrabold text-primary text-base leading-tight">RASH Coffee & Resto</span>
+              <span id="appRoleBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">KASIR AKTIF</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-text-muted mt-0.5">
+              <span id="appUserName">Budi Santoso</span>
+              <span>•</span>
+              <span id="hardwarePrinterBadge" class="text-emerald-600 font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Thermal 58mm Siap
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAVIGATION TABS -->
+        <nav class="hidden md:flex items-center gap-1 p-1 bg-slate-100 rounded-2xl">
+          <button id="navTabPos" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white shadow-sm flex items-center gap-1.5 transition-all" onclick="window.switchAppTab('pos')">
+            <span class="material-symbols-outlined text-[17px]">point_of_sale</span>
+            Mesin Kasir (POS)
+          </button>
+
+          <button id="navTabProduk" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-primary hover:bg-slate-200/60 flex items-center gap-1.5 transition-all" onclick="window.switchAppTab('produk')">
+            <span class="material-symbols-outlined text-[17px]">inventory_2</span>
+            Data Produk & Stok
+          </button>
+
+          <button id="navTabPesanan" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-primary hover:bg-slate-200/60 flex items-center gap-1.5 transition-all relative" onclick="window.switchAppTab('pesanan')">
+            <span class="material-symbols-outlined text-[17px]">receipt_long</span>
+            Antrean & Lacak Pesanan
+            <span id="incomingOrderBadge" class="w-2 h-2 rounded-full bg-red-500 absolute top-2 right-2 animate-ping"></span>
+          </button>
+
+          <!-- Super Admin Tab (Only unlocked for Owner or Demo) -->
+          <button id="navTabAdmin" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-primary hover:bg-slate-200/60 flex items-center gap-1.5 transition-all" onclick="window.switchAppTab('admin')">
+            <span class="material-symbols-outlined text-[17px]">shield_person</span>
+            Super Admin & Setting
+          </button>
+        </nav>
+
+        <!-- Dynamic Model Switcher (Visible ONLY in Demo Mode or to Super Admin) -->
+        <div class="flex items-center gap-3">
+          <div id="demoModelSelectorBox" class="flex items-center gap-1.5 bg-gold-tint px-3 py-1.5 rounded-xl border border-gold-soft/40">
+            <span class="material-symbols-outlined text-secondary text-[16px]">tune</span>
+            <span class="text-[11px] font-bold text-secondary uppercase hidden sm:inline">Model:</span>
+            <select id="activeModelSelect" onchange="window.changeBusinessModel(this.value)" class="text-xs font-bold text-primary bg-transparent border-none p-0 focus:ring-0 cursor-pointer">
+              <option value="RESTO">Restoran & Kafe (Meja)</option>
+              <option value="RETAIL">Retail & Warung (Barcode)</option>
+              <option value="LAUNDRY">Laundry & Jasa (Kg)</option>
+            </select>
+          </div>
+
+          <button onclick="window.handleLogoutApp()" title="Keluar Akun" class="w-9 h-9 rounded-xl border border-slate-200 hover:bg-red-50 text-slate-500 hover:text-red-600 flex items-center justify-center transition-all">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mobile Navigation Sub-bar -->
+      <div class="md:hidden flex items-center justify-around border-t border-slate-100 p-1.5 bg-slate-50">
+        <button onclick="window.switchAppTab('pos')" class="flex flex-col items-center text-[10px] font-bold text-primary py-1 px-2">
+          <span class="material-symbols-outlined text-[20px]">point_of_sale</span>
+          Kasir
+        </button>
+        <button onclick="window.switchAppTab('produk')" class="flex flex-col items-center text-[10px] font-bold text-slate-600 py-1 px-2">
+          <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+          Produk
+        </button>
+        <button onclick="window.switchAppTab('pesanan')" class="flex flex-col items-center text-[10px] font-bold text-slate-600 py-1 px-2">
+          <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+          Pesanan
+        </button>
+        <button onclick="window.switchAppTab('admin')" class="flex flex-col items-center text-[10px] font-bold text-slate-600 py-1 px-2">
+          <span class="material-symbols-outlined text-[20px]">shield_person</span>
+          Admin
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN APP CONTENT PANELS -->
+    <main class="flex-1 p-4 lg:p-6 max-w-7xl mx-auto w-full">
+      
+      <!-- =================================================================== -->
+      <!-- TAB 1: STASIUN KASIR (POS)                                          -->
+      <!-- =================================================================== -->
+      <div id="panelTabPos" class="app-panel">
+        
+        <!-- Lock Screen Absensi (Jika Staf Belum Clock-in) -->
+        <div id="appPosLockGate" class="max-w-md mx-auto my-12 bg-white p-8 rounded-3xl shadow-lg border border-slate-200 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-[30px]">lock_clock</span>
+          </div>
+          <h3 class="text-xl font-black text-primary mb-2">Kasir Terkunci (Wajib Absen)</h3>
+          <p class="text-xs text-text-muted mb-6 leading-relaxed">
+            Sesuai SOP, petugas kasir wajib melakukan <strong>Absensi Masuk (Clock-in)</strong> untuk membuka register kasir harian.
+          </p>
+          <div class="text-left mb-4">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Shift Kerja Anda:</label>
+            <select id="posClockInShift" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-3 bg-slate-50">
+              <option value="Shift Pagi (08:00 - 16:00)">Shift Pagi (08:00 - 16:00 WIB)</option>
+              <option value="Shift Siang (14:00 - 22:00)">Shift Siang (14:00 - 22:00 WIB)</option>
+            </select>
+          </div>
+          <button onclick="window.unlockPosClockIn()" class="w-full py-3.5 rounded-xl bg-primary text-white font-bold text-xs shadow-md hover:bg-primary-dark transition-all">
+            🔓 Absen Masuk & Buka Mesin Kasir Sekarang
+          </button>
+        </div>
+
+        <!-- Layar Kasir POS Sebenarnya (Terbuka Setelah Clock-In) -->
+        <div id="appPosStation" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- LEFT: Katalog Kasir & Scanner Barcode (7 Kolom) -->
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            
+            <!-- Barcode Scanner & Search -->
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+              <span class="material-symbols-outlined text-slate-400 text-[22px]">barcode_scanner</span>
+              <input type="text" id="posBarcodeField" placeholder="Scan Barcode USB / Ketik SKU / Cari Menu... (Enter)" class="flex-1 border-none p-0 text-sm focus:ring-0 placeholder:text-slate-400 font-medium" />
+              <button onclick="window.filterPosMenu('')" class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold">
+                Reset
+              </button>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1" id="posCategoryFilterList">
+              <button class="pos-cat-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-primary text-white shadow-sm shrink-0" onclick="window.filterPosCategory('ALL', this)">
+                Semua Menu
+              </button>
+              <button class="pos-cat-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0" onclick="window.filterPosCategory('Makanan', this)">
+                Makanan
+              </button>
+              <button class="pos-cat-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0" onclick="window.filterPosCategory('Minuman', this)">
+                Minuman
+              </button>
+              <button class="pos-cat-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0" onclick="window.filterPosCategory('Sembako', this)">
+                Sembako / Retail
+              </button>
+              <button class="pos-cat-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 shrink-0" onclick="window.filterPosCategory('Laundry', this)">
+                Laundry
+              </button>
+            </div>
+
+            <!-- Product Grid Touch Tiles -->
+            <div id="posProductGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3.5 max-h-[calc(100vh-270px)] overflow-y-auto pr-1">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- RIGHT: Struk Tagihan Aktif & Numpad Bayar (5 Kolom) -->
+          <div class="lg:col-span-5 bg-white p-5 rounded-3xl border border-gold-soft/30 shadow-md flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                <div class="font-extrabold text-sm text-primary flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[18px]">receipt</span>
+                  <span>Nota Transaksi Baru</span>
+                </div>
+                <button onclick="window.clearPosCart()" class="text-[11px] font-bold text-red-600 hover:bg-red-50 px-2 py-0.5 rounded">
+                  Kosongkan
+                </button>
+              </div>
+
+              <!-- Metadata Khusus Vertikal (No Meja / Nama Pelanggan / Kg) -->
+              <div class="grid grid-cols-2 gap-2 mb-3" id="posVerticalInputs">
+                <!-- Dynamically filled based on model -->
+              </div>
+
+              <!-- Item Keranjang Table -->
+              <div id="posCartTableList" class="space-y-2 max-h-56 overflow-y-auto pr-1 border-b border-dashed border-slate-200 pb-3">
+                <div class="text-center py-10 text-xs text-text-muted">
+                  Keranjang kosong. Klik produk di sebelah kiri atau scan barcode.
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary & Payment Controls -->
+            <div class="pt-3">
+              <div class="space-y-1.5 mb-3 text-xs">
+                <div class="flex justify-between text-slate-500">
+                  <span>Subtotal Belanja:</span>
+                  <span id="posSubtotalText" class="font-mono font-bold text-slate-700">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center text-slate-800 font-extrabold text-lg pt-1 border-t border-slate-200">
+                  <span>TOTAL BAYAR:</span>
+                  <span id="posGrandTotalText" class="text-primary font-mono text-xl">Rp 0</span>
+                </div>
+              </div>
+
+              <!-- Payment Method Tabs -->
+              <div class="grid grid-cols-3 gap-2 mb-3">
+                <button class="pos-pay-btn active p-2 rounded-xl text-xs font-bold border border-primary bg-primary text-white shadow-sm flex flex-col items-center gap-1" data-method="CASH" onclick="window.setPayMethod('CASH', this)">
+                  <span class="material-symbols-outlined text-[18px]">payments</span>
+                  <span>Tunai (F4)</span>
+                </button>
+                <button class="pos-pay-btn p-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex flex-col items-center gap-1" data-method="DYNAMIC_QRIS" onclick="window.setPayMethod('DYNAMIC_QRIS', this)">
+                  <span class="material-symbols-outlined text-[18px]">qr_code_2</span>
+                  <span>QRIS Dinamis</span>
+                </button>
+                <button class="pos-pay-btn p-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex flex-col items-center gap-1" data-method="BANK_TRANSFER" onclick="window.setPayMethod('BANK_TRANSFER', this)">
+                  <span class="material-symbols-outlined text-[18px]">account_balance</span>
+                  <span>Transfer</span>
+                </button>
+              </div>
+
+              <!-- Quick Cash Buttons -->
+              <div class="flex items-center gap-1.5 mb-3 overflow-x-auto pb-1" id="quickCashButtons">
+                <button onclick="window.fillExactCash()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap">Uang Pas</button>
+                <button onclick="window.fillCashAmount(50000)" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap">50.000</button>
+                <button onclick="window.fillCashAmount(100000)" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap">100.000</button>
+                <button onclick="window.fillCashAmount(200000)" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap">200.000</button>
+              </div>
+
+              <!-- Main Bayar & Cetak Action Button -->
+              <button onclick="window.executeTransactionCheckout()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-primary to-primary-container hover:brightness-110 text-white font-black text-sm shadow-lg flex items-center justify-center gap-2 transition-all">
+                <span class="material-symbols-outlined text-[20px]">print</span>
+                <span>BAYAR & CETAK STRUK 58MM</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAB 2: DATA PRODUK & MANAJEMEN STOK (CRUD PRODUK)                   -->
+      <!-- =================================================================== -->
+      <div id="panelTabProduk" class="app-panel hidden">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-xl font-black text-primary">Master Produk & Inventori Stok</h2>
+              <p class="text-xs text-text-muted">Kelola katalog barang, sesuaikan harga jual, dan pantau stok gudang secara realtime.</p>
+            </div>
+            <button onclick="window.openAddProductModal()" class="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all self-start sm:self-auto">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              + Tambah Produk Baru
+            </button>
+          </div>
+
+          <!-- Search & Filter Bar -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 mb-6">
+            <div class="relative flex-1 w-full">
+              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+              <input type="text" id="inventorySearchField" oninput="window.filterInventoryTable()" placeholder="Cari nama produk, SKU, barcode, atau kategori..." class="w-full pl-10 pr-4 py-2.5 text-xs font-medium rounded-xl border-slate-200 bg-slate-50 focus:bg-white" />
+            </div>
+            <select id="inventoryCategoryFilter" onchange="window.filterInventoryTable()" class="w-full sm:w-48 text-xs font-bold rounded-xl border-slate-200 p-2.5 bg-slate-50">
+              <option value="ALL">Semua Kategori</option>
+              <option value="Makanan">Makanan</option>
+              <option value="Minuman">Minuman</option>
+              <option value="Sembako">Sembako / Retail</option>
+              <option value="Laundry">Laundry & Jasa</option>
+            </select>
+          </div>
+
+          <!-- Table Inventory -->
+          <div class="overflow-x-auto rounded-2xl border border-slate-100">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5">SKU / Barcode</th>
+                  <th class="p-3.5">Nama Produk</th>
+                  <th class="p-3.5">Kategori</th>
+                  <th class="p-3.5">Harga Modal</th>
+                  <th class="p-3.5">Harga Jual</th>
+                  <th class="p-3.5">Stok Fisik</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-center">Aksi Cepat</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody" class="divide-y divide-slate-100">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAB 3: ANTREAN & PELACAKAN PESANAN (ORDER TRACKER)                  -->
+      <!-- =================================================================== -->
+      <div id="panelTabPesanan" class="app-panel hidden">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-xl font-black text-primary">Antrean & Pelacakan Pesanan Masuk</h2>
+              <p class="text-xs text-text-muted">Pantau pesanan yang dikirim oleh pelanggan melalui katalog mandiri secara live.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="window.renderOrdersQueueTable()" class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">refresh</span>
+                Segarkan Antrean
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Search Tracker Form -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 flex flex-col sm:flex-row items-center gap-3">
+            <div class="relative flex-1 w-full">
+              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search_check</span>
+              <input type="text" id="trackOrderSearchInput" placeholder="Ketik No. Order (cth: ORD-20261107-101) atau No. WhatsApp Pelanggan..." class="w-full pl-10 pr-4 py-2.5 text-xs font-semibold rounded-xl border-slate-300" />
+            </div>
+            <button onclick="window.searchAndTrackOrder()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark">
+              Lacak Status Pesanan 🔍
+            </button>
+          </div>
+
+          <!-- Visual Order Tracker Timeline Display (When Search Triggered) -->
+          <div id="liveTrackerDisplayBox" class="hidden p-5 rounded-2xl bg-gold-tint/40 border border-gold-soft/50 mb-6">
+            <!-- Dynamically populated with status steps -->
+          </div>
+
+          <!-- Orders Queue Table -->
+          <div class="overflow-x-auto rounded-2xl border border-slate-100">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5">No. Order</th>
+                  <th class="p-3.5">Pelanggan</th>
+                  <th class="p-3.5">Meja / Info Vertikal</th>
+                  <th class="p-3.5">Rincian Menu</th>
+                  <th class="p-3.5">Total Tagihan</th>
+                  <th class="p-3.5">Status Pesanan</th>
+                  <th class="p-3.5 text-center">Ubah Status</th>
+                </tr>
+              </thead>
+              <tbody id="ordersQueueTableBody" class="divide-y divide-slate-100">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAB 4: SUPER ADMIN & MASTER SETTINGS                                -->
+      <!-- =================================================================== -->
+      <div id="panelTabAdmin" class="app-panel hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Col Left: Master Business Vertical Switcher & Config (2 Kolom) -->
+          <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Master Settings Card -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-primary text-[24px]">tune</span>
+                <h3 class="font-extrabold text-lg text-primary">Konfigurasi Multi-Vertikal Toko (Super Admin)</h3>
+              </div>
+              <p class="text-xs text-text-muted mb-6 leading-relaxed">
+                Pilihan tipe bisnis ini secara otomatis mengubah seluruh form kasir, struk belanja, dan katalog tanpa perlu coding ulang.
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                <div onclick="window.changeBusinessModel('RESTO')" class="model-card-option p-4 rounded-2xl border-2 border-primary bg-primary/5 cursor-pointer transition-all text-center" data-val="RESTO">
+                  <div class="text-3xl mb-1">🍽️</div>
+                  <div class="font-bold text-xs text-primary">Restoran & Kafe</div>
+                  <div class="text-[10px] text-text-muted mt-1">Nomor Meja & KDS Dapur</div>
+                </div>
+
+                <div onclick="window.changeBusinessModel('RETAIL')" class="model-card-option p-4 rounded-2xl border-2 border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all text-center" data-val="RETAIL">
+                  <div class="text-3xl mb-1">🏬</div>
+                  <div class="font-bold text-xs text-slate-800">Retail & Warung</div>
+                  <div class="text-[10px] text-text-muted mt-1">Barcode & Stok Grosir</div>
+                </div>
+
+                <div onclick="window.changeBusinessModel('LAUNDRY')" class="model-card-option p-4 rounded-2xl border-2 border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all text-center" data-val="LAUNDRY">
+                  <div class="text-3xl mb-1">🧺</div>
+                  <div class="font-bold text-xs text-slate-800">Laundry & Jasa</div>
+                  <div class="text-[10px] text-text-muted mt-1">Timbangan Kg & Estimasi</div>
+                </div>
+              </div>
+
+              <!-- Form Informasi Usaha -->
+              <div class="space-y-4 pt-4 border-t border-slate-100">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nama Toko / Usaha:</label>
+                    <input type="text" id="cfgStoreName" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2.5 bg-slate-50" value="RASH Coffee & Resto" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">ID Merchant Dynamic QRIS:</label>
+                    <input type="text" id="cfgQrisId" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2.5 bg-slate-50" value="NMID-RASH-99887766" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Token WhatsApp Gateway (Fonnte API - Disamarkan):</label>
+                  <input type="password" id="cfgFonnteToken" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50" value="fonn_secret_token_12345" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Kaki Struk Thermal 58mm:</label>
+                  <input type="text" id="cfgThermalFooter" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2.5 bg-slate-50" value="Barang yang dibeli tidak dapat ditukar. Terima kasih!" />
+                </div>
+
+                <button onclick="window.saveMasterSettings()" class="px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark shadow-sm">
+                  Simpan Perubahan Master Settings 💾
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Payroll Karyawan Otomatis -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="font-extrabold text-base text-primary">Kalkulasi Otomatis Gaji Staf (Payroll)</h3>
+                  <p class="text-xs text-text-muted">Dihitung otomatis dari rekam absensi harian kasir.</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">PERIODE NOV 2026</span>
+              </div>
+
+              <div class="space-y-3">
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-xs text-slate-800">Budi Santoso (Shift Pagi)</div>
+                    <div class="text-[11px] text-text-muted">Hadir: 26 Hari • Gaji Pokok: Rp 2.500.000 • Tunjangan: Rp 520.000</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="font-black text-sm text-primary">Rp 3.020.000</div>
+                    <button onclick="alert('Slip gaji siap dicetak thermal 58mm atau dikirim ke WhatsApp Budi!')" class="text-[10px] text-primary font-bold hover:underline">
+                      Cetak Slip Gaji (58mm)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Col Right: KPI & Financial Quick Summary (1 Kolom) -->
+          <div class="space-y-6">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+              <h3 class="font-extrabold text-sm text-primary mb-4">Ringkasan Omzet Hari Ini</h3>
+              <div class="text-3xl font-black text-primary mb-1">Rp 3.850.000</div>
+              <div class="text-xs text-emerald-600 font-bold mb-4">+18.5% dari target harian</div>
+
+              <div class="space-y-2.5 text-xs pt-3 border-t border-slate-100">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Tunai di Kasir:</span>
+                  <span class="font-bold text-slate-800">Rp 1.200.000</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">QRIS Dinamis:</span>
+                  <span class="font-bold text-primary">Rp 2.100.000</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Transfer Bank:</span>
+                  <span class="font-bold text-slate-800">Rp 550.000</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-primary to-primary-container p-6 rounded-3xl text-white shadow-md">
+              <h4 class="font-bold text-sm text-gold-shimmer mb-1">Standalone Database</h4>
+              <p class="text-xs text-slate-200 leading-relaxed mb-4">
+                100% database tersimpan aman di Google Drive Anda tanpa biaya sewa server.
+              </p>
+              <a href="landing.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-gold-soft hover:underline">
+                <span>Lihat Brosur & Info Lisensi</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS                                                                    -->
+  <!-- ========================================================================= -->
+
+  <!-- Modal: Tambah Produk Baru -->
+  <div id="addProductModal" class="modal-overlay">
+    <div class="modal-card max-w-lg">
       <button class="modal-close-btn">&times;</button>
-      <h3 style="font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 14px; color: var(--primary-dark);">
-        🖨️ Pratinjau Cetak Struk Thermal 58mm
+      <h3 class="text-lg font-black text-primary mb-1">Tambah Produk / Layanan Baru</h3>
+      <p class="text-xs text-text-muted mb-4">Produk otomatis tersinkronisasi ke katalog kasir dan antrean stok.</p>
+
+      <form id="addProductForm" onsubmit="window.saveNewProduct(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Produk / Jasa:</label>
+          <input type="text" id="newProdName" placeholder="Contoh: Kopi Susu Aren 500ml" required class="w-full text-xs rounded-xl border-slate-200 p-2.5" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">SKU / Barcode:</label>
+            <input type="text" id="newProdSku" placeholder="Contoh: RESTO-05" required class="w-full text-xs rounded-xl border-slate-200 p-2.5 font-mono" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Kategori:</label>
+            <select id="newProdCategory" class="w-full text-xs rounded-xl border-slate-200 p-2.5">
+              <option value="Makanan">Makanan</option>
+              <option value="Minuman">Minuman</option>
+              <option value="Sembako">Sembako / Retail</option>
+              <option value="Laundry">Laundry & Jasa</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Harga Modal (Rp):</label>
+            <input type="number" id="newProdCost" placeholder="10000" class="w-full text-xs rounded-xl border-slate-200 p-2.5 font-mono" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Harga Jual (Rp):</label>
+            <input type="number" id="newProdPrice" placeholder="20000" required class="w-full text-xs rounded-xl border-slate-200 p-2.5 font-mono" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Stok Awal:</label>
+            <input type="number" id="newProdStock" placeholder="50" value="50" class="w-full text-xs rounded-xl border-slate-200 p-2.5" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Satuan:</label>
+            <input type="text" id="newProdUnit" placeholder="pcs / cup / kg" value="pcs" class="w-full text-xs rounded-xl border-slate-200 p-2.5" />
+          </div>
+        </div>
+
+        <div class="pt-3">
+          <button type="submit" class="w-full py-3 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary-dark shadow-sm">
+            Simpan Produk ke Database 💾
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Pratinjau Cetak Struk Thermal 58mm -->
+  <div id="thermalReceiptModal" class="modal-overlay">
+    <div class="modal-card max-w-sm">
+      <button class="modal-close-btn">&times;</button>
+      <h3 class="text-base font-extrabold text-center text-primary mb-3">
+        🖨️ Struk Thermal 58mm
       </h3>
 
       <div id="thermalReceiptPaper" class="receipt-paper">
-        <!-- Rendered via js/app.js -->
+        <!-- Rendered via JS -->
       </div>
 
-      <div style="display: flex; gap: 10px; margin-top: 18px;">
-        <button class="btn btn-outline" style="flex: 1;" onclick="window.printReceipt()">
+      <div class="flex gap-2 mt-4">
+        <button onclick="window.printReceipt()" class="flex-1 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-xs font-bold text-slate-700">
           🖨️ Cetak Fisik
         </button>
-        <button class="btn btn-primary" style="flex: 1;" onclick="document.getElementById('thermalReceiptModal').classList.remove('open')">
+        <button onclick="document.getElementById('thermalReceiptModal').classList.remove('open')" class="flex-1 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark">
           Tutup
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- MODAL: TUTUP SHIFT KASIR                                                  -->
-  <!-- ========================================================================= -->
-  <div id="closeShiftModal" class="modal-overlay">
-    <div class="modal-card">
-      <button class="modal-close-btn">&times;</button>
-      <h3 style="font-size: 18px; font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;">Tutup Shift Kasir Harian</h3>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-        Hitungan fisik kas akan direkonsiliasi dan laporan langsung dikirim ke WhatsApp Owner.
-      </p>
-
-      <div class="form-group">
-        <label>Uang Kas Aktual di Laci:</label>
-        <input type="number" id="shiftActualCash" placeholder="Masukkan jumlah uang fisik di laci" value="1850000" />
-      </div>
-
-      <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 18px;">
-        <div>📊 Total Penjualan Shift: <strong>Rp 1.850.000</strong></div>
-        <div style="color: var(--success); font-weight: 700; margin-top: 4px;">✅ Selisih Kas: Rp 0 (Cocok)</div>
-        <div style="color: var(--text-muted); font-size: 11px; margin-top: 6px;">
-          Laporan rekap akan otomatis ditembakkan ke nomor WA Owner via Fonnte API.
-        </div>
-      </div>
-
-      <button class="btn btn-gold" style="width: 100%; padding: 13px;" onclick="window.submitCloseShift()">
-        Konfirmasi Tutup Shift & Kirim WA 📲
-      </button>
-    </div>
-  </div>
-
-  <!-- App Scripts -->
+  <!-- App Core Scripts -->
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/app.js"></script>
