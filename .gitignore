@@ -1,0 +1,4 @@
+# Abaikan folder backend saat push ke GitHub Pages publik
+# Berkas backend/Kode.gs dipasang langsung di Google Apps Script (script.google.com)
+backend/
+.DS_Store
