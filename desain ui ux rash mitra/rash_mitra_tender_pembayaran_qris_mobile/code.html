@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-variant": "#e2e3e1", "on-error-container": "#93000a", "surface-dim": "#dadad8", "on-primary-container": "#77a5b8", "on-primary-fixed-variant": "#1b4c5d", "on-background": "#1a1c1b", "on-error": "#ffffff", "primary-fixed-dim": "#9fcde1", "on-tertiary-container": "#6ca7be", "tertiary-fixed-dim": "#94cfe8", "on-secondary-fixed": "#241a00", "tertiary-container": "#003b4b", "surface": "#f9f9f7", "primary": "#00242f", "outline": "#71787c", "inverse-primary": "#9fcde1", "on-tertiary-fixed-variant": "#004d62", "on-tertiary": "#ffffff", "tertiary": "#00242f", "surface-container-low": "#f4f4f2", "inverse-surface": "#2f3130", "on-surface": "#1a1c1b", "surface-tint": "#366476", "secondary-fixed": "#ffe088", "error-container": "#ffdad6", "on-primary": "#ffffff", "outline-variant": "#c0c8cc", "secondary": "#735c00", "on-tertiary-fixed": "#001f29", "secondary-container": "#fed65b", "surface-container-high": "#e8e8e6", "on-primary-fixed": "#001f29", "on-secondary-container": "#745c00", "secondary-fixed-dim": "#e9c349", "surface-container-lowest": "#ffffff", "on-surface-variant": "#41484b", "primary-container": "#003b4b", "primary-fixed": "#bbeafe", "background": "#f9f9f7", "surface-bright": "#f9f9f7", "on-secondary": "#ffffff", "error": "#ba1a1a", "surface-container-highest": "#e2e3e1", "inverse-on-surface": "#f1f1ef", "tertiary-fixed": "#baeaff", "surface-container": "#eeeeec", "on-secondary-fixed-variant": "#574500" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-md": "0.75rem", "margin": "1rem", "space-xl": "1.5rem", "margin-desktop": "1.5rem", "space-xs": "0.25rem", "space-lg": "1rem", "gutter-desktop": "1.5rem", "gutter": "1rem" }, fontFamily: { "display-lg": ["Plus Jakarta Sans"], "numeric-md": ["JetBrains Mono"], "headline-sm": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "numeric-hero": ["JetBrains Mono"], "numeric-lg": ["JetBrains Mono"], "display-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "numeric-hero-mobile": ["JetBrains Mono"], "body-md": ["Plus Jakarta Sans"], "numeric-sm": ["JetBrains Mono"], "label-caps": ["JetBrains Mono"] }, fontSize: { "display-lg": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }], "numeric-md": ["14px", { lineHeight: "20px", fontWeight: "500" }], "headline-sm": ["18px", { lineHeight: "26px", fontWeight: "600" }], "headline-md": ["22px", { lineHeight: "30px", letterSpacing: "-0.005em", fontWeight: "600" }], "body-sm": ["12px", { lineHeight: "18px", fontWeight: "400" }], "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }], "numeric-hero": ["36px", { lineHeight: "42px", letterSpacing: "-0.03em", fontWeight: "700" }], "numeric-lg": ["20px", { lineHeight: "26px", letterSpacing: "-0.01em", fontWeight: "600" }], "display-lg-mobile": ["30px", { lineHeight: "38px", letterSpacing: "-0.01em", fontWeight: "700" }], "headline-lg": ["28px", { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" }], "numeric-hero-mobile": ["28px", { lineHeight: "34px", letterSpacing: "-0.02em", fontWeight: "700" }], "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }], "numeric-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }], "label-caps": ["11px", { lineHeight: "14px", letterSpacing: "0.06em", fontWeight: "600" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><button aria-label="Kembali" class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center text-on-surface hover:text-primary active:scale-95 transition-all" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Crop tightly around the RASH logo emblem and typography, removing all surrounding blank white/cream space. High resolution, clear crisp details of the circular mandala ornament and bold RASH lettering, perfectly centered with no excessive margins or borders." class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Vt0JYqS07OQC_TGfgXJyu_ESbtyNbXGlocsvVM6mB_ekoLXwRqGKj5EitnaIa8eXKzGVykieVR8Jez6ufjXCMgdxCWWYR5pizXTd3KJOl2xql--8NskGKPHK4xf23Jfkl04wnKfFbPFgUQ1m_XeYHYbwN-6nMVFI2mtDht6kXioy6BrZ90-E8_ZXdbEv4PcmAugE-owDhNUgUyZdMIAJZnrr6rw2dBecP9A3YWGd3Y"/><h1 class="font-headline-sm text-headline-sm text-primary tracking-tight leading-tight line-clamp-1">Tender Pembayaran</h1></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full px-gutter pb-8 gap-space-lg">
+<!-- Invoice Top Pill & Table Meta -->
+<div class="flex items-center justify-between bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-numeric-sm text-numeric-sm text-primary font-semibold tracking-wide">#INV-2026-0042</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Dine-in</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Meja 04 • Budi S. / Pelanggan Dian P.</p>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-full text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">POS KASIR 01</span>
+</div>
+</div>
+<!-- Order Items Brief & Accordion Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden transition-all duration-200" id="order-summary-card">
+<div class="p-space-md flex items-center justify-between cursor-pointer select-none" onclick="toggleOrderSummary()">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-numeric-sm text-numeric-sm font-bold">
+          3
+        </div>
+<span class="font-headline-sm text-headline-sm text-on-surface">Rincian Pesanan Menu</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-numeric-sm text-numeric-sm text-primary font-semibold">Rp 115.900</span>
+<span class="material-symbols-outlined text-[20px] transition-transform duration-200" id="accordion-icon">expand_more</span>
+</div>
+</div>
+<!-- Collapsible Item Details -->
+<div class="px-space-md pb-space-md flex flex-col gap-space-sm" id="order-details-drawer">
+<div class="flex items-center justify-between py-1.5">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="font-numeric-sm text-numeric-sm font-semibold text-primary">2×</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Chicken California Burrito</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pedas Sedang, Ekstra Guacamole</span>
+</div>
+</div>
+<span class="font-numeric-md text-numeric-md text-on-surface shrink-0 font-medium">Rp 75.000</span>
+</div>
+<div class="flex items-center justify-between py-1.5">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="font-numeric-sm text-numeric-sm font-semibold text-primary">1×</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Korean BBQ Chicken Bowl</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Nasi Jeruk, Saus Gochujang Manis</span>
+</div>
+</div>
+<span class="font-numeric-md text-numeric-md text-on-surface shrink-0 font-medium">Rp 32.000</span>
+</div>
+<div class="flex items-center justify-between py-1.5">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="font-numeric-sm text-numeric-sm font-semibold text-primary">1×</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">Agua Fresca Hibiscus Berry</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Less Ice, Normal Sweet</span>
+</div>
+</div>
+<span class="font-numeric-md text-numeric-md text-on-surface shrink-0 font-medium">Rp 15.000</span>
+</div>
+<!-- Financial Subtotals -->
+<div class="mt-space-xs pt-space-sm flex flex-col gap-1.5 bg-surface-container-low p-space-sm rounded-lg">
+<div class="flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+<span>Subtotal Menu</span>
+<span class="font-numeric-sm text-numeric-sm font-medium text-on-surface">Rp 122.000</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">Pajak Resto (PB1 10%)</span>
+<span class="font-numeric-sm text-numeric-sm font-medium text-on-surface">Rp 12.200</span>
+</div>
+<div class="flex justify-between items-center text-secondary font-body-sm text-body-sm font-medium">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_offer</span> Diskon Grand Opening (-15%)
+          </span>
+<span class="font-numeric-sm text-numeric-sm font-semibold text-secondary">-Rp 18.300</span>
+</div>
+</div>
+</div>
+<!-- Grand Total Bar -->
+<div class="bg-primary px-space-md py-3 flex items-center justify-between text-on-primary">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-primary-container tracking-wider uppercase">Total Tagihan Final</span>
+<span class="font-numeric-hero-mobile text-numeric-hero-mobile font-bold tracking-tight text-white">Rp 115.900</span>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed text-[28px]">payments</span>
+</div>
+</div>
+<!-- Payment Methods Navigation Tabs -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Metode Tender Kasir</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Pilih Satu</span>
+</div>
+<div class="grid grid-cols-3 gap-2 bg-surface-container p-1 rounded-xl">
+<button class="py-2.5 px-2 rounded-lg flex flex-col items-center justify-center gap-1 bg-surface-container-lowest text-primary font-body-sm text-body-sm font-semibold shadow-sm transition-all active:scale-95" id="tab-qris" onclick="switchMethod('qris')" type="button">
+<span class="material-symbols-outlined text-[20px] text-secondary">qr_code_scanner</span>
+<span>Dynamic QRIS</span>
+</button>
+<button class="py-2.5 px-2 rounded-lg flex flex-col items-center justify-center gap-1 text-on-surface-variant font-body-sm text-body-sm font-medium transition-all active:scale-95" id="tab-cash" onclick="switchMethod('cash')" type="button">
+<span class="material-symbols-outlined text-[20px]">point_of_sale</span>
+<span>Tunai / Cash</span>
+</button>
+<button class="py-2.5 px-2 rounded-lg flex flex-col items-center justify-center gap-1 text-on-surface-variant font-body-sm text-body-sm font-medium transition-all active:scale-95" id="tab-bank" onclick="switchMethod('bank')" type="button">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+<span>Transfer Bank</span>
+</button>
+</div>
+</div>
+<!-- Tab Content: Dynamic QRIS Section -->
+<div class="flex flex-col gap-space-md" id="method-qris-content">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col items-center text-center gap-space-sm">
+<!-- QRIS Official Banner -->
+<div class="w-full flex items-center justify-between pb-2">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm font-bold tracking-tight text-primary">QRIS</span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded">STANDAR BI</span>
+</div>
+<div class="flex items-center gap-1 bg-amber-50 text-amber-800 px-2 py-0.5 rounded-full font-numeric-sm text-numeric-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+<span id="countdown-timer">04:58</span>
+</div>
+</div>
+<!-- QR Visual Canvas Wrapper -->
+<div class="relative p-3 bg-surface-container-low rounded-xl flex items-center justify-center shadow-inner">
+<!-- SVG Generated High Density QR Code Matrix -->
+<svg class="w-52 h-52 text-primary" fill="currentColor" viewbox="0 0 100 100">
+<!-- Top Left Finder Pattern -->
+<rect fill="currentColor" height="28" rx="4" width="28" x="5" y="5"></rect>
+<rect fill="#FFFFFF" height="20" rx="2" width="20" x="9" y="9"></rect>
+<rect fill="currentColor" height="12" rx="1" width="12" x="13" y="13"></rect>
+<!-- Top Right Finder Pattern -->
+<rect fill="currentColor" height="28" rx="4" width="28" x="67" y="5"></rect>
+<rect fill="#FFFFFF" height="20" rx="2" width="20" x="71" y="9"></rect>
+<rect fill="currentColor" height="12" rx="1" width="12" x="75" y="13"></rect>
+<!-- Bottom Left Finder Pattern -->
+<rect fill="currentColor" height="28" rx="4" width="28" x="5" y="67"></rect>
+<rect fill="#FFFFFF" height="20" rx="2" width="20" x="9" y="71"></rect>
+<rect fill="currentColor" height="12" rx="1" width="12" x="13" y="75"></rect>
+<!-- Alignment & Data Pattern Grid -->
+<rect height="5" width="5" x="38" y="10"></rect>
+<rect height="5" width="5" x="47" y="10"></rect>
+<rect height="5" width="5" x="56" y="10"></rect>
+<rect height="5" width="10" x="38" y="20"></rect>
+<rect height="7" width="7" x="52" y="20"></rect>
+<rect height="5" width="5" x="10" y="38"></rect>
+<rect height="5" width="10" x="20" y="38"></rect>
+<rect height="8" width="8" x="10" y="47"></rect>
+<rect height="6" width="6" x="23" y="47"></rect>
+<rect height="5" width="5" x="10" y="57"></rect>
+<rect height="6" width="6" x="38" y="38"></rect>
+<rect height="6" width="6" x="48" y="38"></rect>
+<rect height="6" width="6" x="58" y="38"></rect>
+<rect height="5" width="26" x="38" y="48"></rect>
+<rect height="8" width="8" x="42" y="58"></rect>
+<rect height="4" width="10" x="54" y="58"></rect>
+<rect height="8" width="5" x="70" y="38"></rect>
+<rect height="4" width="14" x="80" y="38"></rect>
+<rect height="8" width="8" x="75" y="48"></rect>
+<rect height="6" width="6" x="88" y="48"></rect>
+<rect height="7" width="7" x="70" y="60"></rect>
+<rect height="5" width="12" x="82" y="60"></rect>
+<rect height="8" width="6" x="40" y="70"></rect>
+<rect height="6" width="8" x="50" y="70"></rect>
+<rect height="8" width="5" x="62" y="70"></rect>
+<rect height="5" width="12" x="40" y="82"></rect>
+<rect height="12" width="6" x="56" y="82"></rect>
+<rect height="8" width="8" x="68" y="82"></rect>
+<rect height="6" width="14" x="80" y="75"></rect>
+<rect height="8" width="12" x="80" y="86"></rect>
+<!-- Center Emblem Backdrop -->
+<circle cx="50" cy="50" fill="#FFFFFF" r="10"></circle>
+<circle cx="50" cy="50" fill="#00242f" r="7"></circle>
+<path d="M47 48 L53 48 M50 45 L50 55" stroke="#FFFFFF" stroke-linecap="round" stroke-width="1.8"></path>
+</svg>
+<!-- Live Scanning Pulse Overlay Indicator -->
+<div class="absolute bottom-2 inset-x-2 bg-primary/90 backdrop-blur-sm py-1.5 px-3 rounded-lg flex items-center justify-between text-on-primary">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="font-body-sm text-body-sm text-on-primary font-medium">Menunggu scan nasabah...</span>
+</div>
+<span class="font-numeric-sm text-numeric-sm text-secondary-fixed font-semibold">Live Webhook</span>
+</div>
+</div>
+<!-- Merchant Details & Quick Actions -->
+<div class="w-full flex flex-col gap-1">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant font-label-caps text-label-caps uppercase">
+<span>NMID: ID1024389201982</span>
+<span>•</span>
+<span>TORTILLA RESTO &amp; TAQUERIA</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Didukung GoPay, OVO, ShopeePay, BCA, Dana &amp; Mobile Banking</p>
+</div>
+<!-- Download / Print QR Button -->
+<div class="w-full grid grid-cols-2 gap-space-sm pt-1">
+<button class="py-2.5 px-3 rounded-lg bg-surface-container flex items-center justify-center gap-1.5 text-on-surface font-body-sm text-body-sm font-semibold active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Unduh QR</span>
+</button>
+<button class="py-2.5 px-3 rounded-lg bg-surface-container flex items-center justify-center gap-1.5 text-on-surface font-body-sm text-body-sm font-semibold active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">share</span>
+<span>Bagikan QR</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Tab Content: Tunai / Cash Section -->
+<div class="flex flex-col gap-space-md hidden" id="method-cash-content">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Nominal Uang Diterima Kasir</label>
+<div class="relative flex items-center">
+<span class="absolute left-3.5 font-numeric-md text-numeric-md text-primary font-bold">Rp</span>
+<input class="w-full bg-surface-container-low rounded-xl py-3 pl-11 pr-4 font-numeric-lg text-numeric-lg font-bold text-primary focus:outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#00242f]" id="cash-input" oninput="calculateChange()" type="text" value="115.900"/>
+<button class="absolute right-3 w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary" onclick="clearCash()" type="button">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+</div>
+</div>
+<!-- Quick Tender Buttons Grid -->
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Tombol Cepat Uang Pecahan</span>
+<div class="grid grid-cols-2 gap-space-sm">
+<button class="p-2.5 rounded-lg bg-secondary-container/30 text-on-secondary-container flex flex-col items-start active:scale-95 transition-all" onclick="setCashAmount(115900)" type="button">
+<span class="font-label-caps text-label-caps text-on-secondary-container uppercase">Uang Pas</span>
+<span class="font-numeric-md text-numeric-md font-bold">Rp 115.900</span>
+</button>
+<button class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col items-start active:scale-95 transition-all" onclick="setCashAmount(120000)" type="button">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Pecahan 2 Lembar</span>
+<span class="font-numeric-md text-numeric-md font-bold">Rp 120.000</span>
+</button>
+<button class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col items-start active:scale-95 transition-all" onclick="setCashAmount(150000)" type="button">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Pecahan 50 Ribu</span>
+<span class="font-numeric-md text-numeric-md font-bold">Rp 150.000</span>
+</button>
+<button class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col items-start active:scale-95 transition-all" onclick="setCashAmount(200000)" type="button">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Pecahan 100 Ribu</span>
+<span class="font-numeric-md text-numeric-md font-bold">Rp 200.000</span>
+</button>
+</div>
+</div>
+<!-- Change / Kembalian Calculation Container -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Kembalian Kasir</span>
+<span class="font-headline-sm text-headline-sm font-medium text-on-surface">Uang Pas (Lunas)</span>
+</div>
+<span class="font-numeric-hero-mobile text-numeric-hero-mobile font-bold text-primary" id="change-display">Rp 0</span>
+</div>
+</div>
+</div>
+<!-- Tab Content: Transfer Bank Section -->
+<div class="flex flex-col gap-space-md hidden" id="method-bank-content">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-6 bg-primary rounded flex items-center justify-center text-white text-[11px] font-bold">BCA</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Bank Central Asia</span>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant">8801-4492-109</span>
+</div>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-container text-primary font-body-sm text-body-sm font-semibold active:scale-95" type="button">Salin</button>
+</div>
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-6 bg-[#003b4b] rounded flex items-center justify-center text-white text-[11px] font-bold">MDR</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Bank Mandiri</span>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant">132-00-9844211-3</span>
+</div>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-container text-primary font-body-sm text-body-sm font-semibold active:scale-95" type="button">Salin</button>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="font-body-sm text-body-sm">Pengecekan mutasi API otomatis dalam 10 detik setelah transfer.</span>
+</div>
+</div>
+</div>
+<!-- Hardware State & Peripherals Bar -->
+<div class="bg-surface-container-low px-space-md py-2.5 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">print</span>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Printer Thermal 58mm</span>
+<span class="font-label-caps text-label-caps text-emerald-800">Tersambung (Bluetooth POS-5801)</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="autoprint-toggle" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Final Call to Action Buttons -->
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<!-- Primary Confirmation CTA -->
+<button class="w-full h-14 bg-primary text-on-primary rounded-xl font-headline-sm text-headline-sm font-semibold flex items-center justify-center gap-space-sm shadow-md active:scale-[0.98] transition-all" onclick="confirmPayment()" type="button">
+<span class="material-symbols-outlined text-[24px]">receipt</span>
+<span>Konfirmasi &amp; Cetak Struk 58mm</span>
+</button>
+<!-- Secondary WhatsApp E-Receipt CTA -->
+<button class="w-full h-12 bg-surface-container-lowest text-primary rounded-xl font-body-lg text-body-lg font-semibold flex items-center justify-center gap-space-sm shadow-sm active:scale-[0.98] transition-all" onclick="sendWhatsAppReceipt()" type="button">
+<span class="material-symbols-outlined text-[20px] text-emerald-700">chat</span>
+<span>Kirim E-Receipt via WhatsApp (Fonnte)</span>
+</button>
+</div>
+<!-- Notification Toast Modal (Hidden Default) -->
+<div class="fixed inset-x-4 bottom-8 bg-inverse-surface text-inverse-on-surface p-4 rounded-xl shadow-xl flex items-center gap-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50" id="toast-modal">
+<span class="material-symbols-outlined text-secondary-fixed text-[24px]" id="toast-icon">check_circle</span>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm font-semibold" id="toast-title">Berhasil</span>
+<span class="font-body-sm text-body-sm truncate" id="toast-desc">Struk pembayaran tercetak.</span>
+</div>
+</div>
+</div>
+<script>
+  let orderDrawerOpen = true;
+  const billTotal = 115900;
+
+  function toggleOrderSummary() {
+    const drawer = document.getElementById('order-details-drawer');
+    const icon = document.getElementById('accordion-icon');
+    orderDrawerOpen = !orderDrawerOpen;
+    if (orderDrawerOpen) {
+      drawer.classList.remove('hidden');
+      icon.style.transform = 'rotate(0deg)';
+    } else {
+      drawer.classList.add('hidden');
+      icon.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  function switchMethod(method) {
+    const qrisBtn = document.getElementById('tab-qris');
+    const cashBtn = document.getElementById('tab-cash');
+    const bankBtn = document.getElementById('tab-bank');
+
+    const qrisContent = document.getElementById('method-qris-content');
+    const cashContent = document.getElementById('method-cash-content');
+    const bankContent = document.getElementById('method-bank-content');
+
+    // Reset styles
+    [qrisBtn, cashBtn, bankBtn].forEach(btn => {
+      btn.className = "py-2.5 px-2 rounded-lg flex flex-col items-center justify-center gap-1 text-on-surface-variant font-body-sm text-body-sm font-medium transition-all active:scale-95";
+    });
+
+    [qrisContent, cashContent, bankContent].forEach(content => {
+      content.classList.add('hidden');
+    });
+
+    const activeBtnClass = "py-2.5 px-2 rounded-lg flex flex-col items-center justify-center gap-1 bg-surface-container-lowest text-primary font-body-sm text-body-sm font-semibold shadow-sm transition-all active:scale-95";
+
+    if (method === 'qris') {
+      qrisBtn.className = activeBtnClass;
+      qrisContent.classList.remove('hidden');
+    } else if (method === 'cash') {
+      cashBtn.className = activeBtnClass;
+      cashContent.classList.remove('hidden');
+    } else if (method === 'bank') {
+      bankBtn.className = activeBtnClass;
+      bankContent.classList.remove('hidden');
+    }
+  }
+
+  function formatIDR(num) {
+    return new Intl.NumberFormat('id-ID').format(num);
+  }
+
+  function setCashAmount(val) {
+    document.getElementById('cash-input').value = formatIDR(val);
+    calculateChange();
+  }
+
+  function clearCash() {
+    document.getElementById('cash-input').value = '0';
+    calculateChange();
+  }
+
+  function calculateChange() {
+    const rawVal = document.getElementById('cash-input').value.replace(/[^0-9]/g, '');
+    const paid = parseInt(rawVal, 10) || 0;
+    const diff = paid - billTotal;
+    const changeDisplay = document.getElementById('change-display');
+
+    if (diff >= 0) {
+      changeDisplay.textContent = 'Rp ' + formatIDR(diff);
+      changeDisplay.className = "font-numeric-hero-mobile text-numeric-hero-mobile font-bold text-primary";
+    } else {
+      changeDisplay.textContent = '-Rp ' + formatIDR(Math.abs(diff));
+      changeDisplay.className = "font-numeric-hero-mobile text-numeric-hero-mobile font-bold text-error";
+    }
+  }
+
+  function showToast(title, desc, iconName) {
+    const toast = document.getElementById('toast-modal');
+    document.getElementById('toast-title').textContent = title;
+    document.getElementById('toast-desc').textContent = desc;
+    document.getElementById('toast-icon').textContent = iconName || 'check_circle';
+
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    toast.classList.add('opacity-100');
+
+    setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 3200);
+  }
+
+  function confirmPayment() {
+    showToast('Pembayaran Berhasil', 'Struk 58mm sedang dicetak ke printer POS-5801.', 'local_printshop');
+  }
+
+  function sendWhatsAppReceipt() {
+    showToast('WhatsApp Terkirim', 'E-Receipt terkirim via Fonnte Gateway ke 0812****882.', 'mark_chat_read');
+  }
+
+  // Countdown timer micro-interaction
+  let duration = 298; // 4 minutes 58 seconds
+  const timerElem = document.getElementById('countdown-timer');
+  if (timerElem) {
+    setInterval(() => {
+      if (duration > 0) {
+        duration--;
+        const m = Math.floor(duration / 60).toString().padStart(2, '0');
+        const s = (duration % 60).toString().padStart(2, '0');
+        timerElem.textContent = `${m}:${s}`;
+      }
+    }, 1000);
+  }
+</script></main></body></html>

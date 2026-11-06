@@ -1,0 +1,441 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>RASH MITRA - Smart Ordering &amp; Catalog</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              50: '#FDFBF7',
+              100: '#FAF5EE',
+              200: '#F4ECE1',
+              300: '#ECE1D0',
+            },
+            terracotta: {
+              DEFAULT: '#B84E29',
+              dark: '#9A3F1F',
+              light: '#CD633C',
+              soft: '#F8ECE7',
+            },
+            espresso: '#2C1A14',
+            hazelnut: '#75665E',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            tabular: ['"Space Grotesk"', 'monospace'],
+          },
+          boxShadow: {
+            'clay': '0 10px 28px -4px rgba(184, 78, 41, 0.09), 0 4px 14px -2px rgba(44, 26, 20, 0.04)',
+            'clay-button': '0 6px 16px -2px rgba(184, 78, 41, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.4)',
+            'clay-pill': '0 8px 24px -4px rgba(70, 45, 30, 0.08), inset 0 2px 2px rgba(255, 255, 255, 0.8)',
+            'dock': '0 14px 40px -4px rgba(44, 26, 20, 0.14), 0 2px 8px 0 rgba(0, 0, 0, 0.04)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="custom-claymorphism">
+    /* Hide scrollbar for category horizontal carousel */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Soft bevel inner borders for tactile claymorphism */
+    .clay-surface {
+      background: #FFFFFF;
+      box-shadow: 0 10px 28px -4px rgba(184, 78, 41, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .clay-button-circle {
+      background: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(44, 26, 20, 0.06), inset 0 1px 2px #FFFFFF;
+      border: 1px solid rgba(236, 225, 208, 0.6);
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-[#F8F3EA] text-espresso font-sans antialiased min-h-screen flex justify-center selection:bg-terracotta selection:text-white">
+<!-- BEGIN: Mobile Device Canvas Container -->
+<div class="w-full max-w-[428px] min-h-screen bg-[#FAF5EE] relative flex flex-col pb-28 shadow-2xl overflow-x-hidden" data-purpose="mobile-viewport">
+<!-- BEGIN: iOS Status Bar -->
+<header class="w-full pt-3 px-6 pb-2 flex items-center justify-between sticky top-0 bg-[#FAF5EE]/90 backdrop-blur-md z-40" data-purpose="status-bar">
+<!-- Time -->
+<span class="text-sm font-bold text-espresso tracking-tight">9:41</span>
+<!-- Dynamic Island Mock -->
+<div class="h-[22px] w-24 bg-black rounded-full flex items-center justify-end px-2 space-x-1">
+<span class="w-2.5 h-2.5 bg-[#171717] rounded-full border border-gray-700/40"></span>
+</div>
+<!-- Signal & Battery Icons -->
+<div class="flex items-center space-x-1.5 text-espresso">
+<!-- Cellular Bars -->
+<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+<path d="M2 17h3v4H2v-4zm6-5h3v9H8v-9zm6-4h3v13h-3V8zm6-5h3v18h-3V3z"></path>
+</svg>
+<!-- Wifi -->
+<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.25c3.78 0 7.23 1.44 9.84 3.8L12 19.34 2.16 11.05C4.77 8.69 8.22 7.25 12 7.25z"></path>
+</svg>
+<!-- Battery Pill -->
+<div class="w-5 h-2.5 border border-espresso rounded-sm p-0.5 flex items-center">
+<div class="h-full w-full bg-espresso rounded-[1px]"></div>
+</div>
+</div>
+</header>
+<!-- END: iOS Status Bar -->
+<!-- BEGIN: Main Brand Navigation Header -->
+<section class="px-5 pt-2 pb-3 flex items-center justify-between" data-purpose="brand-header">
+<!-- RASH Brand Identity Logo & Name -->
+<div class="flex items-center space-x-3">
+<div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-cream-200 flex items-center justify-center overflow-hidden"><img alt="RASH Logo" class="w-full h-full object-cover scale-110" src="https://lh3.googleusercontent.com/aida/AEtjO1Vt0JYqS07OQC_TGfgXJyu_ESbtyNbXGlocsvVM6mB_ekoLXwRqGKj5EitnaIa8eXKzGVykieVR8Jez6ufjXCMgdxCWWYR5pizXTd3KJOl2xql--8NskGKPHK4xf23Jfkl04wnKfFbPFgUQ1m_XeYHYbwN-6nMVFI2mtDht6kXioy6BrZ90-E8_ZXdbEv4PcmAugE-owDhNUgUyZdMIAJZnrr6rw2dBecP9A3YWGd3Y"></div>
+<div>
+<h1 class="text-xl font-extrabold tracking-tight text-espresso flex items-center gap-1.5">
+            RASH MITRA
+          </h1>
+<p class="text-[11px] font-medium text-hazelnut">Smart Ordering &amp; Mini ERP</p>
+</div>
+</div>
+<!-- Right Action Controls (Notifications & User) -->
+<div class="flex items-center space-x-2.5">
+<!-- Notification Button with Unread Ping Indicator -->
+<button aria-label="Notifikasi" class="clay-button-circle w-10 h-10 rounded-full flex items-center justify-center text-espresso relative active:scale-95 transition-transform">
+<svg class="w-5 h-5 text-espresso" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="absolute top-2 right-2.5 w-2 h-2 bg-terracotta rounded-full ring-2 ring-white"></span>
+</button>
+<!-- Customer Profile Quick Link -->
+<button aria-label="Profil Pengguna" class="clay-button-circle w-10 h-10 rounded-full flex items-center justify-center text-espresso active:scale-95 transition-transform">
+<svg class="w-5 h-5 text-espresso" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</section>
+<!-- END: Main Brand Navigation Header -->
+<!-- BEGIN: Table & Location Pill Switcher -->
+<div class="px-5 my-2">
+<div class="bg-white rounded-full py-2.5 px-4 shadow-clay flex items-center justify-between border border-cream-200/80 cursor-pointer active:scale-[0.99] transition-transform" data-purpose="table-selector-pill">
+<div class="flex items-center space-x-2.5 overflow-hidden">
+<div class="w-6 h-6 rounded-full bg-terracotta/10 flex items-center justify-center shrink-0">
+<svg class="w-3.5 h-3.5 text-terracotta" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"></path>
+</svg>
+</div>
+<div class="text-left truncate">
+<p class="text-[10px] text-hazelnut uppercase tracking-wider font-semibold">Pesanan Meja</p>
+<p class="text-xs font-bold text-espresso truncate">Meja No. 04 • Dine-in <span class="text-terracotta font-normal">(Ganti)</span></p>
+</div>
+</div>
+<!-- Search Quick Tap -->
+<div class="w-8 h-8 rounded-full flex items-center justify-center text-hazelnut hover:text-espresso shrink-0 pl-1">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- END: Table & Location Pill Switcher -->
+<!-- BEGIN: Main Interactive Content Scroll -->
+<main class="flex-1 flex flex-col space-y-5 mt-1">
+<!-- BEGIN: Hero Promotional Clay Banner -->
+<section class="px-5" data-purpose="hero-banner">
+<div class="relative bg-gradient-to-br from-terracotta via-[#B84E29] to-terracotta-dark rounded-[28px] p-5 text-white shadow-clay overflow-hidden">
+<!-- Background Subtle Pattern Elements -->
+<div class="absolute -right-10 -bottom-10 w-44 h-44 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
+<div class="grid grid-cols-12 gap-2 relative z-10 items-center">
+<!-- Left Promo Copy -->
+<div class="col-span-7 pr-1">
+<span class="inline-block px-2.5 py-0.5 mb-2 bg-white/20 backdrop-blur-md rounded-full text-[9px] font-bold tracking-widest uppercase text-cream-100">
+                Promo Eksklusif
+              </span>
+<h2 class="text-xl leading-tight font-black tracking-tight text-white mb-1.5 uppercase font-sans">
+                Fresh.<br>Authentic.<br>Fast.
+              </h2>
+<p class="text-[11px] text-white/85 leading-snug mb-3.5">
+                Pesan mandiri ke dapur tanpa antre. Diskon pembukaan 15%.
+              </p>
+<!-- CTA Pill Button -->
+<button class="inline-flex items-center space-x-1.5 bg-white text-terracotta hover:bg-cream-50 font-extrabold text-xs px-4 py-2 rounded-full shadow-md active:scale-95 transition-all">
+<span class="">Pesan Sekarang</span>
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Right Visual Graphic Showcase -->
+<div class="col-span-5 relative flex items-center justify-center">
+<div class="relative w-full aspect-square flex items-center justify-center">
+<!-- Circular Plate Halo Effect -->
+<div class="absolute inset-0 rounded-full bg-white/15 scale-95 animate-pulse"></div>
+<!-- Food Cutout Representative from Reference Data -->
+<img alt="Special Californian Burrito" class="w-full h-full object-cover rounded-2xl drop-shadow-xl border-2 border-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC93B4adLm74OpY1_Vqlc6bZ4f6s4uYzdiMTL0wDKEryX_hWNJGMHjz2EUQrnA5LjCbuwDWaTZpB0tt_NmL0TkTMVLIOKHyJMR_phvmyFak-xKCz_N1KR5iX7VKrh-pzOHDFZf93lMhlo_jVq6pmV-tnDGCRzUX9mAA7YO49LY1356J7gOVEz8qcTQJncee2wXeDfyj7fPZ3BCBjzhnuXx2xiDWJ-_q_3Mrm_m0sMXxshowIFp1M_Sh">
+</div>
+</div>
+</div>
+<!-- Carousel Dots -->
+<div class="flex justify-center items-center space-x-1.5 mt-3 pt-1">
+<span class="w-4 h-1.5 bg-white rounded-full transition-all"></span>
+<span class="w-1.5 h-1.5 bg-white/40 rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-white/40 rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-white/40 rounded-full"></span>
+</div>
+</div>
+</section>
+<!-- END: Hero Promotional Clay Banner -->
+<!-- BEGIN: Category Squircle Switcher -->
+<section class="px-5" data-purpose="category-switcher">
+<div class="flex items-center justify-between mb-2.5">
+<h3 class="text-sm font-bold text-espresso">Kategori Pilihan</h3>
+<span class="text-xs text-hazelnut font-semibold">Semua (8)</span>
+</div>
+<!-- Horizontal Scrollable Row -->
+<div class="flex items-center space-x-3 overflow-x-auto no-scrollbar py-1">
+<!-- Category 1: Burritos (Active) -->
+<button class="flex flex-col items-center shrink-0 space-y-1 group">
+<div class="w-16 h-16 rounded-[20px] bg-white ring-2 ring-terracotta shadow-clay flex items-center justify-center p-2 transition-transform group-active:scale-95">
+<span class="text-2xl">🌯</span>
+</div>
+<span class="text-[11px] font-bold text-terracotta">Burritos</span>
+</button>
+<!-- Category 2: Tacos -->
+<button class="flex flex-col items-center shrink-0 space-y-1 group">
+<div class="w-16 h-16 rounded-[20px] bg-white border border-cream-200 shadow-sm flex items-center justify-center p-2 transition-transform group-active:scale-95">
+<span class="text-2xl">🌮</span>
+</div>
+<span class="text-[11px] font-semibold text-hazelnut group-hover:text-espresso">Tacos</span>
+</button>
+<!-- Category 3: Rice Bowls -->
+<button class="flex flex-col items-center shrink-0 space-y-1 group">
+<div class="w-16 h-16 rounded-[20px] bg-white border border-cream-200 shadow-sm flex items-center justify-center p-2 transition-transform group-active:scale-95">
+<span class="text-2xl">🥗</span>
+</div>
+<span class="text-[11px] font-semibold text-hazelnut group-hover:text-espresso">Bowls</span>
+</button>
+<!-- Category 4: Snack & Quesadillas -->
+<button class="flex flex-col items-center shrink-0 space-y-1 group">
+<div class="w-16 h-16 rounded-[20px] bg-white border border-cream-200 shadow-sm flex items-center justify-center p-2 transition-transform group-active:scale-95">
+<span class="text-2xl">🍕</span>
+</div>
+<span class="text-[11px] font-semibold text-hazelnut group-hover:text-espresso">Quesadillas</span>
+</button>
+<!-- Category 5: Minuman Segar -->
+<button class="flex flex-col items-center shrink-0 space-y-1 group">
+<div class="w-16 h-16 rounded-[20px] bg-white border border-cream-200 shadow-sm flex items-center justify-center p-2 transition-transform group-active:scale-95">
+<span class="text-2xl">🥤</span>
+</div>
+<span class="text-[11px] font-semibold text-hazelnut group-hover:text-espresso">Minuman</span>
+</button>
+<!-- Category 6: Retail Sembako (Mini ERP Mitra) -->
+<button class="flex flex-col items-center shrink-0 space-y-1 group">
+<div class="w-16 h-16 rounded-[20px] bg-white border border-cream-200 shadow-sm flex items-center justify-center p-2 transition-transform group-active:scale-95">
+<span class="text-2xl">🛍️</span>
+</div>
+<span class="text-[11px] font-semibold text-hazelnut group-hover:text-espresso">Sembako</span>
+</button>
+</div>
+</section>
+<!-- END: Category Squircle Switcher -->
+<!-- BEGIN: Popular Picks Grid ("Menu Terlaris") -->
+<section class="px-5" data-purpose="popular-picks">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h3 class="text-base font-extrabold text-espresso">Menu Terlaris</h3>
+<p class="text-[11px] text-hazelnut">Paling sering dipesan oleh pengunjung</p>
+</div>
+<a class="text-xs font-bold text-terracotta flex items-center gap-0.5 hover:underline" href="#view-all">
+            Lihat Semua
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</div>
+<!-- 2-Column Product Grid -->
+<div class="grid grid-cols-2 gap-3.5">
+<!-- Product Card 1 -->
+<article class="clay-surface rounded-3xl p-3 flex flex-col justify-between relative group hover:shadow-lg transition-shadow" data-purpose="product-card">
+<div>
+<!-- Micro Badge -->
+<span class="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur text-[10px] font-bold text-terracotta px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                🔥 Hot Seller
+              </span>
+<!-- Dish Visual Thumbnail -->
+<div class="w-full aspect-[4/3] rounded-2xl bg-cream-100 overflow-hidden mb-2.5 flex items-center justify-center">
+<img alt="Chicken California Burrito" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC93B4adLm74OpY1_Vqlc6bZ4f6s4uYzdiMTL0wDKEryX_hWNJGMHjz2EUQrnA5LjCbuwDWaTZpB0tt_NmL0TkTMVLIOKHyJMR_phvmyFak-xKCz_N1KR5iX7VKrh-pzOHDFZf93lMhlo_jVq6pmV-tnDGCRzUX9mAA7YO49LY1356J7gOVEz8qcTQJncee2wXeDfyj7fPZ3BCBjzhnuXx2xiDWJ-_q_3Mrm_m0sMXxshowIFp1M_Sh">
+</div>
+<!-- Product Info -->
+<h4 class="text-xs font-bold text-espresso leading-snug line-clamp-2">
+                Chicken California Burrito
+              </h4>
+<p class="text-[10px] text-hazelnut line-clamp-1 mt-0.5">Ayam panggang, salsa &amp; guacamole</p>
+</div>
+<div class="flex items-center justify-between mt-3 pt-1 border-t border-cream-100">
+<span class="font-tabular text-sm font-bold text-espresso">Rp 32.000</span>
+<button aria-label="Tambah Chicken Burrito" class="w-8 h-8 rounded-full bg-terracotta text-white flex items-center justify-center shadow-clay-button active:scale-90 transition-transform">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</article>
+<!-- Product Card 2 -->
+<article class="clay-surface rounded-3xl p-3 flex flex-col justify-between relative group hover:shadow-lg transition-shadow" data-purpose="product-card">
+<div>
+<!-- Micro Badge -->
+<span class="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur text-[10px] font-bold text-amber-700 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                ⭐ Favorit
+              </span>
+<!-- Dish Visual Thumbnail -->
+<div class="w-full aspect-[4/3] rounded-2xl bg-cream-100 overflow-hidden mb-2.5 flex items-center justify-center">
+<img alt="Korean BBQ Chicken Bowl" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC93B4adLm74OpY1_Vqlc6bZ4f6s4uYzdiMTL0wDKEryX_hWNJGMHjz2EUQrnA5LjCbuwDWaTZpB0tt_NmL0TkTMVLIOKHyJMR_phvmyFak-xKCz_N1KR5iX7VKrh-pzOHDFZf93lMhlo_jVq6pmV-tnDGCRzUX9mAA7YO49LY1356J7gOVEz8qcTQJncee2wXeDfyj7fPZ3BCBjzhnuXx2xiDWJ-_q_3Mrm_m0sMXxshowIFp1M_Sh">
+</div>
+<!-- Product Info -->
+<h4 class="text-xs font-bold text-espresso leading-snug line-clamp-2">
+                Korean BBQ Chicken Bowl
+              </h4>
+<p class="text-[10px] text-hazelnut line-clamp-1 mt-0.5">Nasi hangat, bumbu gochujang</p>
+</div>
+<div class="flex items-center justify-between mt-3 pt-1 border-t border-cream-100">
+<span class="font-tabular text-sm font-bold text-espresso">Rp 28.000</span>
+<button aria-label="Tambah Korean BBQ Bowl" class="w-8 h-8 rounded-full bg-terracotta text-white flex items-center justify-center shadow-clay-button active:scale-90 transition-transform">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</article>
+<!-- Product Card 3 -->
+<article class="clay-surface rounded-3xl p-3 flex flex-col justify-between relative group hover:shadow-lg transition-shadow" data-purpose="product-card">
+<div>
+<!-- Micro Badge -->
+<span class="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur text-[10px] font-bold text-red-600 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                🌶️ Pedas
+              </span>
+<!-- Dish Visual Thumbnail -->
+<div class="w-full aspect-[4/3] rounded-2xl bg-cream-100 overflow-hidden mb-2.5 flex items-center justify-center">
+<img alt="Spicy Chicken Tacos" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC93B4adLm74OpY1_Vqlc6bZ4f6s4uYzdiMTL0wDKEryX_hWNJGMHjz2EUQrnA5LjCbuwDWaTZpB0tt_NmL0TkTMVLIOKHyJMR_phvmyFak-xKCz_N1KR5iX7VKrh-pzOHDFZf93lMhlo_jVq6pmV-tnDGCRzUX9mAA7YO49LY1356J7gOVEz8qcTQJncee2wXeDfyj7fPZ3BCBjzhnuXx2xiDWJ-_q_3Mrm_m0sMXxshowIFp1M_Sh">
+</div>
+<!-- Product Info -->
+<h4 class="text-xs font-bold text-espresso leading-snug line-clamp-2">
+                Spicy Chicken Tacos (3 pcs)
+              </h4>
+<p class="text-[10px] text-hazelnut line-clamp-1 mt-0.5">Kulit renyah, saus habanero</p>
+</div>
+<div class="flex items-center justify-between mt-3 pt-1 border-t border-cream-100">
+<span class="font-tabular text-sm font-bold text-espresso">Rp 26.000</span>
+<button aria-label="Tambah Spicy Tacos" class="w-8 h-8 rounded-full bg-terracotta text-white flex items-center justify-center shadow-clay-button active:scale-90 transition-transform">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</article>
+<!-- Product Card 4: Signature Drink -->
+<article class="clay-surface rounded-3xl p-3 flex flex-col justify-between relative group hover:shadow-lg transition-shadow" data-purpose="product-card">
+<div>
+<!-- Micro Badge -->
+<span class="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur text-[10px] font-bold text-emerald-600 px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                🍃 Segar
+              </span>
+<!-- Dish Visual Thumbnail -->
+<div class="w-full aspect-[4/3] rounded-2xl bg-cream-100 overflow-hidden mb-2.5 flex items-center justify-center">
+<div class="text-4xl">🍹</div>
+</div>
+<!-- Product Info -->
+<h4 class="text-xs font-bold text-espresso leading-snug line-clamp-2">
+                Agua Fresca Berry Hibiscus
+              </h4>
+<p class="text-[10px] text-hazelnut line-clamp-1 mt-0.5">Dingin &amp; menyegarkan</p>
+</div>
+<div class="flex items-center justify-between mt-3 pt-1 border-t border-cream-100">
+<span class="font-tabular text-sm font-bold text-espresso">Rp 15.000</span>
+<button aria-label="Tambah Drink" class="w-8 h-8 rounded-full bg-terracotta text-white flex items-center justify-center shadow-clay-button active:scale-90 transition-transform">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- END: Popular Picks Grid -->
+<!-- BEGIN: Loyalty & WhatsApp Rewards Card -->
+<section class="px-5 pb-4" data-purpose="loyalty-card">
+<div class="clay-surface rounded-3xl p-4 flex items-center justify-between border border-cream-200">
+<div class="flex items-center space-x-3">
+<div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-xl shrink-0">
+              ⭐
+            </div>
+<div>
+<h4 class="text-xs font-black tracking-wide text-espresso uppercase">RASH REWARDS</h4>
+<p class="text-[11px] text-hazelnut leading-tight mt-0.5">Dapatkan poin di setiap pesanan &amp; kupon WA</p>
+</div>
+</div>
+<button class="shrink-0 bg-terracotta text-white text-xs font-bold px-3.5 py-2 rounded-full shadow-clay-button hover:bg-terracotta-dark active:scale-95 transition-all">
+            Gabung
+          </button>
+</div>
+</section>
+<!-- END: Loyalty & WhatsApp Rewards Card -->
+</main>
+<!-- END: Main Interactive Content Scroll -->
+<!-- BEGIN: Floating Bottom Capsule Dock Navigation -->
+<nav class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[394px] bg-white/95 backdrop-blur-md rounded-full px-3 py-2 shadow-dock border border-white/70 z-50 flex items-center justify-between" data-purpose="floating-bottom-bar">
+<!-- Nav Item 1: Beranda (Active) -->
+<button class="flex items-center space-x-1.5 bg-terracotta text-white px-3.5 py-1.5 rounded-full shadow-md transition-all active:scale-95">
+<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+</svg>
+<span class="text-xs font-bold">Home</span>
+</button>
+<!-- Nav Item 2: Menu / Katalog -->
+<button class="flex flex-col items-center justify-center text-hazelnut hover:text-espresso p-1.5 transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M4 6h16M4 12h16M4 18h7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-[9px] font-semibold mt-0.5">Menu</span>
+</button>
+<!-- Center Cart Badge (Elevated Terracotta Button) -->
+<button aria-label="Keranjang Belanja" class="relative -mt-6 w-12 h-12 rounded-full bg-gradient-to-tr from-terracotta-dark to-terracotta text-white flex items-center justify-center shadow-lg border-2 border-white active:scale-90 transition-transform">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<!-- Badge Count: 3 items -->
+<span class="absolute -top-1 -right-1 bg-espresso text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+          3
+        </span>
+</button>
+<!-- Nav Item 4: Lacak Pesanan -->
+<button class="flex flex-col items-center justify-center text-hazelnut hover:text-espresso p-1.5 transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-[9px] font-semibold mt-0.5">Lacak</span>
+</button>
+<!-- Nav Item 5: Profil -->
+<button class="flex flex-col items-center justify-center text-hazelnut hover:text-espresso p-1.5 transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-[9px] font-semibold mt-0.5">Profil</span>
+</button>
+</nav>
+<!-- END: Floating Bottom Capsule Dock Navigation -->
+</div>
+<!-- END: Mobile Device Canvas Container -->
+
+
+</body></html>

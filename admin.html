@@ -4,440 +4,287 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>RASH Mitra — Super Admin Back-Office & ERP Core</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script id="tailwind-config">
     tailwind.config = {
-      darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "primary": "#003b4b",
-            "primary-container": "#095368",
-            "primary-dark": "#072e3b",
-            "primary-active": "#0e627d",
-            "secondary": "#775a19",
-            "gold-soft": "#E5C07B",
-            "gold-shimmer": "#D4AF37",
-            "gold-tint": "#F5ECD7",
-            "surface": "#f9f9f7",
-            "surface-container-lowest": "#ffffff",
-            "surface-container-low": "#f4f4f2",
-            "surface-container": "#eeeeec",
-            "surface-container-high": "#e8e8e6",
-            "status-success": "#16A34A",
-            "status-alert": "#DC2626",
-            "text-muted": "#64748B",
-            "text-body": "#334155"
+            cream: {
+              50: '#FDFBF7',
+              100: '#FAF5EE',
+              200: '#F4ECE1',
+              300: '#ECE1D0',
+            },
+            terracotta: {
+              DEFAULT: '#B84E29',
+              dark: '#943A1B',
+              light: '#CD633C',
+              soft: '#F8ECE7',
+            },
+            caramel: {
+              DEFAULT: '#D9822B',
+              light: '#FFDCC2',
+            },
+            espresso: '#2C1A14',
+            hazelnut: '#75665E',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          boxShadow: {
+            'clay': '0 10px 28px -4px rgba(184, 78, 41, 0.08), 0 4px 12px -2px rgba(44, 26, 20, 0.03)',
+            'clay-button': '0 6px 18px -2px rgba(184, 78, 41, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.4)',
           }
         }
       }
     };
   </script>
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
-  </style>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="bg-surface text-text-body min-h-screen">
+<body class="bg-[#FAF5EE] text-espresso font-sans min-h-screen">
 
   <!-- MODAL LOGIN SUPER ADMIN (JIKA BELUM LOGIN) -->
-  <div id="loginModal" class="fixed inset-0 z-50 bg-[#003b4b]/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl border border-gold-soft/40 relative">
+  <div id="loginModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-[32px] max-w-md w-full p-8 shadow-2xl border border-cream-200 relative">
       <div class="text-center mb-6">
-        <div class="w-14 h-14 rounded-xl bg-primary-container mx-auto flex items-center justify-center text-gold-soft mb-3 shadow-md">
-          <span class="material-symbols-outlined text-[32px]">shield_person</span>
+        <div class="w-14 h-14 rounded-3xl bg-terracotta text-white mx-auto flex items-center justify-center mb-3 shadow-clay-button">
+          <span class="material-symbols-outlined text-[30px]">shield_person</span>
         </div>
-        <h2 class="text-2xl font-black text-primary tracking-tight">Super Admin RASH Mitra</h2>
-        <p class="text-sm text-text-muted mt-1">Akses back-office eksekutif & kedaulatan data.</p>
+        <h2 class="text-2xl font-black text-espresso tracking-tight">Super Admin RASH Mitra</h2>
+        <p class="text-xs text-hazelnut mt-1">Akses back-office eksekutif & kedaulatan data.</p>
       </div>
 
       <!-- Tab Login: Google OAuth vs Darurat -->
-      <div class="flex p-1 bg-surface-container rounded-xl mb-6">
-        <button id="tabGoogleBtn" class="flex-1 py-2 text-xs font-bold rounded-lg bg-primary text-white shadow-sm transition-all" onclick="switchLoginTab('google')">
+      <div class="flex p-1 bg-cream-100 rounded-2xl mb-6 border border-cream-200">
+        <button id="tabGoogleBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-terracotta text-white shadow-sm transition-all" onclick="switchLoginTab('google')">
           Google OAuth
         </button>
-        <button id="tabDaruratBtn" class="flex-1 py-2 text-xs font-bold rounded-lg text-text-muted hover:text-primary transition-all" onclick="switchLoginTab('darurat')">
+        <button id="tabDaruratBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-hazelnut hover:text-terracotta transition-all" onclick="switchLoginTab('darurat')">
           Akses Darurat (Master)
         </button>
       </div>
 
       <!-- Form Google OAuth -->
       <div id="loginGoogleForm" class="flex flex-col gap-4">
-        <div class="p-3 bg-surface-container-low rounded-xl border border-slate-200 text-xs text-text-muted">
+        <div class="p-3 bg-cream-50 rounded-2xl border border-cream-200 text-xs text-hazelnut">
           Gunakan akun Google yang terdaftar sebagai <strong>OWNER</strong> di lembar kerja <code>USERS</code>.
         </div>
-        <button onclick="handleGoogleLoginMock()" class="w-full py-3 px-4 rounded-xl border border-slate-300 hover:bg-slate-50 font-bold text-sm text-slate-800 flex items-center justify-center gap-3 shadow-sm transition-all">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-          Masuk dengan Google (Owner)
+        <button onclick="handleGoogleLoginMock()" class="w-full py-3 px-4 rounded-full border border-cream-300 hover:bg-cream-50 font-bold text-xs text-espresso flex items-center justify-center gap-2.5 shadow-sm transition-all">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+          <span>Masuk dengan Google (Owner)</span>
         </button>
       </div>
 
       <!-- Form Akses Darurat (gas-rahasia-script-properties) -->
       <div id="loginDaruratForm" class="hidden flex flex-col gap-4">
-        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800">
-          Akses darurat untuk pemilik sistem jika layanan Google OAuth belum dikonfigurasi.
+        <div class="p-3 bg-caramel-light/60 rounded-2xl border border-caramel/40 text-xs text-espresso">
+          Akses darurat untuk pemilik sistem jika Google OAuth belum dikonfigurasi.
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Username Master:</label>
-          <input type="text" id="daruratUser" class="w-full text-sm rounded-lg border-slate-300 p-2.5" value="darurat" />
+          <label class="block text-xs font-bold text-espresso mb-1">Username Master:</label>
+          <input type="text" id="daruratUser" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50" value="darurat" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Password Darurat:</label>
-          <input type="password" id="daruratPass" class="w-full text-sm rounded-lg border-slate-300 p-2.5" placeholder="Masukkan sandi darurat Apps Script" value="demo-master-2026" />
+          <label class="block text-xs font-bold text-espresso mb-1">Password Darurat:</label>
+          <input type="password" id="daruratPass" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50" value="demo-master-2026" />
         </div>
-        <button onclick="handleDaruratLogin()" class="w-full py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-all shadow-md">
+        <button onclick="handleDaruratLogin()" class="w-full py-3 rounded-full bg-terracotta text-white font-bold text-xs shadow-clay-button active:scale-95 transition-all">
           Buka Panel Super Admin 🔓
         </button>
       </div>
 
       <div class="mt-6 text-center">
-        <a href="index.html" class="text-xs text-text-muted hover:text-primary transition-all">← Kembali ke Halaman Utama</a>
+        <a href="index.html" class="text-xs font-bold text-terracotta hover:underline">← Kembali ke Kasir POS</a>
       </div>
     </div>
   </div>
 
-  <!-- DASHBOARD CONTENT (TERBUKA SETELAH LOGIN) -->
-  <div id="dashboardApp" class="flex">
-    
-    <!-- ASIDE SIDEBAR -->
-    <aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest border-r border-slate-200 z-40 flex flex-col justify-between">
-      <div>
-        <div class="h-20 px-6 flex items-center gap-3 border-b border-slate-200">
-          <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-gold-soft shadow-md font-black text-lg">
-            ⚡
+  <!-- MAIN ADMIN DASHBOARD CONTENT -->
+  <div id="adminContent" class="hidden min-h-screen flex flex-col">
+    <!-- Navbar Header -->
+    <header class="bg-white sticky top-0 z-40 border-b border-cream-200 shadow-sm px-6 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-terracotta text-white flex items-center justify-center font-bold">
+          RM
+        </div>
+        <div>
+          <h1 class="font-black text-sm text-espresso">RASH Mitra — Executive Console</h1>
+          <p class="text-[11px] text-hazelnut">Super Admin Core & Multi-Vertikal Architecture</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-3.5 py-1.5 rounded-full bg-cream-50 hover:bg-cream-100 text-xs font-bold text-espresso border border-cream-200">
+          Kasir POS
+        </a>
+        <a href="katalog.html" target="_blank" class="px-3.5 py-1.5 rounded-full bg-terracotta-soft text-terracotta text-xs font-bold border border-terracotta/30">
+          Lihat Katalog Pelanggan ↗
+        </a>
+        <button onclick="logoutAdmin()" class="w-8 h-8 rounded-full bg-cream-100 hover:bg-red-50 text-hazelnut hover:text-red-600 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[16px]">logout</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto w-full p-6 space-y-6">
+      
+      <!-- Multi-Vertical Selector -->
+      <section class="bg-white rounded-3xl p-6 shadow-clay border border-cream-200">
+        <h3 class="font-extrabold text-base text-espresso mb-1">Model Bisnis Multi-Vertikal Aktif</h3>
+        <p class="text-xs text-hazelnut mb-4">Pilih vertikal yang ingin dijalankan pada outlet ini.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-2xl border-2 border-terracotta bg-terracotta-soft cursor-pointer text-center">
+            <span class="text-3xl">🍽️</span>
+            <h4 class="font-bold text-sm text-espresso mt-2">Restoran & Kafe</h4>
+            <p class="text-xs text-hazelnut mt-1">Meja dine-in, takeaway, tiket dapur, dan cetak bill pesanan.</p>
+          </div>
+          <div class="p-4 rounded-2xl border border-cream-200 hover:border-terracotta bg-white cursor-pointer text-center">
+            <span class="text-3xl">🏬</span>
+            <h4 class="font-bold text-sm text-espresso mt-2">Retail & Warung</h4>
+            <p class="text-xs text-hazelnut mt-1">Barcode scanner cepat, grosir, dan notifikasi stok minimum.</p>
+          </div>
+          <div class="p-4 rounded-2xl border border-cream-200 hover:border-terracotta bg-white cursor-pointer text-center">
+            <span class="text-3xl">🧺</span>
+            <h4 class="font-bold text-sm text-espresso mt-2">Laundry Kiloan</h4>
+            <p class="text-xs text-hazelnut mt-1">Timbangan berat Kg, tracking status cuci/kering/setrika.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cloud API & Script Properties -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-3xl p-6 shadow-clay border border-cream-200 space-y-3">
+          <h4 class="font-extrabold text-sm text-espresso uppercase tracking-wider">Integrasi WhatsApp & Cloud</h4>
+          <div>
+            <label class="block text-xs font-bold text-espresso mb-1">Token Fonnte WhatsApp API (Masked):</label>
+            <input type="text" readonly class="w-full text-xs font-mono rounded-xl border-cream-200 p-2.5 bg-cream-100 text-hazelnut" value="fonn••••••••xyz" />
+            <p class="text-[10px] text-hazelnut mt-1">Token rahasia tersimpan di Google Script Properties.</p>
           </div>
           <div>
-            <div class="flex items-center gap-1 font-black text-primary text-lg leading-tight">
-              RASH <span class="text-secondary">Mitra</span>
-            </div>
-            <div class="text-[10px] font-bold text-text-muted uppercase tracking-wider">Super Admin Core</div>
+            <label class="block text-xs font-bold text-espresso mb-1">NMID Dynamic QRIS Merchant:</label>
+            <input type="text" class="w-full text-xs font-mono rounded-xl border-cream-200 p-2.5 bg-cream-50" value="NMID-RASH-99887766" />
           </div>
-        </div>
-
-        <nav class="p-4 flex flex-col gap-1.5">
-          <button class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-sm bg-primary text-white shadow-sm transition-all" onclick="showTab('ringkasan', this)">
-            <span class="material-symbols-outlined text-[20px]">analytics</span>
-            Ringkasan & KPI
-          </button>
-          <button class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-600 hover:bg-slate-100 transition-all" onclick="showTab('produk', this)">
-            <span class="material-symbols-outlined text-[20px]">inventory_2</span>
-            Katalog & Stok
-          </button>
-          <button class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-600 hover:bg-slate-100 transition-all" onclick="showTab('absensi', this)">
-            <span class="material-symbols-outlined text-[20px]">badge</span>
-            Staf & Payroll
-          </button>
-          <button class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-600 hover:bg-slate-100 transition-all" onclick="showTab('transaksi', this)">
-            <span class="material-symbols-outlined text-[20px]">payments</span>
-            Riwayat Transaksi
-          </button>
-          <button class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-600 hover:bg-slate-100 transition-all" onclick="showTab('settings', this)">
-            <span class="material-symbols-outlined text-[20px]">settings_input_component</span>
-            Master Settings
-          </button>
-        </nav>
-      </div>
-
-      <div class="p-4 border-t border-slate-200 bg-slate-50">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 min-w-0">
-            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs">OA</div>
-            <div class="truncate">
-              <div class="text-xs font-bold text-slate-800">Owner Utama</div>
-              <div class="text-[10px] text-slate-500">Super Admin</div>
-            </div>
-          </div>
-          <button onclick="handleLogout()" title="Keluar" class="text-slate-400 hover:text-red-600">
-            <span class="material-symbols-outlined text-[20px]">logout</span>
+          <button onclick="alert('Pengaturan API tersimpan!')" class="w-full py-2.5 rounded-full bg-terracotta text-white font-bold text-xs shadow-clay-button">
+            Simpan Konfigurasi
           </button>
         </div>
-      </div>
-    </aside>
 
-    <!-- MAIN BODY -->
-    <main class="ml-64 flex-1 min-h-screen bg-surface p-8">
-      
-      <!-- Top HUD Header -->
-      <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 mb-8 border-b border-slate-200">
-        <div>
-          <h1 class="text-2xl font-black text-primary">Executive Managerial Console</h1>
-          <p class="text-sm text-text-muted">Pantau omzet, stok produk, absensi karyawan, dan konfigurasi multi-vertikal.</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Google Sheets: Terkoneksi
-          </span>
-          <a href="index.html" class="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-100 transition-all">
-            Lihat Toko Publik →
-          </a>
-        </div>
-      </header>
-
-      <!-- TAB 1: RINGKASAN & KPI -->
-      <section id="tab-ringkasan" class="tab-content">
-        <!-- 4 KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gold-shimmer"></div>
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Omzet Hari Ini</div>
-            <div class="text-3xl font-black text-primary mb-2">Rp 3.850.000</div>
-            <div class="text-xs text-emerald-600 font-bold">+18.5% dari target harian</div>
+        <div class="bg-white rounded-3xl p-6 shadow-clay border border-cream-200 space-y-3">
+          <h4 class="font-extrabold text-sm text-espresso uppercase tracking-wider">Database & Google Sheets</h4>
+          <p class="text-xs text-hazelnut">Seluruh transaksi tersimpan langsung ke Google Spreadsheet mandiri milik outlet Anda tanpa biaya langganan bulanan.</p>
+          <div class="p-3 bg-cream-50 rounded-2xl border border-cream-200 text-xs">
+            <span class="font-bold text-emerald-700">🟢 Database Status: Connected & Health Checked</span>
+            <p class="text-[11px] text-hazelnut mt-1">10 Lembar Kerja Aktif: USERS, PRODUCTS, ORDERS, ORDER_ITEMS, CASH_FLOW, LOGS, dll.</p>
           </div>
-
-          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gold-shimmer"></div>
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Transaksi Sukses</div>
-            <div class="text-3xl font-black text-slate-800 mb-2">48 Struk</div>
-            <div class="text-xs text-slate-500 font-medium">Rata-rata Rp 80.200 / pesanan</div>
-          </div>
-
-          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gold-shimmer"></div>
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Staf Hadir Hari Ini</div>
-            <div class="text-3xl font-black text-slate-800 mb-2">4 / 4 Orang</div>
-            <div class="text-xs text-emerald-600 font-bold">100% Kehadiran Disiplin</div>
-          </div>
-
-          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-red-500"></div>
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Peringatan Stok Menipis</div>
-            <div class="text-3xl font-black text-red-600 mb-2">2 Produk</div>
-            <div class="text-xs text-red-500 font-medium">Perlu segera restock gudang</div>
-          </div>
-        </div>
-
-        <!-- Rincian Kas vs QRIS -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 class="font-bold text-base text-primary mb-4">Komposisi Metode Pembayaran Hari Ini</h3>
-            <div class="space-y-4">
-              <div>
-                <div class="flex justify-between text-sm font-bold mb-1">
-                  <span>Dynamic QRIS (Merchant)</span>
-                  <span class="text-primary font-black">Rp 2.100.000 (54.5%)</span>
-                </div>
-                <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-primary" style="width: 54.5%"></div>
-                </div>
-              </div>
-              <div>
-                <div class="flex justify-between text-sm font-bold mb-1">
-                  <span>Tunai (Cash di Laci Kasir)</span>
-                  <span class="text-secondary font-black">Rp 1.200.000 (31.2%)</span>
-                </div>
-                <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-secondary" style="width: 31.2%"></div>
-                </div>
-              </div>
-              <div>
-                <div class="flex justify-between text-sm font-bold mb-1">
-                  <span>Transfer Bank (BCA)</span>
-                  <span class="text-slate-600 font-black">Rp 550.000 (14.3%)</span>
-                </div>
-                <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-slate-400" style="width: 14.3%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 class="font-bold text-base text-primary mb-4">Status Integrasi Otomatis</h3>
-            <ul class="space-y-3 text-xs">
-              <li class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
-                <span class="font-bold text-slate-700">WhatsApp Fonnte:</span>
-                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Terhubung 🟢</span>
-              </li>
-              <li class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
-                <span class="font-bold text-slate-700">Dynamic QRIS Engine:</span>
-                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Aktif 🟢</span>
-              </li>
-              <li class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
-                <span class="font-bold text-slate-700">Printer Thermal 58mm:</span>
-                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Bluetooth Siap 🟢</span>
-              </li>
-              <li class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
-                <span class="font-bold text-slate-700">Auto-Sync Google Drive:</span>
-                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Realtime 🟢</span>
-              </li>
-            </ul>
-          </div>
+          <button onclick="alert('Sinkronisasi database Google Sheets berhasil!')" class="w-full py-2.5 rounded-full border border-terracotta text-terracotta font-bold text-xs hover:bg-terracotta-soft">
+            Sinkronkan Ulang Google Sheets 🔄
+          </button>
         </div>
       </section>
 
-      <!-- TAB 2: KATALOG & STOK -->
-      <section id="tab-produk" class="tab-content hidden">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="font-bold text-lg text-primary">Manajemen Master Produk & Stok</h3>
-            <button onclick="alert('Form Tambah Produk: Fitur ini tersinkronisasi otomatis ke Sheet PRODUCTS!')" class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark">
-              + Tambah Produk Baru
-            </button>
+      <!-- Rekap Absensi & Payroll Karyawan -->
+      <section class="bg-white rounded-3xl p-6 shadow-clay border border-cream-200">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h4 class="font-extrabold text-sm text-espresso">Rekap Absensi & Payroll Staf Bulanan</h4>
+            <p class="text-xs text-hazelnut">Kalkulasi otomatis kehadiran dan cetak slip gaji thermal 58mm.</p>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase">
-                <tr>
-                  <th class="p-3">SKU / Barcode</th>
-                  <th class="p-3">Nama Produk</th>
-                  <th class="p-3">Kategori</th>
-                  <th class="p-3">Harga Jual</th>
-                  <th class="p-3">Stok Saat Ini</th>
-                  <th class="p-3">Status</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100" id="adminProductTable">
-                <!-- Data populated dynamically via JS -->
-              </tbody>
-            </table>
-          </div>
+          <button onclick="alert('Mencetak rekapitulasi slip gaji ke printer thermal 58mm...')" class="px-4 py-2 rounded-full bg-espresso text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            <span>Cetak Rekap Gaji 58mm</span>
+          </button>
         </div>
-      </section>
 
-      <!-- TAB 3: STAF & PAYROLL -->
-      <section id="tab-absensi" class="tab-content hidden">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6">
-          <h3 class="font-bold text-lg text-primary mb-2">Kalkulasi Otomatis Gaji Karyawan (Payroll Bulanan)</h3>
-          <p class="text-xs text-text-muted mb-4">Rumus: <code>Gaji Bersih = Gaji Pokok + (Hari Hadir × Tunjangan Harian) + Bonus Lembur</code></p>
-          
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-            <div class="flex justify-between items-center text-sm font-bold">
-              <span>Budi Santoso (Kasir Shift Pagi)</span>
-              <span class="text-primary font-black">Total Gaji: Rp 3.020.000</span>
-            </div>
-            <div class="text-xs text-slate-500">
-              Hadir: 26 Hari • Gaji Pokok: Rp 2.500.000 • Tunjangan Makan: Rp 520.000
-            </div>
-            <button onclick="alert('Slip Gaji Budi Santoso siap dicetak thermal 58mm atau dikirim ke WhatsApp staf!')" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold hover:bg-white">
-              Cetak Slip Gaji (58mm) 🖨️
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: TRANSAKSI -->
-      <section id="tab-transaksi" class="tab-content hidden">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 class="font-bold text-lg text-primary mb-4">Riwayat Transaksi Penjualan Terkini</h3>
-          <div class="space-y-3" id="adminOrderList">
-            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50 flex justify-between items-center">
-              <div>
-                <div class="font-bold text-sm text-slate-800">ORD-20261106-0042</div>
-                <div class="text-xs text-slate-500">Ahmad Mitra • 08123456789 • Meja 03</div>
-              </div>
-              <div class="text-right">
-                <div class="font-black text-sm text-primary">Rp 42.000</div>
-                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">DYNAMIC QRIS • LUNAS</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 5: MASTER SETTINGS -->
-      <section id="tab-settings" class="tab-content hidden">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-2xl">
-          <h3 class="font-bold text-lg text-primary mb-4">Master Settings Multi-Vertikal</h3>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Nama Toko / Usaha:</label>
-              <input type="text" id="settingStoreName" class="w-full text-sm rounded-lg border-slate-300 p-2.5" value="RASH Mitra UMKM Center" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Tipe Bisnis (Multi-Vertikal Dinamis):</label>
-              <select id="settingVertical" class="w-full text-sm rounded-lg border-slate-300 p-2.5">
-                <option value="RESTO">Restoran & Kafe (Nomor Meja Aktif)</option>
-                <option value="RETAIL">Retail & Warung (Scan Barcode Aktif)</option>
-                <option value="LAUNDRY">Laundry & Jasa (Timbangan Kg Aktif)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Token WhatsApp Fonnte API (Script Properties):</label>
-              <input type="password" id="settingFonnte" class="w-full text-sm rounded-lg border-slate-300 p-2.5" placeholder="fonn••••••••••••xyz" value="fonnte_token_tersembunyi" />
-            </div>
-            <button onclick="handleSaveSettings()" class="px-5 py-2.5 rounded-xl bg-gold-shimmer text-slate-900 font-bold text-sm hover:brightness-105 shadow-md">
-              Simpan Pengaturan Master 💾
-            </button>
-          </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-cream-100 text-hazelnut font-bold">
+              <tr>
+                <th class="p-3">Nama Petugas</th>
+                <th class="p-3">Shift</th>
+                <th class="p-3 text-center">Hari Kerja</th>
+                <th class="p-3">Gaji Pokok</th>
+                <th class="p-3">Uang Makan / Shift</th>
+                <th class="p-3">Total Gaji Bersih</th>
+                <th class="p-3 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-cream-100 font-medium">
+              <tr>
+                <td class="p-3 font-bold text-espresso">Budi Santoso</td>
+                <td class="p-3 text-hazelnut">Shift Pagi</td>
+                <td class="p-3 text-center font-mono font-bold">26 Hari</td>
+                <td class="p-3 font-mono">Rp 2.800.000</td>
+                <td class="p-3 font-mono">Rp 520.000</td>
+                <td class="p-3 font-mono font-bold text-terracotta">Rp 3.320.000</td>
+                <td class="p-3 text-center">
+                  <button onclick="alert('Slip gaji Budi Santoso dikirim ke nomor WhatsApp staf.')" class="px-2.5 py-1 rounded-full bg-cream-100 text-hazelnut hover:text-espresso font-bold text-[11px]">Kirim WA 📲</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-espresso">Siti Rahayu</td>
+                <td class="p-3 text-hazelnut">Shift Siang</td>
+                <td class="p-3 text-center font-mono font-bold">25 Hari</td>
+                <td class="p-3 font-mono">Rp 2.800.000</td>
+                <td class="p-3 font-mono">Rp 500.000</td>
+                <td class="p-3 font-mono font-bold text-terracotta">Rp 3.300.000</td>
+                <td class="p-3 text-center">
+                  <button onclick="alert('Slip gaji Siti Rahayu dikirim ke nomor WhatsApp staf.')" class="px-2.5 py-1 rounded-full bg-cream-100 text-hazelnut hover:text-espresso font-bold text-[11px]">Kirim WA 📲</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
     </main>
   </div>
 
-  <script src="js/config.js"></script>
-  <script src="js/api.js"></script>
   <script>
     function switchLoginTab(tab) {
       const isGoogle = tab === 'google';
       document.getElementById('loginGoogleForm').classList.toggle('hidden', !isGoogle);
       document.getElementById('loginDaruratForm').classList.toggle('hidden', isGoogle);
-      document.getElementById('tabGoogleBtn').className = isGoogle ? 'flex-1 py-2 text-xs font-bold rounded-lg bg-primary text-white shadow-sm transition-all' : 'flex-1 py-2 text-xs font-bold rounded-lg text-text-muted hover:text-primary transition-all';
-      document.getElementById('tabDaruratBtn').className = !isGoogle ? 'flex-1 py-2 text-xs font-bold rounded-lg bg-primary text-white shadow-sm transition-all' : 'flex-1 py-2 text-xs font-bold rounded-lg text-text-muted hover:text-primary transition-all';
+
+      document.getElementById('tabGoogleBtn').className = isGoogle
+        ? 'flex-1 py-2.5 text-xs font-bold rounded-xl bg-terracotta text-white shadow-sm transition-all'
+        : 'flex-1 py-2.5 text-xs font-bold rounded-xl text-hazelnut hover:text-terracotta transition-all';
+
+      document.getElementById('tabDaruratBtn').className = !isGoogle
+        ? 'flex-1 py-2.5 text-xs font-bold rounded-xl bg-terracotta text-white shadow-sm transition-all'
+        : 'flex-1 py-2.5 text-xs font-bold rounded-xl text-hazelnut hover:text-terracotta transition-all';
     }
 
     function handleGoogleLoginMock() {
-      // Simulasi autentikasi Google OAuth Owner
-      localStorage.setItem('RASH_SUPER_ADMIN_SESSION', 'authenticated_owner');
       document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('adminContent').classList.remove('hidden');
     }
 
     function handleDaruratLogin() {
-      const u = document.getElementById('daruratUser').value;
-      const p = document.getElementById('daruratPass').value;
+      const u = document.getElementById('daruratUser').value.trim();
       if (u === 'darurat') {
-        localStorage.setItem('RASH_SUPER_ADMIN_SESSION', 'authenticated_darurat');
         document.getElementById('loginModal').classList.add('hidden');
+        document.getElementById('adminContent').classList.remove('hidden');
       } else {
-        alert('Username atau password darurat salah.');
+        alert('Username master tidak sesuai.');
       }
     }
 
-    function handleLogout() {
-      localStorage.removeItem('RASH_SUPER_ADMIN_SESSION');
+    function logoutAdmin() {
+      document.getElementById('adminContent').classList.add('hidden');
       document.getElementById('loginModal').classList.remove('hidden');
     }
-
-    function showTab(tabId, el) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-      document.getElementById('tab-' + tabId).classList.remove('hidden');
-
-      document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.className = 'nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-600 hover:bg-slate-100 transition-all';
-      });
-      el.className = 'nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-sm bg-primary text-white shadow-sm transition-all';
-    }
-
-    function handleSaveSettings() {
-      alert('Pengaturan Master berhasil disimpan! Nilai rahasia diamankan ke Script Properties.');
-    }
-
-    // Populate data produk saat dimuat
-    document.addEventListener('DOMContentLoaded', () => {
-      // Cek sesi
-      if (localStorage.getItem('RASH_SUPER_ADMIN_SESSION')) {
-        document.getElementById('loginModal').classList.add('hidden');
-      }
-
-      const products = window.APP_CONFIG.MOCK_PRODUCTS;
-      const tbody = document.getElementById('adminProductTable');
-      if (tbody) {
-        tbody.innerHTML = products.map(p => `
-          <tr class="hover:bg-slate-50 transition-all">
-            <td class="p-3 font-mono font-bold text-primary">${p.barcode_sku}</td>
-            <td class="p-3 font-bold text-slate-800">${p.product_name}</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">${p.category}</span></td>
-            <td class="p-3 font-bold text-slate-800">Rp ${Number(p.selling_price).toLocaleString('id-ID')}</td>
-            <td class="p-3 font-bold ${p.current_stock <= 20 ? 'text-red-600' : 'text-emerald-600'}">${p.current_stock} ${p.unit_measure}</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${p.current_stock <= 20 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">${p.current_stock <= 20 ? 'Menipis' : 'Aman'}</span></td>
-          </tr>
-        `).join('');
-      }
-    });
   </script>
 </body>
 </html>
