@@ -431,11 +431,37 @@
         : `https://api.whatsapp.com/send?phone=${clean}`;
     }
 
+    const RESTO_MENU_VERSION = '20261107_ARAB_V3';
+
     // Persistensi Produk, Meja, & Orders
     function getStoredProducts() {
       try {
-        const p = localStorage.getItem('RASH_MITRA_PRODUCTS');
-        if (p) return JSON.parse(p);
+        const storedVer = localStorage.getItem('RASH_MITRA_MENU_VER');
+        const stored = localStorage.getItem('RASH_MITRA_PRODUCTS');
+        let parsed = null;
+        if (stored) {
+          try { parsed = JSON.parse(stored); } catch (e) {}
+        }
+
+        // Deteksi apakah data di localStorage masih menu lama (bukan menu masakan Arab)
+        const hasArabMenu = Array.isArray(parsed) && parsed.length > 0 && parsed.some(p => 
+          p.product_name && (
+            p.product_name.includes('Mandi') || 
+            p.product_name.includes('Kebuli') || 
+            p.product_name.includes('Briyani') ||
+            p.category === 'Nasi Rempah Arab'
+          )
+        );
+
+        // Jika versi belum update ATAU data tersimpan masih menu lama, sinkronkan otomatis ke menu Arab MOCK_PRODUCTS
+        if (storedVer !== RESTO_MENU_VERSION || !hasArabMenu) {
+          const defaultArabMenu = (window.APP_CONFIG && window.APP_CONFIG.MOCK_PRODUCTS) ? window.APP_CONFIG.MOCK_PRODUCTS : [];
+          localStorage.setItem('RASH_MITRA_PRODUCTS', JSON.stringify(defaultArabMenu));
+          localStorage.setItem('RASH_MITRA_MENU_VER', RESTO_MENU_VERSION);
+          return defaultArabMenu;
+        }
+
+        return parsed;
       } catch (e) {}
       return (window.APP_CONFIG && window.APP_CONFIG.MOCK_PRODUCTS) ? window.APP_CONFIG.MOCK_PRODUCTS : [];
     }

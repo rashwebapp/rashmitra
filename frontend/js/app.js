@@ -118,15 +118,55 @@
     } catch (e) {}
   }
 
+  const RESTO_MENU_VERSION = '20261107_ARAB_V3';
+
   function loadPersistedProducts() {
     try {
+      const storedVer = localStorage.getItem('RASH_MITRA_MENU_VER');
       const stored = localStorage.getItem('RASH_MITRA_PRODUCTS');
-      if (stored) return JSON.parse(stored);
+      let parsed = null;
+      if (stored) {
+        try { parsed = JSON.parse(stored); } catch (e) {}
+      }
+
+      // Deteksi apakah data di localStorage masih menu lama (bukan menu masakan Arab)
+      const hasArabMenu = Array.isArray(parsed) && parsed.length > 0 && parsed.some(p => 
+        p.product_name && (
+          p.product_name.includes('Mandi') || 
+          p.product_name.includes('Kebuli') || 
+          p.product_name.includes('Briyani') ||
+          p.category === 'Nasi Rempah Arab'
+        )
+      );
+
+      // Jika versi belum update ATAU data tersimpan masih menu lama, sinkronkan otomatis ke menu Arab MOCK_PRODUCTS
+      if (storedVer !== RESTO_MENU_VERSION || !hasArabMenu) {
+        const defaultArabMenu = JSON.parse(JSON.stringify(window.APP_CONFIG.MOCK_PRODUCTS || []));
+        localStorage.setItem('RASH_MITRA_PRODUCTS', JSON.stringify(defaultArabMenu));
+        localStorage.setItem('RASH_MITRA_MENU_VER', RESTO_MENU_VERSION);
+        return defaultArabMenu;
+      }
+
+      return parsed;
     } catch (e) {
       console.warn('Gagal membaca products dari localStorage:', e);
     }
     return JSON.parse(JSON.stringify(window.APP_CONFIG.MOCK_PRODUCTS || []));
   }
+
+  // Fungsi Reset Manual Menu Resto Arab (Bisa dipanggil dari tombol UI)
+  window.resetToDefaultArabMenu = function () {
+    if (confirm('Muat ulang seluruh master menu masakan Arab default (Nasi Mandi, Kebuli, Briyani, Kebab, dll)?')) {
+      const defaultArabMenu = JSON.parse(JSON.stringify(window.APP_CONFIG.MOCK_PRODUCTS || []));
+      savePersistedProducts(defaultArabMenu);
+      localStorage.setItem('RASH_MITRA_MENU_VER', RESTO_MENU_VERSION);
+      State.products = defaultArabMenu;
+      renderPosCatalog();
+      renderPosCategories();
+      renderInventoryTable();
+      showToast('✅ Menu masakan Arab default berhasil dimuat ulang!');
+    }
+  };
 
   function savePersistedProducts(prodsList) {
     try {
