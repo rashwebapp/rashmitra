@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RASH Mitra — Sistem Operasional POS & Mini ERP UMKM</title>
-  <meta name="description" content="Aplikasi kasir POS pintar, manajemen inventaris, absensi staf, dan pelacakan pesanan multi-vertikal UMKM." />
+  <title>RASH Mitra — Sistem Kasir POS Pintar & Mini ERP UMKM</title>
+  <meta name="description" content="Aplikasi kasir POS pintar, manajemen stok produk, dan antrean pesanan mandiri multi-vertikal UMKM." />
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   
-  <!-- Fonts & Icons: Plus Jakarta Sans, JetBrains Mono, Material Symbols -->
+  <!-- Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
@@ -22,51 +22,27 @@
       theme: {
         extend: {
           colors: {
-            cream: {
-              50: '#FDFBF7',
-              100: '#FAF5EE',
-              200: '#F4ECE1',
-              300: '#ECE1D0',
+            brand: {
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+              200: '#BFDBFE',
+              500: '#3B82F6',
+              600: '#2563EB',
+              700: '#1D4ED8',
+              800: '#1E40AF',
+              900: '#1E3A8A'
             },
-            terracotta: {
-              DEFAULT: '#B84E29',
-              dark: '#943A1B',
-              light: '#CD633C',
-              soft: '#F8ECE7',
-            },
-            caramel: {
-              DEFAULT: '#D9822B',
-              light: '#FFDCC2',
-            },
-            espresso: '#2C1A14',
-            hazelnut: '#75665E',
-            "brand-teal": '#0A4D4D',
-            "primary": "#B84E29",
-            "primary-container": "#943A1B",
-            "primary-dark": "#7A2E14",
-            "secondary": "#D9822B",
-            "gold-soft": "#FFDCC2",
-            "gold-shimmer": "#E69A3E",
-            "gold-tint": "#FDF7ED",
-            "surface": "#FAF5EE",
-            "surface-container-lowest": "#ffffff",
-            "surface-container-low": "#F8F3EA",
-            "surface-container": "#F2EDE6",
-            "surface-container-high": "#ECE7E1",
-            "status-success": "#16A34A",
-            "status-alert": "#DC2626",
-            "text-muted": "#75665E",
-            "text-body": "#2C1A14"
+            accent: {
+              50: '#ECFDF5',
+              100: '#D1FAE5',
+              500: '#10B981',
+              600: '#059669',
+              700: '#047857'
+            }
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
-          },
-          boxShadow: {
-            'clay': '0 10px 28px -4px rgba(184, 78, 41, 0.08), 0 4px 12px -2px rgba(44, 26, 20, 0.03)',
-            'clay-button': '0 6px 18px -2px rgba(184, 78, 41, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.4)',
-            'clay-pill': '0 8px 24px -4px rgba(70, 45, 30, 0.08), inset 0 2px 2px rgba(255, 255, 255, 0.8)',
-            'dock': '0 14px 40px -4px rgba(44, 26, 20, 0.14), 0 2px 8px 0 rgba(0, 0, 0, 0.04)',
           }
         }
       }
@@ -75,34 +51,34 @@
 
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="bg-[#FAF5EE] font-sans text-espresso min-h-screen selection:bg-terracotta selection:text-white">
+<body class="bg-slate-50 font-sans text-slate-800 min-h-screen selection:bg-blue-600 selection:text-white">
 
   <!-- ========================================================================= -->
-  <!-- 1. HALAMAN LOGIN UTAMA (ENTRY POINT APLIKASI WARM CLAYMORPHISM)           -->
+  <!-- 1. HALAMAN LOGIN UTAMA (ENTRY POINT APLIKASI)                             -->
   <!-- ========================================================================= -->
-  <div id="authGateView" class="min-h-screen flex flex-col justify-center items-center p-4 bg-[#FAF5EE] relative overflow-hidden">
-    <!-- Ambient Warm Orbs -->
-    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-terracotta/10 blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-caramel/10 blur-3xl pointer-events-none"></div>
+  <div id="authGateView" class="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100 relative overflow-hidden">
+    <!-- Ambient Blue & Emerald Glow Orbs -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-md bg-white rounded-[32px] shadow-clay border border-cream-200/80 p-8 relative z-10">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200/80 p-8 relative z-10">
       
       <!-- Logo Brand -->
       <div class="text-center mb-6">
-        <div class="w-16 h-16 rounded-3xl bg-terracotta text-white mx-auto flex items-center justify-center shadow-clay-button mb-3">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white mx-auto flex items-center justify-center shadow-lg shadow-blue-500/25 mb-3">
           <span class="material-symbols-outlined text-[34px]">point_of_sale</span>
         </div>
-        <h1 class="text-2xl font-black text-espresso tracking-tight">RASH <span class="text-terracotta">MITRA</span></h1>
-        <p class="text-xs font-semibold text-hazelnut uppercase tracking-widest mt-1">Sistem Operasional Kasir & Mini ERP</p>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight">RASH <span class="text-blue-600">MITRA</span></h1>
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-1">Smart Cloud POS & Mini ERP</p>
       </div>
 
       <!-- Tab Peran Login -->
-      <div class="flex p-1.5 bg-cream-100 rounded-2xl mb-6 border border-cream-200">
-        <button id="authTabStaffBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-terracotta text-white shadow-sm transition-all flex items-center justify-center gap-1.5" onclick="window.switchAuthTab('staff')">
+      <div class="flex p-1.5 bg-slate-100 rounded-2xl mb-6 border border-slate-200">
+        <button id="authTabStaffBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-blue-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5" onclick="window.switchAuthTab('staff')">
           <span class="material-symbols-outlined text-[16px]">badge</span>
           Staf Kasir
         </button>
-        <button id="authTabOwnerBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-hazelnut hover:text-terracotta transition-all flex items-center justify-center gap-1.5" onclick="window.switchAuthTab('owner')">
+        <button id="authTabOwnerBtn" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-600 hover:text-blue-600 transition-all flex items-center justify-center gap-1.5" onclick="window.switchAuthTab('owner')">
           <span class="material-symbols-outlined text-[16px]">shield_person</span>
           Super Admin
         </button>
@@ -111,36 +87,36 @@
       <!-- FORM LOGIN KASIR / STAF -->
       <div id="authStaffForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-espresso mb-1.5">Pilih Petugas Kasir:</label>
-          <select id="loginStaffSelect" class="w-full text-xs font-semibold rounded-2xl border-cream-200 p-3 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta focus:border-transparent">
-            <option value="Budi Santoso">Budi Santoso (Kasir 1 - Shift Pagi)</option>
-            <option value="Siti Rahayu">Siti Rahayu (Kasir 2 - Shift Siang)</option>
-            <option value="Dewi Lestari">Dewi Lestari (Operator POS)</option>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Petugas Kasir:</label>
+          <select id="loginStaffSelect" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="Budi Santoso (Kasir 1)">Budi Santoso (Kasir 1 - Shift Pagi)</option>
+            <option value="Siti Rahayu (Kasir 2)">Siti Rahayu (Kasir 2 - Shift Siang)</option>
+            <option value="Dewi Lestari (Operator POS)">Dewi Lestari (Operator POS)</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-espresso mb-1.5">PIN Kasir (Default: 1234):</label>
-          <input type="password" id="loginStaffPin" class="w-full text-base font-mono tracking-widest text-center rounded-2xl border-cream-200 p-3 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta focus:border-transparent" value="1234" maxlength="6" />
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">PIN Kasir (Default: 1234):</label>
+          <input type="password" id="loginStaffPin" class="w-full text-base font-mono tracking-widest text-center rounded-xl border-slate-200 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="1234" maxlength="6" />
         </div>
 
         <!-- Tactile Numpad Shortcuts -->
         <div class="grid grid-cols-3 gap-2 pt-1">
-          <button type="button" onclick="document.getElementById('loginStaffPin').value += '1'" class="py-2.5 rounded-xl bg-cream-50 hover:bg-cream-100 font-mono font-bold text-sm text-espresso border border-cream-200 active:scale-95 transition-all">1</button>
-          <button type="button" onclick="document.getElementById('loginStaffPin').value += '2'" class="py-2.5 rounded-xl bg-cream-50 hover:bg-cream-100 font-mono font-bold text-sm text-espresso border border-cream-200 active:scale-95 transition-all">2</button>
-          <button type="button" onclick="document.getElementById('loginStaffPin').value += '3'" class="py-2.5 rounded-xl bg-cream-50 hover:bg-cream-100 font-mono font-bold text-sm text-espresso border border-cream-200 active:scale-95 transition-all">3</button>
-          <button type="button" onclick="document.getElementById('loginStaffPin').value += '4'" class="py-2.5 rounded-xl bg-cream-50 hover:bg-cream-100 font-mono font-bold text-sm text-espresso border border-cream-200 active:scale-95 transition-all">4</button>
-          <button type="button" onclick="document.getElementById('loginStaffPin').value = ''" class="py-2.5 rounded-xl bg-red-50 hover:bg-red-100 font-bold text-xs text-red-600 border border-red-200 active:scale-95 transition-all">C</button>
-          <button type="button" onclick="document.getElementById('loginStaffPin').value = document.getElementById('loginStaffPin').value.slice(0, -1)" class="py-2.5 rounded-xl bg-cream-50 hover:bg-cream-100 font-bold text-xs text-hazelnut border border-cream-200 active:scale-95 transition-all">⌫</button>
+          <button type="button" onclick="document.getElementById('loginStaffPin').value += '1'" class="py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 font-mono font-bold text-sm text-slate-800 border border-slate-200 active:scale-95 transition-all">1</button>
+          <button type="button" onclick="document.getElementById('loginStaffPin').value += '2'" class="py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 font-mono font-bold text-sm text-slate-800 border border-slate-200 active:scale-95 transition-all">2</button>
+          <button type="button" onclick="document.getElementById('loginStaffPin').value += '3'" class="py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 font-mono font-bold text-sm text-slate-800 border border-slate-200 active:scale-95 transition-all">3</button>
+          <button type="button" onclick="document.getElementById('loginStaffPin').value += '4'" class="py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 font-mono font-bold text-sm text-slate-800 border border-slate-200 active:scale-95 transition-all">4</button>
+          <button type="button" onclick="document.getElementById('loginStaffPin').value = ''" class="py-2.5 rounded-xl bg-red-50 hover:bg-red-100 font-bold text-xs text-red-600 border border-red-200 active:scale-95 transition-all">Clear</button>
+          <button type="button" onclick="document.getElementById('loginStaffPin').value = document.getElementById('loginStaffPin').value.slice(0, -1)" class="py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 font-bold text-xs text-slate-600 border border-slate-200 active:scale-95 transition-all">⌫</button>
         </div>
 
-        <button onclick="window.handleStaffLogin()" class="w-full py-3.5 rounded-full bg-terracotta hover:bg-terracotta-dark text-white font-extrabold text-xs tracking-wider shadow-clay-button active:scale-95 transition-all flex items-center justify-center gap-2">
+        <button onclick="window.handleStaffLogin()" class="w-full py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs tracking-wider shadow-md shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
           <span>BUKA MESIN KASIR POS</span>
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
 
         <div class="pt-2">
-          <button onclick="window.quickDemoLogin('staff')" class="w-full py-2.5 rounded-full border border-dashed border-terracotta/40 bg-terracotta-soft text-terracotta text-xs font-bold hover:bg-terracotta/20 transition-all">
+          <button onclick="window.quickDemoLogin('staff')" class="w-full py-2.5 rounded-full border border-dashed border-blue-300 bg-blue-50/60 text-blue-700 text-xs font-bold hover:bg-blue-100/70 transition-all">
             ⚡ Masuk Cepat Demo Kasir (1-Klik)
           </button>
         </div>
@@ -148,42 +124,42 @@
 
       <!-- FORM LOGIN SUPER ADMIN (OWNER) -->
       <div id="authOwnerForm" class="hidden space-y-4">
-        <div class="p-3.5 bg-caramel-light/60 rounded-2xl border border-caramel/30 text-xs text-espresso leading-relaxed">
-          Super Admin memiliki hak akses master untuk Pengaturan Vertikal (Resto/Retail/Laundry), Kelola Data Produk, dan Gaji Karyawan.
+        <div class="p-3.5 bg-blue-50 rounded-2xl border border-blue-200 text-xs text-blue-900 leading-relaxed">
+          Super Admin memiliki hak master untuk <strong>Ganti Model Bisnis</strong>, <strong>Kelola Stok & Harga</strong>, dan <strong>Laporan Penjualan</strong>.
         </div>
 
         <!-- Google OAuth -->
-        <button onclick="window.handleGoogleLogin()" class="w-full py-3 px-4 rounded-full border border-cream-300 bg-white hover:bg-cream-50 font-bold text-xs text-espresso flex items-center justify-center gap-2.5 shadow-sm transition-all">
+        <button onclick="window.handleGoogleLogin()" class="w-full py-3 px-4 rounded-full border border-slate-300 bg-white hover:bg-slate-50 font-bold text-xs text-slate-800 flex items-center justify-center gap-2.5 shadow-sm transition-all">
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
           <span>Masuk dengan Google (Owner)</span>
         </button>
 
         <!-- Fallback Darurat -->
-        <div class="pt-2 border-t border-cream-200">
-          <p class="text-[11px] font-bold text-hazelnut mb-2 text-center uppercase tracking-wider">Akses Kredensial Master</p>
+        <div class="pt-2 border-t border-slate-200">
+          <p class="text-[11px] font-bold text-slate-500 mb-2 text-center uppercase tracking-wider">Akses Kredensial Master</p>
           <div class="space-y-2">
-            <input type="text" id="ownerUser" placeholder="Username (ketik: darurat)" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
-            <input type="password" id="ownerPass" placeholder="Password (bebas untuk demo)" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
-            <button onclick="window.handleOwnerLogin()" class="w-full py-3 rounded-full bg-espresso hover:bg-black text-white font-bold text-xs shadow-md transition-all">
+            <input type="text" id="ownerUser" placeholder="Username (ketik: darurat)" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+            <input type="password" id="ownerPass" placeholder="Password (bebas untuk demo)" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+            <button onclick="window.handleOwnerLogin()" class="w-full py-3 rounded-full bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-md transition-all">
               Buka Panel Super Admin 🔓
             </button>
           </div>
         </div>
 
         <div class="pt-1">
-          <button onclick="window.quickDemoLogin('owner')" class="w-full py-2.5 rounded-full border border-dashed border-caramel bg-caramel-light/40 text-caramel text-xs font-bold hover:bg-caramel-light transition-all">
+          <button onclick="window.quickDemoLogin('owner')" class="w-full py-2.5 rounded-full border border-dashed border-emerald-400 bg-emerald-50 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition-all">
             ⚡ Masuk Cepat Demo Super Admin
           </button>
         </div>
       </div>
 
       <!-- Link ke Katalog Pelanggan & Landing -->
-      <div class="mt-6 pt-4 border-t border-cream-200 text-center flex flex-col gap-2">
-        <a href="katalog.html" class="text-xs font-extrabold text-terracotta hover:underline inline-flex items-center justify-center gap-1">
+      <div class="mt-6 pt-4 border-t border-slate-200 text-center flex flex-col gap-2">
+        <a href="katalog.html" class="text-xs font-extrabold text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center justify-center gap-1">
           <span>Buka Katalog Pelanggan (Self-Order)</span>
           <span class="material-symbols-outlined text-[15px]">arrow_outward</span>
         </a>
-        <a href="landing.html" class="text-[11px] text-hazelnut hover:text-espresso">
+        <a href="landing.html" class="text-[11px] text-slate-500 hover:text-slate-800">
           Lihat Halaman Marketing & Penjualan Lisensi →
         </a>
       </div>
@@ -192,30 +168,30 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 2. WORKSPACE OPERASIONAL UTAMA APLIKASI (WARM CLAYMORPHISM)               -->
+  <!-- 2. WORKSPACE OPERASIONAL UTAMA APLIKASI                                    -->
   <!-- ========================================================================= -->
-  <div id="mainAppView" class="hidden min-h-screen flex flex-col bg-[#FAF5EE]">
+  <div id="mainAppView" class="hidden min-h-screen flex flex-col bg-slate-50">
     
-    <!-- Top Hardware HUD & Brand Header Bar -->
-    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-40 border-b border-cream-200/80 shadow-[0_2px_12px_rgba(184,78,41,0.04)]">
+    <!-- Top Header Bar -->
+    <header class="bg-white sticky top-0 z-40 border-b border-slate-200 shadow-xs">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         
         <!-- Left: Brand & Store Identity -->
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-terracotta text-white flex items-center justify-center shadow-clay-button shrink-0">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-700 to-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
             <span class="material-symbols-outlined text-[22px]">storefront</span>
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <span id="appStoreName" class="font-extrabold text-sm sm:text-base text-espresso">RASH Mitra UMKM</span>
-              <span id="appRoleBadge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">KASIR</span>
+              <span id="appStoreName" class="font-extrabold text-sm sm:text-base text-slate-900">RASH Smart POS</span>
+              <span id="appRoleBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-200">KASIR AKTIF</span>
             </div>
-            <div class="flex items-center gap-2 text-[11px] text-hazelnut">
-              <span>Kasir: <strong id="appUserName" class="text-espresso">Budi Santoso</strong></span>
+            <div class="flex items-center gap-2 text-[11px] text-slate-500">
+              <span>Kasir: <strong id="appUserName" class="text-slate-800">Budi Santoso</strong></span>
               <span>•</span>
               <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Cloud Ready
+                Online Synced
               </span>
             </div>
           </div>
@@ -223,36 +199,36 @@
 
         <!-- Center: Hardware Status Pills -->
         <div class="hidden xl:flex items-center gap-2">
-          <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cream-50 border border-cream-200 text-xs font-semibold text-hazelnut">
+          <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-600">
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
             <span>Thermal 58mm Ready</span>
           </div>
-          <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cream-50 border border-cream-200 text-xs font-semibold text-hazelnut">
-            <span class="material-symbols-outlined text-[14px] text-emerald-600">cloud_done</span>
-            <span>G-Drive Synced</span>
+          <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-600">
+            <span class="material-symbols-outlined text-[14px] text-blue-600">cloud_done</span>
+            <span>Database Connected</span>
           </div>
         </div>
 
-        <!-- Right: Business Model Selector (Super Admin) & Logout -->
+        <!-- Right: Business Model Selector & Controls -->
         <div class="flex items-center gap-2.5">
-          <!-- Switcher Vertikal Khusus Super Admin / Demo -->
-          <div id="demoModelSelectorBox" class="flex items-center gap-1 bg-cream-100 p-1 rounded-full border border-cream-200">
-            <span class="text-[10px] font-bold text-hazelnut pl-2 hidden sm:inline">Model:</span>
-            <select id="activeModelSelect" onchange="window.changeBusinessModel(this.value)" class="text-xs font-bold bg-white rounded-full py-1 px-3 border-none focus:ring-1 focus:ring-terracotta text-espresso shadow-sm">
+          <!-- Switcher Vertikal (Hanya untuk Super Admin / Demo) -->
+          <div id="demoModelSelectorBox" class="flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200">
+            <span class="text-[10px] font-bold text-slate-500 pl-2 hidden sm:inline">Model:</span>
+            <select id="activeModelSelect" onchange="window.changeBusinessModel(this.value)" class="text-xs font-bold bg-white rounded-full py-1 px-3 border-none focus:ring-2 focus:ring-blue-500 text-slate-800 shadow-xs">
               <option value="RESTO">🍽️ Restoran / Kafe</option>
               <option value="RETAIL">🏬 Retail / Toko</option>
               <option value="LAUNDRY">🧺 Laundry / Jasa</option>
             </select>
           </div>
 
-          <!-- Link ke Katalog -->
-          <a href="katalog.html" target="_blank" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-cream-50 hover:bg-cream-100 text-xs font-bold text-terracotta border border-cream-200" title="Buka Tampilan Pelanggan di Tab Baru">
+          <!-- Link ke Katalog Pelanggan -->
+          <a href="katalog.html" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200 transition-colors" title="Buka Katalog Self-Order Pelanggan">
             <span class="material-symbols-outlined text-[15px]">open_in_new</span>
-            <span>Katalog</span>
+            <span>Katalog Meja</span>
           </a>
 
           <!-- Logout Button -->
-          <button onclick="window.handleLogoutApp()" class="w-9 h-9 rounded-full bg-cream-100 hover:bg-red-50 text-hazelnut hover:text-red-600 flex items-center justify-center transition-all border border-cream-200" title="Keluar dari Aplikasi">
+          <button onclick="window.handleLogoutApp()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 flex items-center justify-center transition-all border border-slate-200" title="Keluar dari Sesi Kasir">
             <span class="material-symbols-outlined text-[18px]">logout</span>
           </button>
         </div>
@@ -262,25 +238,26 @@
 
     <!-- Top Navigation Tabs (Rounded Capsule Container) -->
     <nav class="max-w-7xl mx-auto w-full px-4 sm:px-6 pt-4 pb-2">
-      <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl shadow-clay border border-cream-200/80 overflow-x-auto no-scrollbar">
+      <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl shadow-xs border border-slate-200 overflow-x-auto no-scrollbar">
         
-        <button id="navTabPos" onclick="window.switchAppTab('pos')" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold bg-terracotta text-white shadow-sm flex items-center gap-1.5 transition-all shrink-0">
-          <span class="material-symbols-outlined text-[16px]">point_of_sale</span>
+        <button id="navTabPos" onclick="window.switchAppTab('pos')" class="nav-app-btn px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm flex items-center gap-2 transition-all shrink-0">
+          <span class="material-symbols-outlined text-[18px]">point_of_sale</span>
           <span>1. Kasir POS</span>
         </button>
 
-        <button id="navTabProduk" onclick="window.switchAppTab('produk')" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold text-hazelnut hover:text-espresso hover:bg-cream-100 flex items-center gap-1.5 transition-all shrink-0">
-          <span class="material-symbols-outlined text-[16px]">inventory_2</span>
+        <button id="navTabProduk" onclick="window.switchAppTab('produk')" class="nav-app-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 flex items-center gap-2 transition-all shrink-0">
+          <span class="material-symbols-outlined text-[18px]">inventory_2</span>
           <span>2. Data Produk & Stok</span>
         </button>
 
-        <button id="navTabPesanan" onclick="window.switchAppTab('pesanan')" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold text-hazelnut hover:text-espresso hover:bg-cream-100 flex items-center gap-1.5 transition-all shrink-0">
-          <span class="material-symbols-outlined text-[16px]">receipt_long</span>
-          <span>3. Antrean & Lacak Pesanan</span>
+        <button id="navTabPesanan" onclick="window.switchAppTab('pesanan')" class="nav-app-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 flex items-center gap-2 transition-all shrink-0 relative">
+          <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+          <span>3. Antrean Pesanan</span>
+          <span id="pendingOrdersBadge" class="hidden px-1.5 py-0.2 rounded-full bg-emerald-500 text-white text-[10px] font-bold">0</span>
         </button>
 
-        <button id="navTabAdmin" onclick="window.switchAppTab('admin')" class="nav-app-btn px-4 py-2 rounded-xl text-xs font-bold text-hazelnut hover:text-espresso hover:bg-cream-100 flex items-center gap-1.5 transition-all shrink-0">
-          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+        <button id="navTabAdmin" onclick="window.switchAppTab('admin')" class="nav-app-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 flex items-center gap-2 transition-all shrink-0">
+          <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
           <span>4. Pengaturan Super Admin</span>
         </button>
 
@@ -291,48 +268,48 @@
     <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-3 flex-1 flex flex-col">
 
       <!-- ===================================================================== -->
-      <!-- TAB 1: KASIR POS (SPLIT SCREEN 60% CATALOG + 40% REGISTER)           -->
+      <!-- TAB 1: KASIR POS (SPLIT SCREEN 62% CATALOG + 38% REGISTER)            -->
       <!-- ===================================================================== -->
       <section id="panelTabPos" class="app-panel flex-1 flex flex-col lg:flex-row gap-4">
         
-        <!-- LEFT: 60% CATALOG & BARCODE SCANNER -->
+        <!-- LEFT: 62% CATALOG & BARCODE SCANNER -->
         <div class="w-full lg:w-[62%] flex flex-col gap-3">
           
           <!-- Omni Search Bar & Barcode Scanner -->
-          <div class="bg-white rounded-3xl p-3 shadow-clay border border-cream-200/80 flex items-center gap-3">
+          <div class="bg-white rounded-2xl p-3 shadow-xs border border-slate-200 flex items-center gap-3">
             <div class="relative flex-1">
-              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-hazelnut text-[18px]">barcode_scanner</span>
-              <input type="text" id="posBarcodeSearchInput" oninput="window.handlePosSearchInput(this.value)" placeholder="Scan barcode SKU atau ketik nama menu... [F2]" class="w-full pl-10 pr-3 py-2 text-xs font-semibold rounded-2xl border-cream-200 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
+              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">barcode_scanner</span>
+              <input type="text" id="posBarcodeSearchInput" oninput="window.handlePosSearchInput(this.value)" placeholder="Scan barcode SKU atau ketik nama menu... [F2]" class="w-full pl-10 pr-3 py-2 text-xs font-semibold rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
             
             <!-- Quick Camera Trigger -->
-            <button onclick="alert('Kamera pemindai barcode aktif!')" class="w-9 h-9 rounded-2xl bg-cream-50 hover:bg-cream-100 text-hazelnut flex items-center justify-center border border-cream-200" title="Pindai dengan Kamera">
+            <button onclick="alert('Kamera scanner aktif untuk scan barcode barang!')" class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200" title="Pindai Barcode via Kamera">
               <span class="material-symbols-outlined text-[18px]">photo_camera</span>
             </button>
           </div>
 
           <!-- Dynamic Category Pills -->
-          <div id="posCategoryPills" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <div id="posCategoryPills" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
             <!-- Rendered by app.js -->
           </div>
 
-          <!-- 3x3 Responsive Product Cards Grid -->
-          <div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 flex-1 overflow-y-auto max-h-[600px] no-scrollbar pr-1">
+          <!-- Responsive Product Cards Grid -->
+          <div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 flex-1 overflow-y-auto max-h-[620px] custom-scroll pr-1">
             <!-- Rendered by app.js -->
           </div>
 
         </div>
 
-        <!-- RIGHT: 40% ACTIVE TICKET REGISTER & CHECKOUT -->
+        <!-- RIGHT: 38% ACTIVE TICKET REGISTER & CHECKOUT -->
         <div class="w-full lg:w-[38%] flex flex-col gap-3">
           
-          <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-clay border border-cream-200/80 flex flex-col flex-1">
+          <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200 flex flex-col flex-1">
             
             <!-- Ticket Header -->
-            <div class="flex items-center justify-between pb-3 border-b border-cream-200">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
               <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-caramel"></span>
-                <span class="font-mono font-bold text-sm text-espresso" id="posInvoiceId">#INV-2026-0042</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="font-mono font-bold text-sm text-slate-800" id="posInvoiceId">#INV-2026-0042</span>
               </div>
               <button onclick="window.clearPosCart()" class="text-[11px] font-bold text-red-600 hover:underline">
                 Kosongkan
@@ -340,38 +317,38 @@
             </div>
 
             <!-- Dynamic Vertical Inputs (Table No / Weight / Customer) -->
-            <div id="posVerticalInputs" class="grid grid-cols-2 gap-2 py-3 border-b border-cream-200">
+            <div id="posVerticalInputs" class="grid grid-cols-2 gap-2 py-3 border-b border-slate-200">
               <!-- Rendered dynamically by app.js -->
             </div>
 
             <!-- Scrollable Ticket Items List -->
-            <div id="posCartItemsList" class="flex-1 overflow-y-auto py-3 space-y-2.5 min-h-[180px] max-h-[260px] no-scrollbar">
+            <div id="posCartItemsList" class="flex-1 overflow-y-auto py-3 space-y-2 min-h-[180px] max-h-[250px] custom-scroll">
               <!-- Rendered by app.js -->
             </div>
 
             <!-- Pricing Summary -->
-            <div class="pt-3 border-t border-cream-200 space-y-1.5">
-              <div class="flex justify-between text-xs text-hazelnut">
+            <div class="pt-3 border-t border-slate-200 space-y-1.5">
+              <div class="flex justify-between text-xs text-slate-500">
                 <span>Subtotal (<span id="posCartItemCount">0</span> item):</span>
-                <span id="posSubtotalText" class="font-mono font-bold text-espresso">Rp 0</span>
+                <span id="posSubtotalText" class="font-mono font-bold text-slate-800">Rp 0</span>
               </div>
-              <div class="flex justify-between text-lg font-black text-espresso pt-1">
+              <div class="flex justify-between text-base font-black text-slate-900 pt-1">
                 <span>Total Tagihan:</span>
-                <span id="posGrandTotalText" class="font-mono text-terracotta text-xl">Rp 0</span>
+                <span id="posGrandTotalText" class="font-mono text-blue-600 text-xl">Rp 0</span>
               </div>
             </div>
 
             <!-- Tender Tabs (Cash, QRIS, Transfer) -->
             <div class="pt-3">
-              <label class="block text-[10px] font-bold text-hazelnut mb-1.5 uppercase tracking-wider">Metode Pembayaran:</label>
+              <label class="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Metode Pembayaran:</label>
               <div class="grid grid-cols-3 gap-1.5">
-                <button onclick="window.setPosPayMethod('CASH')" id="payMethodCashBtn" class="py-2 rounded-xl text-xs font-bold bg-terracotta text-white shadow-sm flex items-center justify-center gap-1">
+                <button onclick="window.setPosPayMethod('CASH')" id="payMethodCashBtn" class="py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm flex items-center justify-center gap-1">
                   <span>💵 Tunai</span>
                 </button>
-                <button onclick="window.setPosPayMethod('QRIS')" id="payMethodQrisBtn" class="py-2 rounded-xl text-xs font-bold bg-cream-50 text-hazelnut hover:bg-cream-100 flex items-center justify-center gap-1">
+                <button onclick="window.setPosPayMethod('QRIS')" id="payMethodQrisBtn" class="py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-600 hover:bg-slate-100 flex items-center justify-center gap-1">
                   <span>📱 QRIS</span>
                 </button>
-                <button onclick="window.setPosPayMethod('TRANSFER')" id="payMethodTransferBtn" class="py-2 rounded-xl text-xs font-bold bg-cream-50 text-hazelnut hover:bg-cream-100 flex items-center justify-center gap-1">
+                <button onclick="window.setPosPayMethod('TRANSFER')" id="payMethodTransferBtn" class="py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-600 hover:bg-slate-100 flex items-center justify-center gap-1">
                   <span>🏦 Transfer</span>
                 </button>
               </div>
@@ -380,17 +357,17 @@
             <!-- Quick Cash Pills -->
             <div id="quickCashPillsBox" class="pt-2">
               <div class="grid grid-cols-4 gap-1 text-[11px] font-mono font-bold">
-                <button onclick="window.setQuickCash('EXACT')" class="py-1.5 rounded-lg bg-cream-50 hover:bg-cream-100 border border-cream-200 text-espresso text-center">Pas</button>
-                <button onclick="window.setQuickCash(50000)" class="py-1.5 rounded-lg bg-cream-50 hover:bg-cream-100 border border-cream-200 text-espresso text-center">50rb</button>
-                <button onclick="window.setQuickCash(100000)" class="py-1.5 rounded-lg bg-cream-50 hover:bg-cream-100 border border-cream-200 text-espresso text-center">100rb</button>
-                <button onclick="window.setQuickCash(200000)" class="py-1.5 rounded-lg bg-cream-50 hover:bg-cream-100 border border-cream-200 text-espresso text-center">200rb</button>
+                <button onclick="window.setQuickCash('EXACT')" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">Pas</button>
+                <button onclick="window.setQuickCash(50000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">50rb</button>
+                <button onclick="window.setQuickCash(100000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">100rb</button>
+                <button onclick="window.setQuickCash(200000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">200rb</button>
               </div>
             </div>
 
             <!-- Primary Checkout & Print Thermal Button -->
-            <button onclick="window.handlePosCheckoutSubmit()" class="w-full mt-4 py-3.5 rounded-full bg-terracotta hover:bg-terracotta-dark text-white font-extrabold text-xs tracking-wider shadow-clay-button active:scale-95 transition-all flex items-center justify-center gap-2">
+            <button onclick="window.handlePosCheckoutSubmit()" class="w-full mt-4 py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs tracking-wider shadow-md shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
               <span class="material-symbols-outlined text-[18px]">print</span>
-              <span>BAYAR & CETAK STRUK 58MM (ENTER)</span>
+              <span>BAYAR & CETAK STRUK 58MM</span>
             </button>
 
           </div>
@@ -400,19 +377,19 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- TAB 2: DATA PRODUK & STOK INVENTORI (CRUD LENGKAP)                   -->
+      <!-- TAB 2: DATA PRODUK & STOK INVENTORI (SUPER ADMIN EDITING)             -->
       <!-- ===================================================================== -->
       <section id="panelTabProduk" class="app-panel hidden flex-1 flex flex-col gap-3">
         
         <!-- Action Header -->
-        <div class="bg-white rounded-3xl p-4 shadow-clay border border-cream-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            <h2 class="text-base font-extrabold text-espresso">Master Produk & Inventori Stok</h2>
-            <p class="text-xs text-hazelnut">Kelola katalog barang, pantau stok fisik, dan ubah harga jual.</p>
+            <h2 class="text-base font-extrabold text-slate-900">Master Data Produk & Stok</h2>
+            <p class="text-xs text-slate-500">Kelola harga jual, pantau stok fisik, dan sesuaikan stok dengan 1-klik.</p>
           </div>
           
           <div class="flex items-center gap-2 w-full sm:w-auto">
-            <button onclick="window.openAddProductModal()" class="w-full sm:w-auto px-4 py-2.5 rounded-full bg-terracotta hover:bg-terracotta-dark text-white font-bold text-xs shadow-clay-button flex items-center justify-center gap-1.5 transition-all">
+            <button onclick="window.openAddProductModal()" class="w-full sm:w-auto px-4 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all">
               <span class="material-symbols-outlined text-[18px]">add</span>
               <span>Tambah Produk Baru</span>
             </button>
@@ -420,14 +397,14 @@
         </div>
 
         <!-- Filter & Search Bar -->
-        <div class="bg-white rounded-3xl p-3 shadow-clay border border-cream-200/80 flex flex-col sm:flex-row items-center gap-3">
+        <div class="bg-white rounded-2xl p-3 shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center gap-3">
           <div class="relative flex-1 w-full">
-            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-hazelnut text-[18px]">search</span>
-            <input type="text" id="inventorySearchInput" oninput="window.handleInventoryFilter()" placeholder="Cari nama produk atau SKU barcode..." class="w-full pl-10 pr-3 py-2 text-xs rounded-2xl border-cream-200 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+            <input type="text" id="inventorySearchInput" oninput="window.handleInventoryFilter()" placeholder="Cari nama produk atau SKU barcode..." class="w-full pl-10 pr-3 py-2 text-xs rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div class="flex items-center gap-2 w-full sm:w-auto">
-            <select id="inventoryCategoryFilter" onchange="window.handleInventoryFilter()" class="text-xs font-semibold rounded-2xl border-cream-200 p-2 bg-cream-50 focus:ring-2 focus:ring-terracotta">
+            <select id="inventoryCategoryFilter" onchange="window.handleInventoryFilter()" class="text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500">
               <option value="ALL">Semua Kategori</option>
               <option value="Burritos">Burritos</option>
               <option value="Bowls">Bowls</option>
@@ -438,7 +415,7 @@
               <option value="Laundry">Laundry</option>
             </select>
 
-            <select id="inventoryStockAlertFilter" onchange="window.handleInventoryFilter()" class="text-xs font-semibold rounded-2xl border-cream-200 p-2 bg-cream-50 focus:ring-2 focus:ring-terracotta">
+            <select id="inventoryStockAlertFilter" onchange="window.handleInventoryFilter()" class="text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500">
               <option value="ALL">Semua Status Stok</option>
               <option value="SAFE">Stok Aman (Hijau)</option>
               <option value="LOW">Stok Kritis / Menipis (Merah)</option>
@@ -447,10 +424,10 @@
         </div>
 
         <!-- Inventory Data Table -->
-        <div class="bg-white rounded-3xl shadow-clay border border-cream-200/80 overflow-hidden flex-1">
+        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden flex-1">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
-              <thead class="bg-cream-100 border-b border-cream-200 text-hazelnut font-bold">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
                 <tr>
                   <th class="p-3.5">SKU / Barcode</th>
                   <th class="p-3.5">Nama Produk</th>
@@ -463,7 +440,7 @@
                   <th class="p-3.5 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody id="inventoryTableBody" class="divide-y divide-cream-100 font-medium">
+              <tbody id="inventoryTableBody" class="divide-y divide-slate-100 font-medium">
                 <!-- Rendered by app.js -->
               </tbody>
             </table>
@@ -473,37 +450,37 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- TAB 3: ANTREAN & LACAK PESANAN REALTIME                              -->
+      <!-- TAB 3: ANTREAN & LACAK PESANAN REALTIME                               -->
       <!-- ===================================================================== -->
       <section id="panelTabPesanan" class="app-panel hidden flex-1 flex flex-col gap-3">
         
-        <div class="bg-white rounded-3xl p-4 shadow-clay border border-cream-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            <h2 class="text-base font-extrabold text-espresso">Antrean Pesanan & Pelacakan Dapur</h2>
-            <p class="text-xs text-hazelnut">Pesanan yang masuk langsung dari katalog digital pelanggan di meja.</p>
+            <h2 class="text-base font-extrabold text-slate-900">Antrean Pesanan Masuk</h2>
+            <p class="text-xs text-slate-500">Pesanan dari katalog digital meja pelanggan masuk otomatis secara realtime.</p>
           </div>
           
           <div class="relative w-full sm:w-72">
-            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-hazelnut text-[18px]">search</span>
-            <input type="text" id="orderTrackSearchInput" oninput="window.handleOrderSearch(this.value)" placeholder="Cari No. Order atau No. WA..." class="w-full pl-10 pr-3 py-2 text-xs rounded-2xl border-cream-200 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+            <input type="text" id="orderTrackSearchInput" oninput="window.handleOrderSearch(this.value)" placeholder="Cari No. Order, Meja, atau WA..." class="w-full pl-10 pr-3 py-2 text-xs rounded-xl border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
         <!-- Orders Queue Table -->
-        <div class="bg-white rounded-3xl shadow-clay border border-cream-200/80 overflow-hidden flex-1">
+        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden flex-1">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
-              <thead class="bg-cream-100 border-b border-cream-200 text-hazelnut font-bold">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
                 <tr>
                   <th class="p-3.5">No. Order / Waktu</th>
                   <th class="p-3.5">Pelanggan / Meja</th>
-                  <th class="p-3.5">Daftar Menu</th>
+                  <th class="p-3.5">Rincian Menu</th>
                   <th class="p-3.5">Total Tagihan</th>
-                  <th class="p-3.5 text-center">Tahapan Dapur</th>
-                  <th class="p-3.5 text-center">Aksi Status</th>
+                  <th class="p-3.5 text-center">Status Dapur</th>
+                  <th class="p-3.5 text-center">Aksi Status & WhatsApp</th>
                 </tr>
               </thead>
-              <tbody id="ordersQueueTableBody" class="divide-y divide-cream-100 font-medium">
+              <tbody id="ordersQueueTableBody" class="divide-y divide-slate-100 font-medium">
                 <!-- Rendered by app.js -->
               </tbody>
             </table>
@@ -513,75 +490,75 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- TAB 4: PENGATURAN SUPER ADMIN & ABSENSI PAYROLL                      -->
+      <!-- TAB 4: PENGATURAN SUPER ADMIN & MODEL BISNIS                          -->
       <!-- ===================================================================== -->
       <section id="panelTabAdmin" class="app-panel hidden flex-1 flex flex-col gap-4">
         
         <!-- Model Switcher Cards -->
-        <div class="bg-white rounded-3xl p-5 shadow-clay border border-cream-200/80">
-          <h3 class="text-sm font-extrabold text-espresso mb-1">Pilih Model Bisnis Operasional (Multi-Vertikal)</h3>
-          <p class="text-xs text-hazelnut mb-4">Pengaturan ini akan langsung mengubah alur kasir, cetakan struk thermal, dan katalog.</p>
+        <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200">
+          <h3 class="text-sm font-extrabold text-slate-900 mb-1">Model Bisnis Operasional (Multi-Vertikal)</h3>
+          <p class="text-xs text-slate-500 mb-4">Pilih model usaha untuk menyesuaikan alur kasir, cetakan struk, dan katalog.</p>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             <!-- Resto -->
-            <div data-val="RESTO" onclick="window.changeBusinessModel('RESTO')" class="model-card-option p-4 rounded-2xl border-2 border-cream-200 hover:border-terracotta bg-white cursor-pointer transition-all">
-              <div class="w-12 h-12 rounded-2xl bg-terracotta-soft text-terracotta flex items-center justify-center text-2xl mb-2">
+            <div data-val="RESTO" onclick="window.changeBusinessModel('RESTO')" class="model-card-option p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/70 shadow-sm cursor-pointer transition-all">
+              <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl mb-2">
                 🍽️
               </div>
-              <h4 class="font-bold text-sm text-espresso">Restoran & Kafe</h4>
-              <p class="text-[11px] text-hazelnut mt-1">Dine-in, nomor meja, takeaway, tiket antrean dapur, dan split bill.</p>
+              <h4 class="font-bold text-sm text-slate-900">Restoran & Kafe</h4>
+              <p class="text-[11px] text-slate-600 mt-1">Dine-in, nomor meja, takeaway, tiket antrean dapur, dan split bill.</p>
             </div>
 
             <!-- Retail -->
-            <div data-val="RETAIL" onclick="window.changeBusinessModel('RETAIL')" class="model-card-option p-4 rounded-2xl border-2 border-cream-200 hover:border-terracotta bg-white cursor-pointer transition-all">
-              <div class="w-12 h-12 rounded-2xl bg-caramel-light text-caramel flex items-center justify-center text-2xl mb-2">
+            <div data-val="RETAIL" onclick="window.changeBusinessModel('RETAIL')" class="model-card-option p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all">
+              <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-2xl mb-2">
                 🏬
               </div>
-              <h4 class="font-bold text-sm text-espresso">Retail & Warung Toko</h4>
-              <p class="text-[11px] text-hazelnut mt-1">Pencarian barcode cepat [F2], harga grosir, dan notifikasi stok minimum.</p>
+              <h4 class="font-bold text-sm text-slate-900">Retail & Warung Toko</h4>
+              <p class="text-[11px] text-slate-600 mt-1">Pencarian barcode cepat [F2], harga grosir, dan notifikasi stok minimum.</p>
             </div>
 
             <!-- Laundry -->
-            <div data-val="LAUNDRY" onclick="window.changeBusinessModel('LAUNDRY')" class="model-card-option p-4 rounded-2xl border-2 border-cream-200 hover:border-terracotta bg-white cursor-pointer transition-all">
-              <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-2">
+            <div data-val="LAUNDRY" onclick="window.changeBusinessModel('LAUNDRY')" class="model-card-option p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-2xl mb-2">
                 🧺
               </div>
-              <h4 class="font-bold text-sm text-espresso">Laundry & Jasa Kiloan</h4>
-              <p class="text-[11px] text-hazelnut mt-1">Timbangan berat Kg, tracking status cuci/setrika, dan tanggal ambil.</p>
+              <h4 class="font-bold text-sm text-slate-900">Laundry & Jasa Kiloan</h4>
+              <p class="text-[11px] text-slate-600 mt-1">Timbangan berat Kg, tracking status cuci/setrika, dan tanggal ambil.</p>
             </div>
           </div>
         </div>
 
         <!-- Store Profile & WhatsApp Settings -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-white rounded-3xl p-5 shadow-clay border border-cream-200/80 space-y-3">
-            <h4 class="text-xs font-extrabold text-espresso uppercase tracking-wider">Identitas Usaha & Struk</h4>
+          <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200 space-y-3">
+            <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Identitas Usaha & Struk</h4>
             <div>
-              <label class="block text-[11px] font-bold text-espresso mb-1">Nama Usaha / Toko:</label>
-              <input type="text" id="settStoreName" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Nama Usaha / Toko:</label>
+              <input type="text" id="settStoreName" value="RASH Smart POS & Cafe" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-espresso mb-1">Alamat Outlet:</label>
-              <input type="text" id="settStoreAddress" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Alamat Outlet:</label>
+              <input type="text" id="settStoreAddress" value="Jl. Merdeka No. 45, Jakarta Pusat" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-espresso mb-1">Catatan Kaki Struk Thermal 58mm:</label>
-              <input type="text" id="settThermalFooter" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Catatan Kaki Struk Thermal 58mm:</label>
+              <input type="text" id="settThermalFooter" value="Barang yang dibeli tidak dapat ditukar. Terima kasih!" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
 
-          <div class="bg-white rounded-3xl p-5 shadow-clay border border-cream-200/80 space-y-3">
-            <h4 class="text-xs font-extrabold text-espresso uppercase tracking-wider">Integrasi Notifikasi & QRIS</h4>
+          <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200 space-y-3">
+            <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Integrasi Notifikasi & QRIS</h4>
             <div>
-              <label class="block text-[11px] font-bold text-espresso mb-1">Fonnte WhatsApp Token (Script Properties):</label>
-              <input type="text" id="settFonnteToken" readonly class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-100 font-mono text-hazelnut" value="fonn••••••••xyz" />
-              <p class="text-[10px] text-hazelnut mt-1">Token tersimpan aman di Google Script Properties.</p>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Fonnte WhatsApp Token (Script Properties):</label>
+              <input type="text" id="settFonnteToken" readonly class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-100 font-mono text-slate-500" value="fonn••••••••xyz" />
+              <p class="text-[10px] text-slate-500 mt-1">Token tersimpan aman di Google Script Properties.</p>
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-espresso mb-1">NMID Dynamic QRIS:</label>
-              <input type="text" id="settQrisNmid" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:bg-white focus:ring-2 focus:ring-terracotta" />
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">NMID Dynamic QRIS:</label>
+              <input type="text" id="settQrisNmid" value="NMID-RASH-99887766" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
-            <button onclick="window.saveAdminSettings()" class="w-full py-2.5 rounded-full bg-terracotta text-white font-bold text-xs shadow-clay-button active:scale-95 transition-all">
+            <button onclick="window.saveAdminSettings()" class="w-full py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all">
               Simpan Pengaturan
             </button>
           </div>
@@ -593,55 +570,31 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL CLOCK-IN ABSENSI STAF (SEBELUM BUKA POS)                            -->
-  <!-- ========================================================================= -->
-  <div id="posClockInModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none">
-    <div class="bg-white rounded-[32px] max-w-sm w-full p-6 shadow-2xl border border-cream-200 text-center">
-      <div class="w-14 h-14 rounded-3xl bg-terracotta-soft text-terracotta mx-auto flex items-center justify-center text-2xl mb-3 shadow-sm">
-        ⏰
-      </div>
-      <h3 class="text-base font-extrabold text-espresso">Absensi Buka Kasir (Clock-in)</h3>
-      <p class="text-xs text-hazelnut mt-1 mb-4">Catat waktu kehadiran dan modal kas awal sebelum memulai transaksi penjualan.</p>
-
-      <div class="space-y-3 text-left mb-4">
-        <div>
-          <label class="block text-[11px] font-bold text-espresso mb-1">Modal Kas Kecil di Laci (Rp):</label>
-          <input type="number" id="clockInCashDrawer" value="100000" class="w-full text-xs font-mono font-bold rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
-        </div>
-      </div>
-
-      <button id="posClockInSubmitBtn" onclick="window.submitClockIn()" class="w-full py-3 rounded-full bg-terracotta text-white font-bold text-xs shadow-clay-button active:scale-95 transition-all">
-        Mulai Buka Sesi Kasir →
-      </button>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL TAMBAH PRODUK BARU (CRUD)                                          -->
+  <!-- MODAL TAMBAH PRODUK BARU (SUPER ADMIN CRUD)                               -->
   <!-- ========================================================================= -->
   <div id="addProductModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none">
-    <div class="bg-white rounded-[32px] max-w-md w-full p-6 shadow-2xl border border-cream-200 relative">
-      <button onclick="window.closeAddProductModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center text-hazelnut hover:text-espresso">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative">
+      <button onclick="window.closeAddProductModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900">
         <span class="material-symbols-outlined text-[18px]">close</span>
       </button>
 
-      <h3 class="text-base font-extrabold text-espresso mb-1">Tambah Produk Baru</h3>
-      <p class="text-xs text-hazelnut mb-4">Lengkapi spesifikasi produk untuk dimasukkan ke katalog POS.</p>
+      <h3 class="text-base font-extrabold text-slate-900 mb-1">Tambah Produk Baru</h3>
+      <p class="text-xs text-slate-500 mb-4">Lengkapi spesifikasi produk untuk dimasukkan ke katalog POS.</p>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-espresso mb-1">Nama Produk:</label>
-          <input type="text" id="newProdName" placeholder="Contoh: Burrito Ayam Spesial" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+          <label class="block font-bold text-slate-700 mb-1">Nama Produk:</label>
+          <input type="text" id="newProdName" placeholder="Contoh: Burrito Ayam Spesial" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
         </div>
         
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-espresso mb-1">SKU / Barcode:</label>
-            <input type="text" id="newProdSku" placeholder="BUR-99" class="w-full text-xs font-mono rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+            <label class="block font-bold text-slate-700 mb-1">SKU / Barcode:</label>
+            <input type="text" id="newProdSku" placeholder="BUR-99" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label class="block font-bold text-espresso mb-1">Kategori:</label>
-            <select id="newProdCategory" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50">
+            <label class="block font-bold text-slate-700 mb-1">Kategori:</label>
+            <select id="newProdCategory" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50">
               <option value="Burritos">Burritos</option>
               <option value="Bowls">Bowls</option>
               <option value="Tacos">Tacos</option>
@@ -655,35 +608,35 @@
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-espresso mb-1">Harga Modal (Rp):</label>
-            <input type="number" id="newProdCostPrice" value="15000" class="w-full text-xs font-mono rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+            <label class="block font-bold text-slate-700 mb-1">Harga Modal (Rp):</label>
+            <input type="number" id="newProdCostPrice" value="15000" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label class="block font-bold text-espresso mb-1">Harga Jual (Rp):</label>
-            <input type="number" id="newProdSellingPrice" value="28000" class="w-full text-xs font-mono rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+            <label class="block font-bold text-slate-700 mb-1">Harga Jual (Rp):</label>
+            <input type="number" id="newProdSellingPrice" value="28000" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-espresso mb-1">Stok Awal:</label>
-            <input type="number" id="newProdStock" value="20" class="w-full text-xs font-mono rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+            <label class="block font-bold text-slate-700 mb-1">Stok Awal:</label>
+            <input type="number" id="newProdStock" value="20" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label class="block font-bold text-espresso mb-1">Satuan Unit:</label>
-            <input type="text" id="newProdUnit" value="porsi" class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+            <label class="block font-bold text-slate-700 mb-1">Satuan Unit:</label>
+            <input type="text" id="newProdUnit" value="porsi" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
         <div>
-          <label class="block font-bold text-espresso mb-1">URL Gambar:</label>
-          <input type="url" id="newProdImageUrl" placeholder="https://images.unsplash.com/..." class="w-full text-xs rounded-xl border-cream-200 p-2.5 bg-cream-50 focus:ring-2 focus:ring-terracotta" />
+          <label class="block font-bold text-slate-700 mb-1">URL Gambar:</label>
+          <input type="url" id="newProdImageUrl" placeholder="https://images.unsplash.com/..." class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
         </div>
       </div>
 
       <div class="mt-5 flex gap-2">
-        <button onclick="window.closeAddProductModal()" class="flex-1 py-2.5 rounded-full border border-cream-300 text-hazelnut font-bold text-xs">Batal</button>
-        <button onclick="window.submitNewProduct()" class="flex-1 py-2.5 rounded-full bg-terracotta text-white font-bold text-xs shadow-clay-button">Simpan Produk</button>
+        <button onclick="window.closeAddProductModal()" class="flex-1 py-2.5 rounded-full border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors">Batal</button>
+        <button onclick="window.submitNewProduct()" class="flex-1 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-all">Simpan Produk</button>
       </div>
     </div>
   </div>
@@ -692,7 +645,7 @@
   <div id="thermalPrintContainer" class="hidden"></div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-espresso text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl border border-terracotta transition-all opacity-0 pointer-events-none"></div>
+  <div id="toast" class="toast-box"></div>
 
   <!-- Scripts: Config, ApiClient, App Controller -->
   <script src="js/config.js"></script>

@@ -1,75 +1,72 @@
 /* ==========================================================================
-   RASH MITRA — DESIGN SYSTEM & WARM TACTILE CLAYMORPHISM
-   Aesthetic: Warm Minimalist Claymorphism (Soft Porcelain, Burnt Terracotta, Caramel Gold)
-   Inspired by: Tortilla App & Google Stitch Design Suite
+   RASH MITRA — DESIGN SYSTEM (BLUE - GREEN - WHITE)
+   Theme: Modern Fintech & Smart Cloud POS
+   Primary: Blue (#2563EB) | Accent: Emerald Green (#10B981) | Surface: White & Slate
    Author: RASH WebApp Builder
    ========================================================================== */
 
 :root {
-  /* Warm Terracotta Palette */
-  --primary: #B84E29;
-  --primary-dark: #943A1B;
-  --primary-light: #CD633C;
-  --primary-subtle: #F8ECE7;
-  
-  /* Caramel & Champagne Gold */
-  --secondary: #D9822B;
-  --caramel: #D9822B;
-  --caramel-light: #FFDCC2;
-  --gold: #D9822B;
-  --gold-glow: #E69A3E;
-  --gold-subtle: #FDF7ED;
-  --champagne: #C5A059;
+  /* Primary Royal Blue */
+  --primary: #2563EB;
+  --primary-dark: #1D4ED8;
+  --primary-light: #3B82F6;
+  --primary-subtle: #EFF6FF;
+  --primary-glow: rgba(37, 99, 235, 0.25);
 
-  /* RASH Brand Anchor (Deep Emerald Teal) */
-  --brand-teal: #0A4D4D;
-  --brand-teal-dark: #043A3A;
-  --brand-teal-light: #0E6666;
-  --brand-teal-subtle: #E6F0F0;
-  
-  /* Canvas & Warm Surfaces */
-  --bg-page: #FAF5EE;
-  --bg-canvas: #FAF5EE;
-  --bg-canvas-subtle: #F8F3EA;
+  /* Emerald Green / WhatsApp / Success */
+  --accent: #10B981;
+  --accent-dark: #059669;
+  --accent-light: #34D399;
+  --accent-subtle: #ECFDF5;
+  --accent-glow: rgba(16, 185, 129, 0.25);
+
+  /* Amber / Attention */
+  --warning: #F59E0B;
+  --warning-dark: #D97706;
+  --warning-subtle: #FEF3C7;
+
+  /* Red / Danger */
+  --danger: #EF4444;
+  --danger-dark: #DC2626;
+  --danger-subtle: #FEE2E2;
+
+  /* Canvas & Clean Surfaces */
+  --bg-page: #F8FAFC;
+  --bg-canvas: #F1F5F9;
   --bg-card: #FFFFFF;
-  --bg-surface: #F2EDE6;
-  --bg-surface-high: #ECE7E1;
-  
-  /* Typography Contrast */
-  --text-main: #2C1A14;
-  --text-espresso: #2C1A14;
-  --text-muted: #75665E;
-  --text-light: #9C8880;
+  --bg-surface: #F8FAFC;
+  --bg-surface-elevated: #FFFFFF;
+
+  /* Typography */
+  --text-main: #0F172A;
+  --text-heading: #0F172A;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
   --text-on-dark: #FFFFFF;
-  
-  /* Soft Borders */
-  --border-light: #E6E2DB;
-  --border-subtle: #DEC0B7;
-  --border-terracotta: rgba(184, 78, 41, 0.25);
-  
-  /* Status Colors */
-  --danger: #DC2626;
-  --danger-light: #FFDAD6;
-  --success: #16A34A;
-  --success-light: #DCFCE7;
-  --warning: #D9822B;
-  
-  /* Tactile Claymorphic Shadows */
-  --shadow-clay: 0 10px 28px -4px rgba(184, 78, 41, 0.08), 0 4px 12px -2px rgba(44, 26, 20, 0.03);
-  --shadow-clay-card: 0 8px 24px -4px rgba(184, 78, 41, 0.07), 0 2px 6px -1px rgba(90, 52, 28, 0.04);
-  --shadow-clay-hover: 0 14px 32px -4px rgba(184, 78, 41, 0.14), 0 4px 12px -2px rgba(90, 52, 28, 0.06);
-  --shadow-clay-button: 0 6px 18px -2px rgba(184, 78, 41, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-  --shadow-clay-pill: 0 8px 24px -4px rgba(70, 45, 30, 0.08), inset 0 2px 2px rgba(255, 255, 255, 0.8);
-  --shadow-dock: 0 14px 40px -4px rgba(44, 26, 20, 0.14), 0 2px 8px 0 rgba(0, 0, 0, 0.04);
-  
-  /* Radii */
+
+  /* Borders */
+  --border-light: #E2E8F0;
+  --border-subtle: #CBD5E1;
+  --border-focus: #3B82F6;
+
+  /* Elevation Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 2px 4px 0 rgba(15, 23, 42, 0.04), 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
+  --shadow-xl: 0 20px 32px -8px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.04);
+  --shadow-button: 0 4px 14px -1px rgba(37, 99, 235, 0.35);
+  --shadow-button-green: 0 4px 14px -1px rgba(16, 185, 129, 0.35);
+  --shadow-dock: 0 -4px 24px rgba(15, 23, 42, 0.07), 0 0 0 1px rgba(226, 232, 240, 0.8);
+
+  /* Radius */
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 26px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
-  
-  --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+
+  --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Reset & Base */
@@ -80,76 +77,18 @@
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-page);
   color: var(--text-main);
-  line-height: 1.6;
-  overflow-x: hidden;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular Numerals for Prices & SKUs */
-.font-tabular, .tabular-nums, .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+/* Monospace & Tabular Figures */
+.font-mono, .font-tabular, .tabular-nums {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-feature-settings: 'tnum' 1;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button, input, select, textarea {
-  font-family: inherit;
-}
-
-/* Custom Claymorphic Utilities */
-.clay-surface {
-  background: var(--bg-card);
-  box-shadow: var(--shadow-clay);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  transition: var(--transition);
-}
-
-.clay-surface:hover {
-  box-shadow: var(--shadow-clay-hover);
-}
-
-.clay-button-circle {
-  background: var(--bg-card);
-  box-shadow: 0 4px 12px rgba(44, 26, 20, 0.06), inset 0 1px 2px #FFFFFF;
-  border: 1px solid rgba(236, 225, 208, 0.6);
-  transition: var(--transition);
-}
-
-.clay-button-circle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(184, 78, 41, 0.12);
-}
-
-.clay-button-circle:active {
-  transform: scale(0.95);
-}
-
-.clay-pill {
-  background: var(--bg-card);
-  box-shadow: var(--shadow-clay-pill);
-  border: 1px solid rgba(236, 225, 208, 0.8);
-  border-radius: var(--radius-full);
-}
-
-.clay-dock {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-dock);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: var(--radius-full);
 }
 
 /* Scrollbar Hide */
@@ -163,98 +102,205 @@ button, input, select, textarea {
   scrollbar-width: none;
 }
 
+/* Custom Scrollbar for desktop panels */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: #F1F5F9;
+  border-radius: 999px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* UI Cards & Surfaces */
+.app-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.app-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.app-card-interactive {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.app-card-interactive:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
 /* Buttons */
-.btn {
+.btn-primary {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-button);
+  transition: var(--transition);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 24px;
-  border-radius: var(--radius-full);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: var(--transition);
-  border: none;
 }
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: #fff;
-  box-shadow: var(--shadow-clay-button);
-}
-
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px -2px rgba(37, 99, 235, 0.45);
 }
-
 .btn-primary:active {
-  transform: translateY(1px) scale(0.98);
+  transform: translateY(1px);
 }
 
-.btn-secondary {
-  background: var(--caramel-light);
-  color: #8F4E00;
+.btn-accent {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
   font-weight: 700;
-}
-
-.btn-secondary:hover {
-  background: #FFB77A;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--primary);
-  border: 1.5px solid var(--primary);
-}
-
-.btn-outline:hover {
-  background: var(--primary-subtle);
-}
-
-/* Floating Action Cart Button (+) */
-.btn-quick-add {
-  width: 36px;
-  height: 36px;
   border-radius: var(--radius-full);
-  background: var(--primary);
-  color: #ffffff;
+  box-shadow: var(--shadow-button-green);
+  transition: var(--transition);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-clay-button);
-  border: none;
-  cursor: pointer;
+  gap: 8px;
+}
+.btn-accent:hover {
+  background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #EFF6FF;
+  color: var(--primary);
+  border: 1px solid #BFDBFE;
+  font-weight: 700;
+  border-radius: var(--radius-full);
   transition: var(--transition);
 }
-
-.btn-quick-add:hover {
-  background: var(--primary-dark);
-  transform: scale(1.08);
+.btn-secondary:hover {
+  background: #DBEAFE;
 }
 
-.btn-quick-add:active {
-  transform: scale(0.92);
+/* Floating Dock Navigation */
+.dock-bar {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: var(--shadow-dock);
+  border-radius: var(--radius-full);
+}
+
+/* Toast Notification */
+.toast-box {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px -3px rgba(15, 23, 42, 0.3);
+  border: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast-box.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Product Card Grid */
+.product-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  padding: 10px;
+  transition: var(--transition);
+  display: flex;
+  flex-col: column;
+  justify-content: space-between;
+}
+.product-card:hover {
+  border-color: #93C5FD;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 /* Animations */
-@keyframes pulseSlow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.02); }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-pulse-slow {
-  animation: pulseSlow 3s ease-in-out infinite;
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Thermal Receipt Print Styles */
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse-subtle {
+  animation: pulseSubtle 2s ease-in-out infinite;
+}
+
+/* Thermal Receipt Print Styles 58mm */
 @media print {
   body * {
-    visibility: hidden;
+    visibility: hidden !important;
   }
   #thermalPrintContainer, #thermalPrintContainer * {
-    visibility: visible;
+    visibility: visible !important;
   }
   #thermalPrintContainer {
     position: absolute;
@@ -262,7 +308,7 @@ button, input, select, textarea {
     top: 0;
     width: 58mm;
     margin: 0;
-    padding: 0;
+    padding: 4mm;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     line-height: 1.25;

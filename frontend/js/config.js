@@ -14,13 +14,15 @@ window.APP_CONFIG = {
   // Informasi Toko & Brand
   BRAND_NAME: 'RASH Mitra',
   BUILDER_NAME: 'RASH WebApp Builder',
-  VERSION: '1.1.0-prod',
+  VERSION: '1.2.0-blue',
+  KASIR_WA_NUMBER: '6281234567890', // Nomor WhatsApp Kasir untuk Self-Order
   
   // Master Settings Default Toko
   MOCK_SETTINGS: {
-    STORE_NAME: 'RASH Coffee & Eatery',
+    STORE_NAME: 'RASH Smart POS & Cafe',
     BUSINESS_VERTICAL: 'RESTO', // RESTO | RETAIL | LAUNDRY
     STORE_ADDRESS: 'Jl. Merdeka No. 45, Jakarta Pusat',
+    KASIR_WA_NUMBER: '6281234567890',
     QRIS_MERCHANT_ID: 'NMID-RASH-99887766',
     BANK_ACCOUNT_INFO: 'BCA 8735123456 a.n. RASH Mitra',
     THERMAL_FOOTER: 'Barang yang dibeli tidak dapat ditukar. Terima kasih!',
