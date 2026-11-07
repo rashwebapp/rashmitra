@@ -604,8 +604,9 @@
         } catch (e) {}
       }
 
-      // Aktifkan listener update status pesanan dari Cloud Kasir
+      // Aktifkan listener update status pesanan dari Cloud Kasir & sinkronkan antrean tersimpan
       initCustomerCloudListener();
+      broadcastStoredOrdersToCloud();
 
       if (mejaParam) {
         setTable(decodeURIComponent(mejaParam), true);
@@ -1003,6 +1004,37 @@ _Pesanan ini otomatis masuk ke sistem kasir & antrean dapur resto._`;
       } catch (err) {
         console.warn('Gagal koneksi Cloud SSE di katalog:', err);
       }
+    }
+
+    // Sinkronisasi seluruh riwayat pesanan lokal di HP ke Cloud (agar laptop kasir menerima seluruh antrean)
+    function broadcastStoredOrdersToCloud() {
+      const orders = getStoredOrders();
+      if (!Array.isArray(orders) || orders.length === 0) return;
+
+      const kasirPhone = getStoredKasirPhone();
+      const cloudChannel = normalizeKasirChannelId(kasirPhone);
+
+      orders.forEach(ord => {
+        if (!ord || !ord.order_id) return;
+        const payload = {
+          type: 'RASH_NEW_ORDER',
+          sender: 'katalog_self_order_recovery',
+          order: ord,
+          timestamp: Date.now()
+        };
+
+        try {
+          fetch('https://ntfy.sh/' + cloudChannel, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Title': `Pesanan Meja: ${ord.table_number || 'Tamu'}`,
+              'Priority': 'urgent',
+              'Tags': 'bell,knife_fork_plate'
+            }
+          }).catch(() => {});
+        } catch (e) {}
+      });
     }
 
     function searchOrderTimeline() {

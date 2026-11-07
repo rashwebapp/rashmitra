@@ -296,6 +296,7 @@
 
     setupEventListeners();
     initCloudOrderSync();
+    window.syncAllOrdersFromCloud(true);
 
     // Sinkronisasi realtime saat tamu memesan dari katalog meja
     window.addEventListener('storage', (e) => {
@@ -2328,6 +2329,82 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
     showToast(`🔔 Pesanan baru masuk dari ${order.table_number || 'Meja'}! (#${order.order_id})`);
   };
 
+  // Merge daftar pesanan dari Cloud ke antrean State Kasir (Catch-up sync lintas perangkat)
+  window.mergeOrdersFromCloudPayload = function (payloadArray, silent) {
+    if (!Array.isArray(payloadArray) || payloadArray.length === 0) return 0;
+
+    let addedCount = 0;
+    payloadArray.forEach(item => {
+      let order = null;
+      if (item && item.order && item.order.order_id) {
+        order = item.order;
+      } else if (item && item.order_id) {
+        order = item;
+      } else if (item && item.message) {
+        try {
+          const parsed = JSON.parse(item.message);
+          if (parsed && parsed.order && parsed.order.order_id) {
+            order = parsed.order;
+          }
+        } catch (e) {}
+      }
+
+      if (!order || !order.order_id) return;
+
+      const exists = State.orders.some(o => o.order_id === order.order_id);
+      if (!exists) {
+        State.orders.unshift(order);
+        if (!window.lastProcessedOrderIds) window.lastProcessedOrderIds = new Set();
+        window.lastProcessedOrderIds.add(order.order_id);
+        addedCount++;
+
+        // Upsert customer jika ada
+        if (order.customer_phone && order.customer_phone !== '-') {
+          try {
+            window.upsertCustomerFromOrder(
+              order.customer_name,
+              order.customer_phone,
+              order.total_amount,
+              order.table_number
+            );
+          } catch (e) {}
+        }
+      }
+    });
+
+    if (addedCount > 0) {
+      savePersistedOrders(State.orders);
+      renderOrdersQueueTable();
+      updatePendingOrderBadge();
+      if (!silent) {
+        showToast(`🔄 Berhasil sinkronisasi ${addedCount} pesanan dari HP/perangkat lain!`);
+      }
+    }
+    return addedCount;
+  };
+
+  // Mengambil dan mensinkronkan seluruh riwayat antrean pesanan dari cloud (Catch-up)
+  window.syncAllOrdersFromCloud = async function (silent) {
+    const channel = getCloudSyncChannel();
+    try {
+      const res = await fetch(`https://ntfy.sh/${channel}/json?poll=1&since=24h`);
+      if (!res.ok) return 0;
+      const text = await res.text();
+      const lines = text.trim().split('\n');
+      const items = [];
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          items.push(JSON.parse(line));
+        } catch (e) {}
+      }
+      return window.mergeOrdersFromCloudPayload(items, silent);
+    } catch (err) {
+      console.warn('Gagal sync riwayat pesanan dari cloud:', err);
+      return 0;
+    }
+  };
+
   // Inisialisasi Pendengar Realtime Cloud SSE (ntfy.sh)
   let cloudReconnectTimer = null;
 
@@ -2346,8 +2423,8 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
     }
 
     try {
-      // WAJIB menggunakan endpoint /sse untuk browser native EventSource
-      const es = new EventSource(`https://ntfy.sh/${channel}/sse`);
+      // WAJIB menggunakan endpoint /sse?since=24h agar pesanan offline/riwayat HP otomatis di-replay
+      const es = new EventSource(`https://ntfy.sh/${channel}/sse?since=24h`);
       window._rashOrderEventSource = es;
 
       es.onopen = () => {
@@ -2417,6 +2494,8 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
       });
     }
   }
+
+  window.initCloudOrderSync = initCloudOrderSync;
 
   // Tombol Reconnect Manual jika kasir mengklik badge
   window.reconnectCloudSync = function () {
