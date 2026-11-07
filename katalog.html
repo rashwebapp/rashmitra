@@ -979,7 +979,7 @@ _Pesanan ini otomatis masuk ke sistem kasir & antrean dapur resto._`;
       const kasirPhone = getStoredKasirPhone();
       const channel = normalizeKasirChannelId(kasirPhone);
       try {
-        const es = new EventSource(`https://ntfy.sh/${channel}/json`);
+        const es = new EventSource(`https://ntfy.sh/${channel}/sse`);
         es.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);

@@ -2329,6 +2329,8 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
   };
 
   // Inisialisasi Pendengar Realtime Cloud SSE (ntfy.sh)
+  let cloudReconnectTimer = null;
+
   function initCloudOrderSync() {
     const channel = getCloudSyncChannel();
     console.log('📡 Mengaktifkan Realtime Cloud Order Listener di channel:', channel);
@@ -2344,13 +2346,19 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
     }
 
     try {
-      const es = new EventSource(`https://ntfy.sh/${channel}/json`);
+      // WAJIB menggunakan endpoint /sse untuk browser native EventSource
+      const es = new EventSource(`https://ntfy.sh/${channel}/sse`);
       window._rashOrderEventSource = es;
 
       es.onopen = () => {
-        console.log('🟢 Cloud Sync Kasir Terhubung (Online):', channel);
+        console.log('🟢 Cloud Sync Kasir Terhubung (SSE onopen):', channel);
         updateCloudSyncStatusBadge(true, channel);
       };
+
+      es.addEventListener('open', () => {
+        console.log('🟢 Cloud Sync Kasir Terhubung (SSE event open):', channel);
+        updateCloudSyncStatusBadge(true, channel);
+      });
 
       es.onmessage = (event) => {
         try {
@@ -2368,37 +2376,78 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
       };
 
       es.onerror = (err) => {
-        console.warn('⚠️ Koneksi Cloud SSE terputus, mencoba menyambung ulang...', err);
+        console.warn('⚠️ Koneksi Cloud SSE terputus, mencoba menyambung ulang... ReadyState:', es.readyState, err);
         updateCloudSyncStatusBadge(false, channel);
+        // Jika koneksi tertutup permanen, jadwalkan instansiasi ulang
+        if (es.readyState === 2) {
+          if (cloudReconnectTimer) clearTimeout(cloudReconnectTimer);
+          cloudReconnectTimer = setTimeout(() => {
+            initCloudOrderSync();
+          }, 3000);
+        }
       };
     } catch (err) {
       console.error('Gagal membuat EventSource Cloud:', err);
       updateCloudSyncStatusBadge(false, channel);
     }
+
+    // Pasang Watchdog Pemulihan Koneksi Otomatis (jika tab laptop tidur / bangun kembali)
+    if (!window._rashWatchdogInstalled) {
+      window._rashWatchdogInstalled = true;
+
+      // Cek setiap 8 detik jika status SSE tertutup (CLOSED = 2)
+      setInterval(() => {
+        if (!window._rashOrderEventSource || window._rashOrderEventSource.readyState === 2) {
+          console.log('🔄 Watchdog: Memulihkan sambungan Cloud SSE...');
+          initCloudOrderSync();
+        }
+      }, 8000);
+
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          if (!window._rashOrderEventSource || window._rashOrderEventSource.readyState !== 1) {
+            initCloudOrderSync();
+          }
+        }
+      });
+
+      window.addEventListener('online', () => {
+        console.log('🌐 Koneksi internet laptop kembali online.');
+        initCloudOrderSync();
+      });
+    }
   }
+
+  // Tombol Reconnect Manual jika kasir mengklik badge
+  window.reconnectCloudSync = function () {
+    showToast('🔄 Menyambungkan ulang ke saluran Cloud...');
+    initCloudOrderSync();
+  };
 
   function updateCloudSyncStatusBadge(isOnline, channelName) {
     const badge = document.getElementById('cloudSyncStatusBadge');
     if (badge) {
       if (isOnline) {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        badge.className = 'cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:opacity-80 transition-opacity';
         badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>Cloud Meja Aktif</span>`;
-        badge.title = `Cloud Sync Terhubung (${channelName || ''})`;
+        badge.title = `Cloud Sync Terhubung (${channelName || ''}) • Klik untuk refresh`;
       } else {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200';
+        badge.className = 'cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:opacity-80 transition-opacity';
         badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span><span>Reconnecting...</span>`;
-        badge.title = 'Sedang menyambung ulang ke Cloud Channel...';
+        badge.title = 'Sedang menyambung ulang ke Cloud Channel • Klik untuk paksa sambung';
       }
     }
 
     const adminStatusPill = document.getElementById('adminCloudStatusPill');
     if (adminStatusPill) {
       if (isOnline) {
-        adminStatusPill.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1';
+        adminStatusPill.className = 'cursor-pointer px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1 hover:opacity-80 transition-opacity';
         adminStatusPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Cloud Online</span>';
+        adminStatusPill.title = 'Klik untuk refresh koneksi Cloud';
       } else {
-        adminStatusPill.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1';
+        adminStatusPill.className = 'cursor-pointer px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1 hover:opacity-80 transition-opacity';
         adminStatusPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span><span>Reconnecting...</span>';
+        adminStatusPill.title = 'Klik untuk paksa sambungkan ulang Cloud';
       }
     }
   }
