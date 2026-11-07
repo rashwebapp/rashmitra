@@ -30,6 +30,7 @@
     editingProductSku: null,
     editingCustomerId: null
   };
+  window.State = State;
 
   // Helper Safe Storage (Mencegah SecurityError di iframe / Safari / strict mode)
   const SafeStorage = {
@@ -294,6 +295,7 @@
     }
 
     setupEventListeners();
+    initCloudOrderSync();
 
     // Sinkronisasi realtime saat tamu memesan dari katalog meja
     window.addEventListener('storage', (e) => {
@@ -314,7 +316,7 @@
         }
 
         if (incomingOrder) {
-          window.showNewIncomingOrderPopup(incomingOrder);
+          window.processIncomingOrder(incomingOrder, 'local_storage');
         }
       }
       if (e.key === 'RASH_MITRA_PRODUCTS') {
@@ -335,6 +337,7 @@
       if (e.key === 'RASH_MITRA_SETTINGS') {
         State.settings = loadPersistedSettings();
         populateAdminSettingsUI();
+        initCloudOrderSync();
       }
     });
   }
@@ -662,6 +665,24 @@
   };
 
   // --- FITUR KELOLA MEJA (SUPER ADMIN) ---
+  window.getCatalogTableQrUrl = function (tableName) {
+    const currentPath = window.location.pathname;
+    let catalogBase;
+    if (currentPath.includes('/frontend/')) {
+      catalogBase = `${window.location.origin}${currentPath.replace(/\/frontend\/.*$/, '')}/frontend/katalog.html`;
+    } else {
+      const base = `${window.location.origin}${currentPath.replace(/\/index\.html.*$/, '').replace(/\/$/, '')}`;
+      catalogBase = `${base}/katalog.html`;
+    }
+
+    const kasirPhone = (State.settings && State.settings.KASIR_WA_NUMBER) || 
+                       (window.APP_CONFIG && window.APP_CONFIG.KASIR_WA_NUMBER) || 
+                       '6281234567890';
+    const cleanPhone = normalizeKasirPhoneNumber(kasirPhone);
+
+    return `${catalogBase}?meja=${encodeURIComponent(tableName)}&kasir=${encodeURIComponent(cleanPhone)}`;
+  };
+
   window.renderTablesManager = function () {
     const container = document.getElementById('tablesGridContainer');
     if (!container) return;
@@ -669,12 +690,8 @@
     const countEl = document.getElementById('totalTablesCount');
     if (countEl) countEl.textContent = State.tables.length;
 
-    // Dapatkan URL dasar aplikasi untuk QR Code
-    const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html.*$/, '').replace(/\/$/, '');
-    const catalogBase = baseUrl.endsWith('/frontend') ? `${baseUrl}/katalog.html` : `${baseUrl}/frontend/katalog.html`;
-
     container.innerHTML = State.tables.map((tableName, idx) => {
-      const qrUrl = `${catalogBase}?meja=${encodeURIComponent(tableName)}`;
+      const qrUrl = window.getCatalogTableQrUrl(tableName);
       const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`;
 
       return `
@@ -754,9 +771,7 @@
     const modal = document.getElementById('tableQrModal');
     if (!modal) return;
 
-    const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html.*$/, '').replace(/\/$/, '');
-    const catalogBase = baseUrl.endsWith('/frontend') ? `${baseUrl}/katalog.html` : `${baseUrl}/frontend/katalog.html`;
-    const targetUrl = `${catalogBase}?meja=${encodeURIComponent(tableName)}`;
+    const targetUrl = window.getCatalogTableQrUrl(tableName);
     const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(targetUrl)}`;
 
     document.getElementById('tableQrModalTitle').textContent = tableName;
@@ -911,11 +926,8 @@
   };
 
   window.printAllTableQrStands = function () {
-    const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html.*$/, '').replace(/\/$/, '');
-    const catalogBase = baseUrl.endsWith('/frontend') ? `${baseUrl}/katalog.html` : `${baseUrl}/frontend/katalog.html`;
-
     const html = State.tables.map(tableName => {
-      const targetUrl = `${catalogBase}?meja=${encodeURIComponent(tableName)}`;
+      const targetUrl = window.getCatalogTableQrUrl(tableName);
       const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(targetUrl)}`;
       return `
         <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: center; border: 2px solid #000; padding: 18px; border-radius: 14px; margin-bottom: 25px; page-break-after: always; max-width: 320px; margin-left: auto; margin-right: auto; box-sizing: border-box;">
@@ -1692,6 +1704,7 @@
     renderOrdersQueueTable();
     updatePendingOrderBadge();
     renderActiveModelUI();
+    broadcastOrderStatusCloud(ord);
     showToast(`📋 Status pesanan ${orderId} (${ord.table_number}): ${ord.status_label}`);
   };
 
@@ -2138,6 +2151,10 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
     if (document.getElementById('settKasirPhone')) {
       document.getElementById('settKasirPhone').value = State.settings.KASIR_WA_NUMBER || '081234567890';
     }
+    const channelLabel = document.getElementById('cloudChannelLabel');
+    if (channelLabel) {
+      channelLabel.textContent = getCloudSyncChannel();
+    }
   }
 
   window.saveAdminSettings = function () {
@@ -2158,18 +2175,69 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
     const storeTitleEl = document.getElementById('appStoreName');
     if (storeTitleEl) storeTitleEl.textContent = State.settings.STORE_NAME;
 
-    showToast('💾 Pengaturan resto & Nomor WA Kasir berhasil disimpan!');
+    // Perbarui koneksi Cloud Order Sync ke nomor kasir baru
+    initCloudOrderSync();
+
+    // Perbarui barcode meja di tab Kelola Meja
+    renderTablesManager();
+
+    showToast('💾 Pengaturan resto & Nomor WA Kasir berhasil disimpan! Cloud Sync aktif.');
   };
 
   // ============================================================================
-  // 11. NOTIFIKASI LONCENG & POPUP PESANAN MASUK DARI KATALOG MEJA
+  // 11. NOTIFIKASI LONCENG & CLOUD REALTIME SYNC (HP TAMU -> LAPTOP KASIR)
   // ============================================================================
+
+  // Normalisasi nomor telepon kasir ke format seragam untuk identifikasi Cloud Channel
+  function normalizeKasirPhoneNumber(phone) {
+    let clean = (phone || '').replace(/\D/g, '');
+    if (clean.startsWith('08')) {
+      clean = '62' + clean.slice(1);
+    }
+    if (!clean || clean.length < 5) {
+      clean = '6281234567890';
+    }
+    return clean;
+  }
+
+  function normalizeKasirChannelId(phone) {
+    return 'rash_mitra_' + normalizeKasirPhoneNumber(phone);
+  }
+
+  function getCloudSyncChannel() {
+    const phone = (State.settings && State.settings.KASIR_WA_NUMBER) || 
+                  (window.APP_CONFIG && window.APP_CONFIG.KASIR_WA_NUMBER) || 
+                  '6281234567890';
+    return normalizeKasirChannelId(phone);
+  }
+
+  window.normalizeKasirPhoneNumber = normalizeKasirPhoneNumber;
+  window.normalizeKasirChannelId = normalizeKasirChannelId;
+  window.getCloudSyncChannel = getCloudSyncChannel;
+
+  // Audio Context Shared & Auto-Unlock on user interaction
+  let sharedAudioCtx = null;
+  function getSharedAudioContext() {
+    try {
+      if (!sharedAudioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) sharedAudioCtx = new AudioCtx();
+      }
+      if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+        sharedAudioCtx.resume().catch(() => {});
+      }
+    } catch (e) {}
+    return sharedAudioCtx;
+  }
+
+  window.addEventListener('click', () => { getSharedAudioContext(); }, { once: true });
+  window.addEventListener('touchstart', () => { getSharedAudioContext(); }, { once: true });
+
   // Suara Lonceng Notifikasi Kasir (Ding-Dong-Ding via Web Audio API, tanpa file eksternal)
   function playOrderBell() {
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
+      const ctx = getSharedAudioContext();
+      if (!ctx) return;
       if (ctx.state === 'suspended') {
         ctx.resume();
       }
@@ -2180,7 +2248,7 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
       const gain1 = ctx.createGain();
       osc1.type = 'sine';
       osc1.frequency.setValueAtTime(659.25, now);
-      gain1.gain.setValueAtTime(0.3, now);
+      gain1.gain.setValueAtTime(0.35, now);
       gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
       osc1.connect(gain1);
       gain1.connect(ctx.destination);
@@ -2192,7 +2260,7 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
       const gain2 = ctx.createGain();
       osc2.type = 'sine';
       osc2.frequency.setValueAtTime(830.61, now + 0.12);
-      gain2.gain.setValueAtTime(0.35, now + 0.12);
+      gain2.gain.setValueAtTime(0.4, now + 0.12);
       gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
       osc2.connect(gain2);
       gain2.connect(ctx.destination);
@@ -2204,7 +2272,7 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
       const gain3 = ctx.createGain();
       osc3.type = 'sine';
       osc3.frequency.setValueAtTime(987.77, now + 0.25);
-      gain3.gain.setValueAtTime(0.4, now + 0.25);
+      gain3.gain.setValueAtTime(0.45, now + 0.25);
       gain3.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
       osc3.connect(gain3);
       gain3.connect(ctx.destination);
@@ -2214,6 +2282,200 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
       console.warn('Audio bell:', err);
     }
   }
+
+  // Set Pelacak Deduplikasi Pesanan
+  window.lastProcessedOrderIds = window.lastProcessedOrderIds || new Set();
+
+  // Pengolah Pesanan Masuk Terpadu (Dari Cloud SSE atau LocalStorage)
+  window.processIncomingOrder = function (order, source = 'cloud') {
+    if (!order || !order.order_id) return;
+
+    if (window.lastProcessedOrderIds.has(order.order_id)) {
+      console.log(`[${source}] Order #${order.order_id} sudah diproses sebelumnya.`);
+      return;
+    }
+    window.lastProcessedOrderIds.add(order.order_id);
+
+    if (window.lastProcessedOrderIds.size > 200) {
+      const arr = Array.from(window.lastProcessedOrderIds);
+      window.lastProcessedOrderIds = new Set(arr.slice(-100));
+    }
+
+    const exists = State.orders.some(o => o.order_id === order.order_id);
+    if (!exists) {
+      State.orders.unshift(order);
+      savePersistedOrders(State.orders);
+    }
+
+    if (order.customer_phone && order.customer_phone !== '-') {
+      try {
+        window.upsertCustomerFromOrder(
+          order.customer_name,
+          order.customer_phone,
+          order.total_amount,
+          order.table_number
+        );
+        if (State.currentAppTab === 'pelanggan') renderCustomersTable();
+      } catch (err) {
+        console.warn('Upsert customer error:', err);
+      }
+    }
+
+    renderOrdersQueueTable();
+    updatePendingOrderBadge();
+
+    window.showNewIncomingOrderPopup(order);
+    showToast(`🔔 Pesanan baru masuk dari ${order.table_number || 'Meja'}! (#${order.order_id})`);
+  };
+
+  // Inisialisasi Pendengar Realtime Cloud SSE (ntfy.sh)
+  function initCloudOrderSync() {
+    const channel = getCloudSyncChannel();
+    console.log('📡 Mengaktifkan Realtime Cloud Order Listener di channel:', channel);
+
+    const channelLabel = document.getElementById('cloudChannelLabel');
+    if (channelLabel) channelLabel.textContent = channel;
+
+    if (window._rashOrderEventSource) {
+      try {
+        window._rashOrderEventSource.close();
+      } catch (e) {}
+      window._rashOrderEventSource = null;
+    }
+
+    try {
+      const es = new EventSource(`https://ntfy.sh/${channel}/json`);
+      window._rashOrderEventSource = es;
+
+      es.onopen = () => {
+        console.log('🟢 Cloud Sync Kasir Terhubung (Online):', channel);
+        updateCloudSyncStatusBadge(true, channel);
+      };
+
+      es.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.event === 'message' && data.message) {
+            const payload = JSON.parse(data.message);
+            if (payload && payload.type === 'RASH_NEW_ORDER' && payload.order) {
+              console.log('📥 Pesanan diterima via Cloud Meja:', payload.order.order_id);
+              window.processIncomingOrder(payload.order, 'cloud');
+            }
+          }
+        } catch (e) {
+          console.warn('Gagal membaca pesan order SSE:', e);
+        }
+      };
+
+      es.onerror = (err) => {
+        console.warn('⚠️ Koneksi Cloud SSE terputus, mencoba menyambung ulang...', err);
+        updateCloudSyncStatusBadge(false, channel);
+      };
+    } catch (err) {
+      console.error('Gagal membuat EventSource Cloud:', err);
+      updateCloudSyncStatusBadge(false, channel);
+    }
+  }
+
+  function updateCloudSyncStatusBadge(isOnline, channelName) {
+    const badge = document.getElementById('cloudSyncStatusBadge');
+    if (badge) {
+      if (isOnline) {
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>Cloud Meja Aktif</span>`;
+        badge.title = `Cloud Sync Terhubung (${channelName || ''})`;
+      } else {
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200';
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span><span>Reconnecting...</span>`;
+        badge.title = 'Sedang menyambung ulang ke Cloud Channel...';
+      }
+    }
+
+    const adminStatusPill = document.getElementById('adminCloudStatusPill');
+    if (adminStatusPill) {
+      if (isOnline) {
+        adminStatusPill.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1';
+        adminStatusPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Cloud Online</span>';
+      } else {
+        adminStatusPill.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1';
+        adminStatusPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span><span>Reconnecting...</span>';
+      }
+    }
+  }
+
+  // Broadcast perubahan status pesanan ke Cloud
+  function broadcastOrderStatusCloud(order) {
+    if (!order || !order.order_id) return;
+    try {
+      const channel = getCloudSyncChannel();
+      const payload = {
+        type: 'RASH_ORDER_STATUS_UPDATE',
+        order_id: order.order_id,
+        status: order.status,
+        status_label: order.status_label,
+        timestamp: Date.now()
+      };
+      fetch(`https://ntfy.sh/${channel}`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Title': `Status Pesanan: ${order.order_id} -> ${order.status_label || order.status}`,
+          'Priority': 'default'
+        }
+      }).catch(e => console.warn('Gagal broadcast status:', e));
+    } catch (err) {}
+  }
+
+  // Tombol Uji Cloud Realtime (HP -> Laptop)
+  window.testCloudIncomingOrder = async function () {
+    const channel = getCloudSyncChannel();
+    showToast('📡 Mengirim sinyal uji coba ke Cloud ntfy.sh...');
+
+    const demoTestOrder = {
+      order_id: 'ORD-CLOUD-' + Math.floor(1000 + Math.random() * 9000),
+      timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      customer_name: 'Faisal Basalamah (Tes Cloud HP)',
+      customer_phone: '081398765432',
+      table_number: 'Meja 05',
+      notes: 'Tes notifikasi real-time antar-perangkat HP ke Laptop Kasir via Cloud',
+      items: [
+        { name: 'Nasi Kebuli Daging Kambing', qty: 2, price: 58000 },
+        { name: 'Shahi Adeni (Teh Rempah Yaman)', qty: 2, price: 18000 }
+      ],
+      total_amount: 152000,
+      payment_method: 'Tunai di Kasir',
+      status: 'RECEIVED',
+      status_label: 'Pesanan Diterima Kasir'
+    };
+
+    const payload = {
+      type: 'RASH_NEW_ORDER',
+      sender: 'test_cloud_button',
+      order: demoTestOrder,
+      timestamp: Date.now()
+    };
+
+    try {
+      const res = await fetch(`https://ntfy.sh/${channel}`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Title': `Uji Pesanan Meja: ${demoTestOrder.table_number}`,
+          'Priority': 'urgent',
+          'Tags': 'bell,plate'
+        }
+      });
+
+      if (res.ok) {
+        showToast('✅ Berhasil dikirim ke Cloud! Tunggu pop-up & lonceng berbunyi...');
+      } else {
+        showToast('⚠️ Gagal broadcast ke cloud: HTTP ' + res.status);
+      }
+    } catch (err) {
+      console.error('Error test cloud:', err);
+      showToast('❌ Gagal menghubungi server cloud: ' + err.message);
+    }
+  };
 
   window.showNewIncomingOrderPopup = function (order) {
     if (!order) return;
