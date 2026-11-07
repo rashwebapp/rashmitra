@@ -1,3 +1,13 @@
 {
-  "cleanUrls": true
+  "cleanUrls": false,
+  "trailingSlash": true,
+  "rewrites": [
+    { "source": "/", "destination": "/frontend/index.html" },
+    { "source": "/katalog", "destination": "/frontend/katalog.html" },
+    { "source": "/katalog.html", "destination": "/frontend/katalog.html" },
+    { "source": "/pos", "destination": "/frontend/index.html" },
+    { "source": "/admin", "destination": "/frontend/index.html?auth=owner" },
+    { "source": "/js/:match*", "destination": "/frontend/js/:match*" },
+    { "source": "/css/:match*", "destination": "/frontend/css/:match*" }
+  ]
 }

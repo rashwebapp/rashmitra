@@ -28,21 +28,40 @@
     editingProductSku: null
   };
 
+  // Helper Safe Storage (Mencegah SecurityError di iframe / Safari / strict mode)
+  const SafeStorage = {
+    getItem: function (key) {
+      try { return sessionStorage.getItem(key) || localStorage.getItem(key); } catch (e) { return null; }
+    },
+    setItem: function (key, val) {
+      try { sessionStorage.setItem(key, val); } catch (e) {}
+      try { localStorage.setItem(key, val); } catch (e) {}
+    },
+    removeItem: function (key) {
+      try { sessionStorage.removeItem(key); } catch (e) {}
+      try { localStorage.removeItem(key); } catch (e) {}
+    }
+  };
+
   // Toast Helper
   function showToast(message, duration) {
-    duration = duration || 3000;
-    let toast = document.getElementById('toast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'toast';
-      toast.className = 'toast-box';
-      document.body.appendChild(toast);
+    try {
+      duration = duration || 3000;
+      let toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.className = 'toast-box';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span class="material-symbols-outlined text-[18px] text-emerald-400">info</span><span>${message}</span>`;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    } catch (e) {
+      console.log('Toast:', message);
     }
-    toast.innerHTML = `<span class="material-symbols-outlined text-[18px] text-emerald-400">info</span><span>${message}</span>`;
-    toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, duration);
   }
 
   function formatIDR(num) {
@@ -111,7 +130,7 @@
     State.currentVertical = State.settings.BUSINESS_VERTICAL || 'RESTO';
 
     // Periksa Sesi Login Tersimpan
-    const savedSession = sessionStorage.getItem('RASH_USER_SESSION');
+    const savedSession = SafeStorage.getItem('RASH_USER_SESSION');
     if (savedSession) {
       try {
         State.user = JSON.parse(savedSession);
@@ -199,15 +218,15 @@
     const modelSelect = document.getElementById('activeModelSelect');
     if (modelSelect) modelSelect.value = State.currentVertical;
 
-    // Inisialisasi tampilan
-    renderActiveModelUI();
-    renderPosCategories();
-    renderPosCatalog();
-    renderInventoryTable();
-    renderOrdersQueueTable();
-    updatePosCartUI();
-    updatePendingOrderBadge();
-    generateInvoiceNumber();
+    // Inisialisasi tampilan secara aman (fail-safe rendering)
+    try { renderActiveModelUI(); } catch (e) { console.error('Error renderActiveModelUI:', e); }
+    try { renderPosCategories(); } catch (e) { console.error('Error renderPosCategories:', e); }
+    try { renderPosCatalog(); } catch (e) { console.error('Error renderPosCatalog:', e); }
+    try { renderInventoryTable(); } catch (e) { console.error('Error renderInventoryTable:', e); }
+    try { renderOrdersQueueTable(); } catch (e) { console.error('Error renderOrdersQueueTable:', e); }
+    try { updatePosCartUI(); } catch (e) { console.error('Error updatePosCartUI:', e); }
+    try { updatePendingOrderBadge(); } catch (e) { console.error('Error updatePendingOrderBadge:', e); }
+    try { generateInvoiceNumber(); } catch (e) { console.error('Error generateInvoiceNumber:', e); }
   }
 
   function updatePendingOrderBadge() {
@@ -264,7 +283,7 @@
 
     State.user = { name: staffName, role: 'STAFF', email: 'kasir@rashmitra.id' };
     State.isDemo = false;
-    sessionStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
+    SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
     enterMainApplication();
     showToast(`👋 Selamat bertugas, ${staffName}!`);
   };
@@ -276,7 +295,7 @@
     if (user.toLowerCase() === 'darurat' || user.toLowerCase() === 'admin') {
       State.user = { name: 'Super Admin (Owner)', role: 'OWNER', email: 'owner@rashmitra.id' };
       State.isDemo = false;
-      sessionStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
+      SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
       enterMainApplication();
       showToast('🔓 Akses Penuh Super Admin Terbuka!');
     } else {
@@ -287,7 +306,7 @@
   window.handleGoogleLogin = function () {
     State.user = { name: 'Owner Google Workspace', role: 'OWNER', email: 'owner.mitra@gmail.com' };
     State.isDemo = false;
-    sessionStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
+    SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
     enterMainApplication();
     showToast('✅ Berhasil masuk sebagai Super Admin Google Workspace!');
   };
@@ -299,13 +318,13 @@
     } else {
       State.user = { name: 'Super Admin Demo', role: 'OWNER', email: 'demo-owner@rash.id' };
     }
-    sessionStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
+    SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
     enterMainApplication();
     showToast(`⚡ Masuk instan sebagai ${State.user.name}`);
   };
 
   window.handleLogoutApp = function () {
-    sessionStorage.removeItem('RASH_USER_SESSION');
+    SafeStorage.removeItem('RASH_USER_SESSION');
     State.user = null;
     State.isDemo = false;
     State.posCart = [];
