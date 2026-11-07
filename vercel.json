@@ -1,9 +1,9 @@
 {
-  "cleanUrls": false,
-  "trailingSlash": true,
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/", "destination": "/frontend/index.html" },
     { "source": "/katalog", "destination": "/frontend/katalog.html" },
+    { "source": "/katalog/", "destination": "/frontend/katalog.html" },
     { "source": "/katalog.html", "destination": "/frontend/katalog.html" },
     { "source": "/pos", "destination": "/frontend/index.html" },
     { "source": "/admin", "destination": "/frontend/index.html?auth=owner" },
