@@ -1,23 +1,24 @@
 /**
  * ============================================================================
  * RASH MITRA — APP CONTROLLER & OPERATIONAL WORKSPACE
- * Theme: Blue - Green - White (Modern Fintech POS & Mini ERP)
- * Roles: Kasir (Staff) & Super Admin (Owner)
- * Modules: POS Kasir | Master Produk & Stok | Antrean Pesanan | Pengaturan
+ * Theme: Blue - Green - White (Restoran & Kuliner Timur Tengah)
+ * Modules: POS Kasir Resto | Meja 1-10 (+QR Code Mandiri) | Stok | Antrean Dapur
  * ============================================================================
  */
 
 (function () {
   'use strict';
 
-  // State Management
+  // State Management Aplikasi
   const State = {
     user: null, // { name: '', role: 'STAFF' | 'OWNER', email: '' }
     isDemo: false,
-    currentVertical: 'RESTO', // RESTO | RETAIL | LAUNDRY
+    currentVertical: 'RESTO',
     currentAppTab: 'pos', // pos | produk | pesanan | admin
     products: [],
     orders: [],
+    tables: [], // Daftar Meja: Meja 01 s/d Meja 10 (+ meja tambahan)
+    customers: [], // Data Pelanggan CRM (Kontak & Riwayat)
     settings: {},
     posCart: [],
     posClockedIn: true,
@@ -25,7 +26,9 @@
     posSearchQuery: '',
     posPayMethod: 'CASH',
     posCashTendered: 0,
-    editingProductSku: null
+    posSelectedTable: 'Meja 01',
+    editingProductSku: null,
+    editingCustomerId: null
   };
 
   // Helper Safe Storage (Mencegah SecurityError di iframe / Safari / strict mode)
@@ -68,6 +71,26 @@
     return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
   }
 
+  // Helper Format Nomor & URL WhatsApp Resmi (Konversi 08... -> 628... Standar Internasional)
+  window.formatWhatsAppUrl = function (phone, message = '') {
+    if (!phone || phone === '-') return '#';
+    let clean = String(phone).replace(/\D/g, '');
+    if (!clean) return '#';
+
+    // Konversi nomor lokal Indonesia (08... atau 8...) ke format internasional (628...)
+    if (clean.startsWith('0')) {
+      clean = '62' + clean.slice(1);
+    } else if (clean.startsWith('8')) {
+      clean = '62' + clean;
+    }
+
+    const encodedMsg = message ? encodeURIComponent(message) : '';
+    // api.whatsapp.com/send membuka WhatsApp Desktop Mac & Web tanpa error "Tautan tidak dapat dibuka"
+    return encodedMsg 
+      ? `https://api.whatsapp.com/send?phone=${clean}&text=${encodedMsg}`
+      : `https://api.whatsapp.com/send?phone=${clean}`;
+  };
+
   function UtilitiesFormatDate() {
     const d = new Date();
     const yr = d.getFullYear();
@@ -77,14 +100,12 @@
   }
 
   // ============================================================================
-  // LOCAL STORAGE ORDER SYNC (Realtime antar Tab / Katalog & Kasir)
+  // PERSISTENSI DATA (ORDERS, PRODUK, & MEJA)
   // ============================================================================
   function loadPersistedOrders() {
     try {
       const stored = localStorage.getItem('RASH_MITRA_ORDERS');
-      if (stored) {
-        return JSON.parse(stored);
-      }
+      if (stored) return JSON.parse(stored);
     } catch (e) {
       console.warn('Gagal membaca orders dari localStorage:', e);
     }
@@ -94,17 +115,13 @@
   function savePersistedOrders(ordersList) {
     try {
       localStorage.setItem('RASH_MITRA_ORDERS', JSON.stringify(ordersList));
-    } catch (e) {
-      console.warn('Gagal menyimpan orders ke localStorage:', e);
-    }
+    } catch (e) {}
   }
 
   function loadPersistedProducts() {
     try {
       const stored = localStorage.getItem('RASH_MITRA_PRODUCTS');
-      if (stored) {
-        return JSON.parse(stored);
-      }
+      if (stored) return JSON.parse(stored);
     } catch (e) {
       console.warn('Gagal membaca products dari localStorage:', e);
     }
@@ -114,22 +131,91 @@
   function savePersistedProducts(prodsList) {
     try {
       localStorage.setItem('RASH_MITRA_PRODUCTS', JSON.stringify(prodsList));
-    } catch (e) {
-      console.warn('Gagal menyimpan products ke localStorage:', e);
-    }
+    } catch (e) {}
   }
+
+  function loadPersistedTables() {
+    try {
+      const stored = localStorage.getItem('RASH_MITRA_TABLES');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {
+      console.warn('Gagal membaca tables dari localStorage:', e);
+    }
+    return JSON.parse(JSON.stringify(window.APP_CONFIG.DEFAULT_TABLES || [
+      'Meja 01', 'Meja 02', 'Meja 03', 'Meja 04', 'Meja 05',
+      'Meja 06', 'Meja 07', 'Meja 08', 'Meja 09', 'Meja 10'
+    ]));
+  }
+
+  function savePersistedTables(tablesList) {
+    try {
+      localStorage.setItem('RASH_MITRA_TABLES', JSON.stringify(tablesList));
+    } catch (e) {}
+  }
+
+  function loadPersistedCustomers() {
+    try {
+      const stored = localStorage.getItem('RASH_MITRA_CUSTOMERS');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {
+      console.warn('Gagal membaca customers dari localStorage:', e);
+    }
+    return JSON.parse(JSON.stringify(window.APP_CONFIG.DEFAULT_CUSTOMERS || []));
+  }
+
+  function savePersistedCustomers(customersList) {
+    try {
+      localStorage.setItem('RASH_MITRA_CUSTOMERS', JSON.stringify(customersList));
+    } catch (e) {}
+  }
+
+  window.upsertCustomerFromOrder = function (name, phone, orderAmount, tableNumber) {
+    if (!phone || phone === '-') return null;
+
+    let customers = loadPersistedCustomers();
+    const cleanPhone = phone.replace(/\D/g, '');
+    let existing = customers.find(c => c.phone.replace(/\D/g, '') === cleanPhone);
+
+    if (existing) {
+      if (name && !name.startsWith('Tamu') && name !== 'Pelanggan') {
+        existing.name = name;
+      }
+      existing.total_orders = (existing.total_orders || 0) + 1;
+      existing.total_spent = (existing.total_spent || 0) + (Number(orderAmount) || 0);
+      existing.last_visit = new Date().toISOString();
+      if (tableNumber) existing.favorite_table = tableNumber;
+    } else {
+      existing = {
+        customer_id: 'CUST-' + Date.now().toString().slice(-4),
+        name: name || 'Tamu Baru',
+        phone: phone,
+        email: '',
+        total_orders: 1,
+        total_spent: Number(orderAmount) || 0,
+        favorite_table: tableNumber || 'Meja 01',
+        notes: 'Pemesanan Kasir / Mandiri',
+        created_at: new Date().toISOString().split('T')[0]
+      };
+      customers.push(existing);
+    }
+
+    savePersistedCustomers(customers);
+    State.customers = customers;
+    return existing;
+  };
 
   // ============================================================================
   // 1. INISIALISASI APLIKASI
   // ============================================================================
   async function initApp() {
-    // Muat data pengaturan & produk
     State.settings = window.APP_CONFIG.MOCK_SETTINGS || {};
     State.products = loadPersistedProducts();
     State.orders = loadPersistedOrders();
-    State.currentVertical = State.settings.BUSINESS_VERTICAL || 'RESTO';
+    State.tables = loadPersistedTables();
+    State.customers = loadPersistedCustomers();
+    State.currentVertical = 'RESTO';
 
-    // Periksa Sesi Login Tersimpan
+    // Cek Sesi Login
     const savedSession = SafeStorage.getItem('RASH_USER_SESSION');
     if (savedSession) {
       try {
@@ -140,7 +226,6 @@
       }
     } else {
       showLoginGate();
-      // Buka tab owner otomatis jika ada parameter ?auth=owner
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('auth') === 'owner') {
         window.switchAuthTab('owner');
@@ -149,18 +234,28 @@
 
     setupEventListeners();
 
-    // Dengarkan event sinkronisasi localStorage saat pelanggan pesan dari tab katalog
+    // Sinkronisasi realtime saat tamu memesan dari katalog meja
     window.addEventListener('storage', (e) => {
       if (e.key === 'RASH_MITRA_ORDERS') {
         State.orders = loadPersistedOrders();
         renderOrdersQueueTable();
         updatePendingOrderBadge();
-        showToast('🔔 Pesanan baru masuk dari Katalog Pelanggan!');
+        showToast('🔔 Pesanan baru masuk dari Meja Tamu!');
       }
       if (e.key === 'RASH_MITRA_PRODUCTS') {
         State.products = loadPersistedProducts();
         renderPosCatalog();
         renderInventoryTable();
+      }
+      if (e.key === 'RASH_MITRA_TABLES') {
+        State.tables = loadPersistedTables();
+        renderActiveModelUI();
+        renderTablesManager();
+      }
+      if (e.key === 'RASH_MITRA_CUSTOMERS') {
+        State.customers = loadPersistedCustomers();
+        renderActiveModelUI();
+        if (State.currentAppTab === 'pelanggan') renderCustomersTable();
       }
     });
   }
@@ -184,39 +279,29 @@
     // Update Header Profil & Role
     const storeNameEl = document.getElementById('appStoreName');
     const userNameEl = document.getElementById('appUserName');
-    if (storeNameEl) storeNameEl.textContent = State.settings.STORE_NAME || 'RASH Smart POS';
+    if (storeNameEl) storeNameEl.textContent = State.settings.STORE_NAME || 'RASH Resto Timur Tengah';
     if (userNameEl) userNameEl.textContent = State.user.name;
 
     const roleBadge = document.getElementById('appRoleBadge');
-    const demoBox = document.getElementById('demoModelSelectorBox');
     const navAdmin = document.getElementById('navTabAdmin');
-
     const isSuperAdmin = State.user.role === 'OWNER' || State.isDemo;
 
     if (roleBadge) {
       if (State.isDemo) {
-        roleBadge.textContent = 'MODE DEMO';
+        roleBadge.textContent = 'MODE DEMO RESTO';
         roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800 border border-blue-200';
       } else if (State.user.role === 'OWNER') {
-        roleBadge.textContent = 'SUPER ADMIN';
+        roleBadge.textContent = 'SUPER ADMIN RESTO';
         roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-indigo-100 text-indigo-800 border border-indigo-200';
       } else {
-        roleBadge.textContent = 'KASIR AKTIF';
+        roleBadge.textContent = 'KASIR RESTO AKTIF';
         roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-200';
       }
     }
 
-    // Pilihan 3 Model Vertikal disembunyikan untuk staf kasir biasa
-    if (demoBox) {
-      demoBox.style.display = isSuperAdmin ? 'flex' : 'none';
-    }
     if (navAdmin) {
       navAdmin.style.display = isSuperAdmin ? 'flex' : 'none';
     }
-
-    // Set dropdown model aktif
-    const modelSelect = document.getElementById('activeModelSelect');
-    if (modelSelect) modelSelect.value = State.currentVertical;
 
     // Inisialisasi tampilan secara aman (fail-safe rendering)
     try { renderActiveModelUI(); } catch (e) { console.error('Error renderActiveModelUI:', e); }
@@ -224,6 +309,7 @@
     try { renderPosCatalog(); } catch (e) { console.error('Error renderPosCatalog:', e); }
     try { renderInventoryTable(); } catch (e) { console.error('Error renderInventoryTable:', e); }
     try { renderOrdersQueueTable(); } catch (e) { console.error('Error renderOrdersQueueTable:', e); }
+    try { renderTablesManager(); } catch (e) { console.error('Error renderTablesManager:', e); }
     try { updatePosCartUI(); } catch (e) { console.error('Error updatePosCartUI:', e); }
     try { updatePendingOrderBadge(); } catch (e) { console.error('Error updatePendingOrderBadge:', e); }
     try { generateInvoiceNumber(); } catch (e) { console.error('Error generateInvoiceNumber:', e); }
@@ -277,11 +363,11 @@
     const pin = pinInput ? pinInput.value.trim() : '';
 
     if (pin !== '1234') {
-      showToast('⚠️ PIN Kasir keliru! Gunakan PIN demo: 1234');
+      showToast('⚠️ PIN Kasir keliru! Gunakan PIN default: 1234');
       return;
     }
 
-    State.user = { name: staffName, role: 'STAFF', email: 'kasir@rashmitra.id' };
+    State.user = { name: staffName, role: 'STAFF', email: 'kasir@rashresto.id' };
     State.isDemo = false;
     SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
     enterMainApplication();
@@ -290,25 +376,23 @@
 
   window.handleOwnerLogin = function () {
     const user = (document.getElementById('ownerUser')?.value || '').trim();
-    const pass = (document.getElementById('ownerPass')?.value || '').trim();
-
     if (user.toLowerCase() === 'darurat' || user.toLowerCase() === 'admin') {
-      State.user = { name: 'Super Admin (Owner)', role: 'OWNER', email: 'owner@rashmitra.id' };
+      State.user = { name: 'Super Admin Resto (Owner)', role: 'OWNER', email: 'owner@rashresto.id' };
       State.isDemo = false;
       SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
       enterMainApplication();
-      showToast('🔓 Akses Penuh Super Admin Terbuka!');
+      showToast('🔓 Panel Super Admin Resto Terbuka!');
     } else {
       showToast('⚠️ Username darurat: ketik "darurat"');
     }
   };
 
   window.handleGoogleLogin = function () {
-    State.user = { name: 'Owner Google Workspace', role: 'OWNER', email: 'owner.mitra@gmail.com' };
+    State.user = { name: 'Owner Google Workspace', role: 'OWNER', email: 'owner.resto@gmail.com' };
     State.isDemo = false;
     SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
     enterMainApplication();
-    showToast('✅ Berhasil masuk sebagai Super Admin Google Workspace!');
+    showToast('✅ Berhasil masuk sebagai Super Admin Resto!');
   };
 
   window.quickDemoLogin = function (role) {
@@ -316,7 +400,7 @@
     if (role === 'staff') {
       State.user = { name: 'Kasir Demo (Budi)', role: 'STAFF', email: 'demo-kasir@rash.id' };
     } else {
-      State.user = { name: 'Super Admin Demo', role: 'OWNER', email: 'demo-owner@rash.id' };
+      State.user = { name: 'Super Admin Resto', role: 'OWNER', email: 'demo-owner@rash.id' };
     }
     SafeStorage.setItem('RASH_USER_SESSION', JSON.stringify(State.user));
     enterMainApplication();
@@ -355,13 +439,18 @@
       renderOrdersQueueTable();
       updatePendingOrderBadge();
     }
+    if (tab === 'pelanggan') {
+      document.getElementById('panelTabPelanggan')?.classList.remove('hidden');
+      renderCustomersTable();
+    }
     if (tab === 'admin') {
       if (State.user.role !== 'OWNER' && !State.isDemo) {
-        showToast('⛔ Akses Terbatas: Hanya Super Admin.');
+        showToast('⛔ Akses Terbatas: Khusus Super Admin.');
         window.switchAppTab('pos');
         return;
       }
       document.getElementById('panelTabAdmin')?.classList.remove('hidden');
+      renderTablesManager();
     }
 
     // Styling tombol navigasi
@@ -373,6 +462,7 @@
       pos: 'navTabPos',
       produk: 'navTabProduk',
       pesanan: 'navTabPesanan',
+      pelanggan: 'navTabPelanggan',
       admin: 'navTabAdmin'
     };
 
@@ -383,102 +473,402 @@
   };
 
   // ============================================================================
-  // 4. MULTI-VERTIKAL ENGINE (RESTO / RETAIL / LAUNDRY)
+  // 4. MANAJEMEN MEJA RESTORAN & POS REGISTER INPUTS
   // ============================================================================
-  window.changeBusinessModel = function (newModel) {
-    State.currentVertical = newModel;
-    State.settings.BUSINESS_VERTICAL = newModel;
-
-    const select = document.getElementById('activeModelSelect');
-    if (select) select.value = newModel;
-
-    // Highlight opsi model di tab admin
-    document.querySelectorAll('.model-card-option').forEach(c => {
-      const isSel = c.dataset.val === newModel;
-      c.className = isSel
-        ? 'model-card-option p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/70 shadow-sm cursor-pointer transition-all'
-        : 'model-card-option p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all';
-    });
-
-    renderActiveModelUI();
-    renderPosCategories();
-    renderPosCatalog();
-    renderInventoryTable();
-    renderOrdersQueueTable();
-
-    const label = { RESTO: 'Restoran / Kafe', RETAIL: 'Retail / Warung', LAUNDRY: 'Laundry / Jasa' }[newModel];
-    showToast(`🔄 Model Bisnis Aktif: ${label}`);
-  };
-
   function renderActiveModelUI() {
     const inputsBox = document.getElementById('posVerticalInputs');
     if (!inputsBox) return;
 
-    if (State.currentVertical === 'RESTO') {
-      inputsBox.innerHTML = `
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Nomor Meja:</label>
-          <input type="text" id="posTableNumber" placeholder="Contoh: Meja 04" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" value="Meja 01" />
+    // Dapatkan daftar meja yang sedang memiliki antrean aktif
+    const occupiedTables = State.orders
+      .filter(o => o.status === 'COOKING' || o.status === 'RECEIVED' || o.status === 'READY')
+      .map(o => o.table_number);
+
+    inputsBox.innerHTML = `
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Nomor Meja Restoran:</label>
+        <select id="posTableNumberSelect" onchange="window.handlePosTableChange(this.value)" class="w-full text-xs font-bold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500">
+          ${State.tables.map(t => {
+            const isOccupied = occupiedTables.includes(t);
+            const isSelected = t === State.posSelectedTable;
+            return `<option value="${t}" ${isSelected ? 'selected' : ''}>
+              ${isOccupied ? '🔴' : '🟢'} ${t} ${isOccupied ? '(Ada Pesanan)' : '(Kosong)'}
+            </option>`;
+          }).join('')}
+          <option value="Takeaway (Bungkus)" ${State.posSelectedTable === 'Takeaway (Bungkus)' ? 'selected' : ''}>🥡 Takeaway (Bungkus)</option>
+          <option value="Delivery Ojol" ${State.posSelectedTable === 'Delivery Ojol' ? 'selected' : ''}>🛵 Delivery Ojek Online</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Tipe Layanan:</label>
+        <select id="posServiceType" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500">
+          <option value="Dine-in">Makan di Tempat (Dine-in)</option>
+          <option value="Takeaway">Bungkus Pulang (Takeaway)</option>
+        </select>
+      </div>
+
+      <!-- Data Pelanggan CRM Resto (Kirim Resi WA Otomatis) -->
+      <div class="col-span-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-[10px] font-extrabold uppercase tracking-wider text-blue-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">contacts</span>
+            <span>Data Pelanggan (Resi WA):</span>
+          </label>
+          <button type="button" onclick="window.openCustomerModal()" class="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-0.5">
+            + Tambah Baru
+          </button>
         </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Tipe Pesanan:</label>
-          <select id="posServiceType" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500">
-            <option value="Dine-in">Makan di Tempat (Dine-in)</option>
-            <option value="Takeaway">Bungkus (Takeaway)</option>
-          </select>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <select id="posCustomerSelect" onchange="window.handlePosCustomerSelect(this.value)" class="w-full text-xs rounded-xl border-slate-200 p-2 bg-white font-medium focus:ring-2 focus:ring-blue-500">
+              <option value="">-- Tamu Walk-in / Umum --</option>
+              ${State.customers.map(c => `
+                <option value="${c.customer_id}">${c.name} (${c.phone})</option>
+              `).join('')}
+            </select>
+          </div>
+          <div>
+            <input type="tel" id="posCustomerPhone" oninput="window.handlePosPhoneInput(this.value)" placeholder="No. WA: 081234567..." class="w-full text-xs font-mono rounded-xl border-slate-200 p-2 bg-white focus:ring-2 focus:ring-blue-500" />
+          </div>
         </div>
-      `;
-    } else if (State.currentVertical === 'LAUNDRY') {
-      inputsBox.innerHTML = `
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Berat Laundry (Kg):</label>
-          <input type="number" id="posLaundryWeight" step="0.5" placeholder="cth: 3.5" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" value="3.0" />
+
+        <div class="mt-2 flex items-center justify-between gap-2">
+          <input type="text" id="posCustomerName" placeholder="Nama Pelanggan / Tamu..." class="flex-1 text-xs rounded-xl border-slate-200 p-1.5 bg-white font-medium focus:ring-2 focus:ring-blue-500" />
+          <label class="flex items-center gap-1.5 text-[10px] font-semibold text-slate-600 shrink-0 cursor-pointer">
+            <input type="checkbox" id="posSaveCustomerCheckbox" checked class="rounded text-blue-600 focus:ring-blue-500 text-xs" />
+            <span>Simpan Kontak</span>
+          </label>
         </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Paket Layanan:</label>
-          <select id="posLaundryService" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500">
-            <option value="Reguler (2 Hari)">Reguler (2 Hari)</option>
-            <option value="Kilat Express (6 Jam)">Kilat Express (6 Jam)</option>
-            <option value="Satuan Dry Clean">Satuan Dry Clean</option>
-          </select>
-        </div>
-      `;
+      </div>
+
+      <div class="col-span-2">
+        <label class="block text-[10px] font-bold text-slate-500 mb-1">Catatan Khusus Koki Dapur (Opsional):</label>
+        <input type="text" id="posKitchenNotes" placeholder="Contoh: Sambal dhabah dipisah, porsi nasi banyak..." class="w-full text-xs rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+      </div>
+    `;
+  }
+
+  window.handlePosCustomerSelect = function (custId) {
+    const c = State.customers.find(item => item.customer_id === custId);
+    const nameInput = document.getElementById('posCustomerName');
+    const phoneInput = document.getElementById('posCustomerPhone');
+
+    if (c) {
+      if (nameInput) nameInput.value = c.name;
+      if (phoneInput) phoneInput.value = c.phone;
+      showToast(`👤 Terhubung: ${c.name} (${c.favorite_table ? 'Favorit: ' + c.favorite_table : c.phone})`);
     } else {
-      inputsBox.innerHTML = `
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Nama Pembeli:</label>
-          <input type="text" id="posRetailCustomer" placeholder="Pelanggan Umum" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" value="Pelanggan Umum" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">No. WhatsApp:</label>
-          <input type="tel" id="posRetailPhone" placeholder="08xxxxxxxxxx" class="w-full text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+      if (nameInput) nameInput.value = '';
+      if (phoneInput) phoneInput.value = '';
+    }
+  };
+
+  window.handlePosPhoneInput = function (val) {
+    const clean = val.replace(/\D/g, '');
+    if (clean.length >= 8) {
+      const c = State.customers.find(item => item.phone.replace(/\D/g, '').includes(clean));
+      if (c) {
+        const nameInput = document.getElementById('posCustomerName');
+        const select = document.getElementById('posCustomerSelect');
+        if (nameInput && !nameInput.value) nameInput.value = c.name;
+        if (select) select.value = c.customer_id;
+        showToast(`✨ Pelanggan Ditemukan: ${c.name}`);
+      }
+    }
+  };
+
+  window.handlePosTableChange = function (val) {
+    State.posSelectedTable = val;
+  };
+
+  // --- FITUR KELOLA MEJA (SUPER ADMIN) ---
+  window.renderTablesManager = function () {
+    const container = document.getElementById('tablesGridContainer');
+    if (!container) return;
+
+    const countEl = document.getElementById('totalTablesCount');
+    if (countEl) countEl.textContent = State.tables.length;
+
+    // Dapatkan URL dasar aplikasi untuk QR Code
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html.*$/, '').replace(/\/$/, '');
+    const catalogBase = baseUrl.endsWith('/frontend') ? `${baseUrl}/katalog.html` : `${baseUrl}/frontend/katalog.html`;
+
+    container.innerHTML = State.tables.map((tableName, idx) => {
+      const qrUrl = `${catalogBase}?meja=${encodeURIComponent(tableName)}`;
+      const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`;
+
+      return `
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 hover:border-blue-400 shadow-xs flex flex-col justify-between transition-all group">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[15px]">table_restaurant</span>
+                ${tableName}
+              </span>
+              <button onclick="window.deleteTable('${tableName}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors" title="Hapus Meja Ini">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+              </button>
+            </div>
+
+            <!-- QR Code Mini Thumbnail -->
+            <div class="w-full aspect-square max-w-[140px] mx-auto bg-slate-50 rounded-xl p-2.5 border border-slate-200 flex items-center justify-center mb-3">
+              <img src="${qrImgSrc}" alt="QR ${tableName}" class="w-full h-full object-contain" loading="lazy" />
+            </div>
+
+            <p class="text-[10px] text-center text-slate-500 line-clamp-1 mb-2 font-mono">
+              ${tableName} • Scan Mandiri
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100">
+            <button onclick="window.openTableQrModal('${tableName}')" class="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all">
+              <span class="material-symbols-outlined text-[16px]">qr_code_2</span>
+              <span>Cetak QR Stand</span>
+            </button>
+            <a href="${qrUrl}" target="_blank" class="w-full py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-[11px] flex items-center justify-center gap-1 border border-slate-200 transition-colors">
+              <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+              <span>Tes Buka Menu</span>
+            </a>
+          </div>
         </div>
       `;
+    }).join('');
+  };
+
+  window.addNewTable = function () {
+    const input = document.getElementById('newTableNameInput');
+    let name = (input ? input.value : '').trim();
+
+    if (!name) {
+      // Rekomendasikan nama meja otomatis
+      const nextNum = State.tables.length + 1;
+      name = `Meja ${String(nextNum).padStart(2, '0')}`;
     }
-  }
+
+    if (State.tables.includes(name)) {
+      showToast(`⚠️ Nama "${name}" sudah terdaftar! Gunakan nama lain.`);
+      return;
+    }
+
+    State.tables.push(name);
+    savePersistedTables(State.tables);
+
+    if (input) input.value = '';
+    renderTablesManager();
+    renderActiveModelUI();
+    showToast(`✅ ${name} berhasil ditambahkan ke daftar meja resto!`);
+  };
+
+  window.deleteTable = function (name) {
+    if (confirm(`Yakin ingin menghapus ${name}? Tamu tidak akan bisa lagi scan barcode meja ini.`)) {
+      State.tables = State.tables.filter(t => t !== name);
+      savePersistedTables(State.tables);
+      renderTablesManager();
+      renderActiveModelUI();
+      showToast(`🗑️ ${name} telah dihapus.`);
+    }
+  };
+
+  window.openTableQrModal = function (tableName) {
+    const modal = document.getElementById('tableQrModal');
+    if (!modal) return;
+
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html.*$/, '').replace(/\/$/, '');
+    const catalogBase = baseUrl.endsWith('/frontend') ? `${baseUrl}/katalog.html` : `${baseUrl}/frontend/katalog.html`;
+    const targetUrl = `${catalogBase}?meja=${encodeURIComponent(tableName)}`;
+    const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(targetUrl)}`;
+
+    document.getElementById('tableQrModalTitle').textContent = tableName;
+    document.getElementById('tableQrModalImg').src = qrImgSrc;
+    document.getElementById('tableQrModalUrl').textContent = targetUrl;
+    document.getElementById('tableQrModalBtnPrint').onclick = function () {
+      window.printTableQrStand(tableName, qrImgSrc, targetUrl);
+    };
+    document.getElementById('tableQrModalBtnTest').href = targetUrl;
+
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+  };
+
+  window.closeTableQrModal = function () {
+    const modal = document.getElementById('tableQrModal');
+    if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+  };
 
   // ============================================================================
-  // 5. STASIUN KASIR (POS) LENGKAP & INTERAKTIF
+  // UNIVERSAL IFRAME PRINTER (ISOLASI DOKUMEN CETAK 58MM BEBAS BLANK PAGE)
   // ============================================================================
-  function getProductsByVertical() {
-    return State.products.filter(p => {
-      if (State.currentVertical === 'RESTO') return p.vertical === 'RESTO' || p.category === 'Makanan' || p.category === 'Minuman' || p.category === 'Burritos' || p.category === 'Bowls' || p.category === 'Tacos' || p.category === 'Quesadillas';
-      if (State.currentVertical === 'RETAIL') return p.vertical === 'RETAIL' || p.category === 'Sembako';
-      if (State.currentVertical === 'LAUNDRY') return p.vertical === 'LAUNDRY' || p.category.includes('Laundry');
-      return true;
-    });
-  }
+  window.printReceiptHtml = function (htmlContent, title = 'Struk Kasir 58mm') {
+    let iframe = document.getElementById('receiptPrintIframe');
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = 'receiptPrintIframe';
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0px';
+      iframe.style.height = '0px';
+      iframe.style.border = 'none';
+      iframe.style.visibility = 'hidden';
+      document.body.appendChild(iframe);
+    }
 
+    const frameDoc = iframe.contentWindow || iframe.contentDocument;
+    const doc = frameDoc.document || frameDoc;
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>${title}</title>
+        <style>
+          @page {
+            size: 58mm auto;
+            margin: 0mm;
+          }
+          @media print {
+            html, body {
+              width: 58mm !important;
+              max-width: 58mm !important;
+              margin: 0 auto !important;
+              padding: 0 !important;
+              background: #fff !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+          }
+          * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+          }
+          body {
+            width: 58mm;
+            max-width: 58mm;
+            margin: 0 auto;
+            padding: 3mm 2mm;
+            font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+            font-size: 11px;
+            line-height: 1.35;
+            color: #000;
+            background: #fff;
+            -webkit-font-smoothing: antialiased;
+          }
+          .text-center { text-align: center; }
+          .text-right { text-align: right; }
+          .font-bold { font-weight: bold; }
+          .divider {
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+          }
+          .double-divider {
+            border-top: 2px dashed #000;
+            margin: 6px 0;
+          }
+          .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3px;
+          }
+          .item-name {
+            flex: 1;
+            padding-right: 4px;
+            word-break: break-word;
+          }
+          .item-price {
+            white-space: nowrap;
+            text-align: right;
+          }
+        </style>
+      </head>
+      <body>
+        ${htmlContent}
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.focus();
+              window.print();
+            }, 100);
+          };
+        <\/script>
+      </body>
+      </html>
+    `);
+    doc.close();
+  };
+
+  window.printTableQrStand = function (tableName, qrImgSrc, targetUrl) {
+    const html = `
+      <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: center; border: 2px solid #000; padding: 18px; border-radius: 14px; width: 100%; max-width: 320px; margin: 0 auto; box-sizing: border-box;">
+        <div style="font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">${State.settings.STORE_NAME || 'RASH RESTO TIMUR TENGAH'}</div>
+        <div style="font-size: 10px; color: #555; margin-top: 2px;">Smart Ordering & QR Menu Digital</div>
+        <div style="border-top: 1px dashed #999; margin: 10px 0;"></div>
+        
+        <h2 style="font-size: 24px; font-weight: 900; margin: 0; color: #000;">${tableName}</h2>
+        <p style="font-size: 11px; font-weight: 600; color: #333; margin: 4px 0 10px;">Scan QR Code dengan Kamera HP Anda</p>
+        
+        <div style="display: inline-block; padding: 8px; background: #fff; border: 1.5px solid #000; border-radius: 12px;">
+          <img src="${qrImgSrc}" style="width: 180px; height: 180px; display: block;" />
+        </div>
+
+        <div style="margin-top: 10px; font-size: 10px; color: #000; line-height: 1.4; text-align: left; padding: 0 8px;">
+          <strong>1.</strong> Arahkan kamera HP ke QR Code<br>
+          <strong>2.</strong> Pilih Menu Timur Tengah Lezat & Kirim Pesanan<br>
+          <strong>3.</strong> Pesanan langsung dimasak di dapur resto kami!
+        </div>
+
+        <div style="border-top: 1px dashed #999; margin: 10px 0;"></div>
+        <div style="font-size: 9px; color: #777;">Powered by RASH Mitra POS</div>
+      </div>
+    `;
+
+    const container = document.getElementById('tableQrPrintContainer');
+    if (container) container.innerHTML = html;
+
+    window.printReceiptHtml(html, `Stand-QR-${tableName}`);
+  };
+
+  window.printAllTableQrStands = function () {
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html.*$/, '').replace(/\/$/, '');
+    const catalogBase = baseUrl.endsWith('/frontend') ? `${baseUrl}/katalog.html` : `${baseUrl}/frontend/katalog.html`;
+
+    const html = State.tables.map(tableName => {
+      const targetUrl = `${catalogBase}?meja=${encodeURIComponent(tableName)}`;
+      const qrImgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(targetUrl)}`;
+      return `
+        <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; text-align: center; border: 2px solid #000; padding: 18px; border-radius: 14px; margin-bottom: 25px; page-break-after: always; max-width: 320px; margin-left: auto; margin-right: auto; box-sizing: border-box;">
+          <div style="font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">${State.settings.STORE_NAME || 'RASH RESTO TIMUR TENGAH'}</div>
+          <div style="font-size: 10px; color: #555;">Buku Menu Digital Meja</div>
+          <div style="border-top: 1px dashed #000; margin: 10px 0;"></div>
+          <h2 style="font-size: 24px; font-weight: 900; margin: 0;">${tableName}</h2>
+          <p style="font-size: 11px; margin: 4px 0 10px;">Scan QR untuk Memesan Langsung</p>
+          <img src="${qrImgSrc}" style="width: 180px; height: 180px; margin: 0 auto; display: block;" />
+          <div style="margin-top: 10px; font-size: 10px;">Pesanan langsung masuk ke Dapur & Kasir Resto</div>
+        </div>
+      `;
+    }).join('');
+
+    const container = document.getElementById('tableQrPrintContainer');
+    if (container) container.innerHTML = html;
+
+    window.printReceiptHtml(html, 'Semua-QR-Meja-Resto');
+  };
+
+  // ============================================================================
+  // 5. STASIUN KASIR RESTO (POS REGISTER & CATALOG)
+  // ============================================================================
   function renderPosCategories() {
     const container = document.getElementById('posCategoryPills');
     if (!container) return;
 
-    const items = getProductsByVertical();
-    const categories = ['ALL', ...new Set(items.map(p => p.category))];
+    const categories = ['ALL', ...new Set(State.products.map(p => p.category))];
 
     container.innerHTML = categories.map(cat => {
       const isSel = State.posSelectedCategory === cat;
-      const label = cat === 'ALL' ? 'Semua Menu' : cat;
+      const label = cat === 'ALL' ? 'Semua Menu Arab' : cat;
       return `
         <button onclick="window.filterPosCategory('${cat}', this)" class="pos-cat-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
           isSel ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -504,14 +894,12 @@
     const container = document.getElementById('posCatalogGrid');
     if (!container) return;
 
-    let items = getProductsByVertical();
+    let items = State.products;
 
-    // Filter Kategori
     if (State.posSelectedCategory !== 'ALL') {
       items = items.filter(p => p.category.toLowerCase() === State.posSelectedCategory.toLowerCase());
     }
 
-    // Filter Pencarian
     if (State.posSearchQuery) {
       items = items.filter(p =>
         p.product_name.toLowerCase().includes(State.posSearchQuery) ||
@@ -523,7 +911,7 @@
       container.innerHTML = `
         <div class="col-span-full py-16 text-center text-slate-400">
           <span class="material-symbols-outlined text-4xl mb-1">search_off</span>
-          <p class="text-xs font-semibold">Tidak ada produk yang cocok dengan pencarian.</p>
+          <p class="text-xs font-semibold">Tidak ada menu yang cocok dengan pencarian.</p>
         </div>
       `;
       return;
@@ -564,14 +952,14 @@
     if (!prod) return;
 
     if (prod.current_stock <= 0) {
-      showToast(`⚠️ Stok ${prod.product_name} habis! Lakukan restock terlebih dahulu.`);
+      showToast(`⚠️ Stok menu "${prod.product_name}" habis!`);
       return;
     }
 
     const exist = State.posCart.find(i => i.barcode_sku === sku);
     if (exist) {
       if (exist.qty >= prod.current_stock) {
-        showToast(`⚠️ Tidak bisa melebihi stok yang tersedia (${prod.current_stock}).`);
+        showToast(`⚠️ Tidak bisa melebihi stok tersedia (${prod.current_stock}).`);
         return;
       }
       exist.qty++;
@@ -593,7 +981,7 @@
     const prod = State.products.find(p => p.barcode_sku === item.barcode_sku);
 
     if (delta > 0 && prod && item.qty >= prod.current_stock) {
-      showToast(`⚠️ Batas stok tercapai (${prod.current_stock}).`);
+      showToast(`⚠️ Batas stok menu tercapai (${prod.current_stock}).`);
       return;
     }
 
@@ -613,7 +1001,7 @@
     if (State.posCart.length === 0) return;
     State.posCart = [];
     updatePosCartUI();
-    showToast('🗑️ Keranjang kasir dikosongkan.');
+    showToast('🗑️ Pesanan kasir dikosongkan.');
   };
 
   function updatePosCartUI() {
@@ -631,12 +1019,20 @@
     if (subtotalEl) subtotalEl.textContent = formatIDR(grandTotal);
     if (grandEl) grandEl.textContent = formatIDR(grandTotal);
 
+    if (State.posPayMethod === 'CASH') {
+      window.recalculatePosChange();
+    }
+
     if (State.posCart.length === 0) {
+      State.posCashTendered = 0;
+      const cashInput = document.getElementById('posCashTenderedInput');
+      if (cashInput) cashInput.value = '';
+      window.recalculatePosChange();
       list.innerHTML = `
         <div class="text-center py-10 text-slate-400">
           <span class="material-symbols-outlined text-3xl mb-1 text-slate-300">point_of_sale</span>
-          <p class="text-xs font-semibold">Keranjang masih kosong.</p>
-          <p class="text-[10px] text-slate-400 mt-0.5">Klik menu di sebelah kiri untuk menambah pesanan.</p>
+          <p class="text-xs font-semibold">Pesanan meja masih kosong.</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Pilih menu Timur Tengah di sebelah kiri untuk menambah ke tagihan.</p>
         </div>
       `;
       return;
@@ -682,69 +1078,211 @@
 
     if (quickCashBox) {
       quickCashBox.style.display = method === 'CASH' ? 'block' : 'none';
+      if (method === 'CASH') {
+        window.recalculatePosChange();
+      }
     }
+  };
+
+  // Kalkulasi & Input Nominal Uang Tunai Diterima
+  window.handleCashTenderInput = function (val) {
+    const clean = String(val || '').replace(/\D/g, '');
+    const num = clean ? parseInt(clean, 10) : 0;
+    State.posCashTendered = num;
+
+    const input = document.getElementById('posCashTenderedInput');
+    if (input) {
+      input.value = num ? Number(num).toLocaleString('id-ID') : '';
+    }
+    window.recalculatePosChange();
+  };
+
+  window.clearCashTenderInput = function () {
+    State.posCashTendered = 0;
+    const input = document.getElementById('posCashTenderedInput');
+    if (input) {
+      input.value = '';
+      if (typeof input.focus === 'function') input.focus();
+    }
+    window.recalculatePosChange();
   };
 
   window.setQuickCash = function (val) {
     const grand = State.posCart.reduce((sum, i) => sum + (i.price * i.qty), 0);
     if (val === 'EXACT') {
       State.posCashTendered = grand;
-      showToast(`💵 Uang Pas: ${formatIDR(grand)}`);
     } else {
       State.posCashTendered = Number(val);
-      const change = State.posCashTendered - grand;
-      if (change >= 0) {
-        showToast(`💵 Diterima: ${formatIDR(val)} | Kembalian: ${formatIDR(change)}`);
+    }
+
+    const input = document.getElementById('posCashTenderedInput');
+    if (input) {
+      input.value = State.posCashTendered ? Number(State.posCashTendered).toLocaleString('id-ID') : '';
+    }
+    window.recalculatePosChange();
+
+    if (val === 'EXACT') {
+      showToast(`💵 Uang Pas: ${formatIDR(grand)}`);
+    } else {
+      const diff = State.posCashTendered - grand;
+      if (diff >= 0) {
+        showToast(`💵 Diterima: ${formatIDR(val)} | Kembalian: ${formatIDR(diff)}`);
       } else {
-        showToast(`⚠️ Uang kurang ${formatIDR(Math.abs(change))}`);
+        showToast(`⚠️ Uang kurang ${formatIDR(Math.abs(diff))}`);
       }
+    }
+  };
+
+  window.recalculatePosChange = function () {
+    const grand = State.posCart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    const tendered = Number(State.posCashTendered) || 0;
+
+    const card = document.getElementById('posChangeCard');
+    const labelEl = document.getElementById('posChangeLabel');
+    const textEl = document.getElementById('posChangeText');
+    const badgeEl = document.getElementById('posChangeBadge');
+    const iconEl = document.getElementById('posChangeIcon');
+
+    if (!card || !textEl || !labelEl || !badgeEl) return;
+
+    if (tendered === 0) {
+      if (grand > 0) {
+        card.className = 'p-2.5 rounded-xl border transition-all flex items-center justify-between bg-slate-50 border-slate-200 text-slate-700';
+        if (iconEl) {
+          iconEl.textContent = 'payments';
+          iconEl.className = 'material-symbols-outlined text-[22px] text-slate-400';
+        }
+        labelEl.textContent = 'Nominal Tunai:';
+        labelEl.className = 'text-[9px] font-bold uppercase tracking-wider text-slate-500';
+        textEl.textContent = 'Masukkan Nominal';
+        textEl.className = 'font-mono text-xs font-bold leading-tight text-slate-500';
+        badgeEl.textContent = 'Belum Diisi';
+        badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 border border-slate-300';
+      } else {
+        card.className = 'p-2.5 rounded-xl border transition-all flex items-center justify-between bg-emerald-50 border-emerald-200 text-emerald-800';
+        if (iconEl) {
+          iconEl.textContent = 'change_circle';
+          iconEl.className = 'material-symbols-outlined text-[22px] text-emerald-600';
+        }
+        labelEl.textContent = 'Kembalian Kasir:';
+        labelEl.className = 'text-[9px] font-bold uppercase tracking-wider text-slate-500';
+        textEl.textContent = 'Rp 0';
+        textEl.className = 'font-mono text-base font-black leading-tight text-emerald-700';
+        badgeEl.textContent = 'Uang Pas';
+        badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200';
+      }
+      return;
+    }
+
+    const diff = tendered - grand;
+
+    if (diff >= 0) {
+      // Uang cukup atau ada kembalian
+      card.className = 'p-2.5 rounded-xl border transition-all flex items-center justify-between bg-emerald-50 border-emerald-300 text-emerald-900';
+      if (iconEl) {
+        iconEl.textContent = 'change_circle';
+        iconEl.className = 'material-symbols-outlined text-[22px] text-emerald-600';
+      }
+      labelEl.textContent = 'Kembalian Kasir:';
+      labelEl.className = 'text-[9px] font-bold uppercase tracking-wider text-emerald-700';
+      textEl.textContent = formatIDR(diff);
+      textEl.className = 'font-mono text-base font-black leading-tight text-emerald-700';
+
+      if (diff === 0) {
+        badgeEl.textContent = 'Uang Pas';
+        badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+      } else {
+        badgeEl.textContent = `Kembali ${formatIDR(diff)}`;
+        badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+      }
+    } else {
+      // Uang kurang
+      const deficit = Math.abs(diff);
+      card.className = 'p-2.5 rounded-xl border transition-all flex items-center justify-between bg-amber-50 border-amber-300 text-amber-900';
+      if (iconEl) {
+        iconEl.textContent = 'warning';
+        iconEl.className = 'material-symbols-outlined text-[22px] text-amber-600';
+      }
+      labelEl.textContent = '⚠️ Uang Kurang:';
+      labelEl.className = 'text-[9px] font-bold uppercase tracking-wider text-amber-700';
+      textEl.textContent = formatIDR(deficit);
+      textEl.className = 'font-mono text-base font-black leading-tight text-amber-700';
+      badgeEl.textContent = `Kurang ${formatIDR(deficit)}`;
+      badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-800 border border-amber-300';
     }
   };
 
   window.handlePosCheckoutSubmit = function () {
     if (State.posCart.length === 0) {
-      showToast('⚠️ Keranjang kasir masih kosong!');
+      showToast('⚠️ Keranjang pesanan masih kosong!');
       return;
     }
 
     const grand = State.posCart.reduce((sum, i) => sum + (i.price * i.qty), 0);
     const invoiceNo = document.getElementById('posInvoiceId')?.textContent || ('#INV-' + Date.now().toString().slice(-6));
+    const tableSelect = document.getElementById('posTableNumberSelect');
+    const tableNo = tableSelect ? tableSelect.value : (State.posSelectedTable || 'Meja 01');
+    const notes = (document.getElementById('posKitchenNotes')?.value || '').trim();
 
-    // Potong stok produk di State & Simpan ke Persistensi
+    // Validasi Pembayaran Tunai & Kalkulasi Kembalian
+    let cashTendered = 0;
+    let cashChange = 0;
+
+    if (State.posPayMethod === 'CASH') {
+      if (!State.posCashTendered || State.posCashTendered === 0) {
+        // Otomatis asumsikan Uang Pas jika kasir langsung menekan tombol bayar
+        State.posCashTendered = grand;
+        const input = document.getElementById('posCashTenderedInput');
+        if (input) input.value = Number(grand).toLocaleString('id-ID');
+        window.recalculatePosChange();
+      }
+
+      if (State.posCashTendered < grand) {
+        const deficit = grand - State.posCashTendered;
+        showToast(`⚠️ Uang tunai masih kurang ${formatIDR(deficit)}! Masukkan nominal yang cukup.`);
+        const inEl = document.getElementById('posCashTenderedInput');
+        if (inEl && typeof inEl.focus === 'function') inEl.focus();
+        return;
+      }
+
+      cashTendered = State.posCashTendered;
+      cashChange = Math.max(0, State.posCashTendered - grand);
+    }
+
+    // Data Pelanggan (CRM)
+    const custId = document.getElementById('posCustomerSelect')?.value;
+    const custPhone = (document.getElementById('posCustomerPhone')?.value || '').trim();
+    let custName = (document.getElementById('posCustomerName')?.value || '').trim();
+    if (!custName) {
+      custName = custPhone ? 'Pelanggan Meja' : `Tamu (${tableNo})`;
+    }
+    const saveContact = document.getElementById('posSaveCustomerCheckbox')?.checked;
+
+    // Simpan/update otomatis ke CRM jika ada no WA
+    if (custPhone && (saveContact || custId)) {
+      window.upsertCustomerFromOrder(custName, custPhone, grand, tableNo);
+    }
+
+    // Potong stok produk
     State.posCart.forEach(ci => {
       const p = State.products.find(prod => prod.barcode_sku === ci.barcode_sku);
-      if (p) {
-        p.current_stock = Math.max(0, p.current_stock - ci.qty);
-      }
+      if (p) p.current_stock = Math.max(0, p.current_stock - ci.qty);
     });
     savePersistedProducts(State.products);
-
-    // Metadata vertikal
-    let tableNo = '';
-    let laundryWeight = '';
-    let custName = 'Pelanggan Walk-in';
-
-    if (State.currentVertical === 'RESTO') {
-      tableNo = document.getElementById('posTableNumber')?.value || 'Meja 01';
-      custName = `Kasir (${tableNo})`;
-    } else if (State.currentVertical === 'LAUNDRY') {
-      laundryWeight = (document.getElementById('posLaundryWeight')?.value || '3.0') + ' Kg';
-      custName = 'Pelanggan Laundry';
-    } else {
-      custName = document.getElementById('posRetailCustomer')?.value || 'Pelanggan Retail';
-    }
 
     const newOrder = {
       order_id: invoiceNo.replace('#', ''),
       timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
       customer_name: custName,
-      customer_phone: '',
-      vertical: State.currentVertical,
+      customer_phone: custPhone,
+      vertical: 'RESTO',
       table_number: tableNo,
-      laundry_weight: laundryWeight,
+      notes: notes,
       items: JSON.parse(JSON.stringify(State.posCart)),
       total_amount: grand,
-      payment_method: State.posPayMethod,
+      payment_method: State.posPayMethod === 'CASH' ? 'Tunai di Kasir' : State.posPayMethod === 'QRIS' ? 'QRIS Dinamis' : 'Transfer Bank',
+      cash_tendered: cashTendered,
+      cash_change: cashChange,
       status: 'COMPLETED',
       status_label: 'Selesai (Lunas)'
     };
@@ -752,22 +1290,29 @@
     State.orders.unshift(newOrder);
     savePersistedOrders(State.orders);
 
-    // Tampilkan & Cetak Struk Thermal
+    // Struk Thermal
     showThermalReceipt(newOrder);
 
-    // Reset keranjang
+    // Reset keranjang & input kasir
     State.posCart = [];
+    State.posCashTendered = 0;
+    const cashInput = document.getElementById('posCashTenderedInput');
+    if (cashInput) cashInput.value = '';
+    window.recalculatePosChange();
+
+    if (document.getElementById('posKitchenNotes')) document.getElementById('posKitchenNotes').value = '';
     updatePosCartUI();
     renderPosCatalog();
     renderInventoryTable();
     renderOrdersQueueTable();
+    renderActiveModelUI();
     generateInvoiceNumber();
 
-    showToast(`✅ Transaksi ${newOrder.order_id} berhasil disimpan!`);
+    showToast(`✅ Transaksi ${newOrder.order_id} (${tableNo}) Berhasil!`);
   };
 
   // ============================================================================
-  // 6. MASTER PRODUK & STOK INVENTORI (SUPER ADMIN EDITING)
+  // 6. MASTER PRODUK & STOK RESTO
   // ============================================================================
   function renderInventoryTable() {
     const tbody = document.getElementById('inventoryTableBody');
@@ -798,7 +1343,7 @@
       tbody.innerHTML = `
         <tr>
           <td colspan="9" class="p-8 text-center text-slate-400">
-            Tidak ada produk yang cocok dengan filter.
+            Tidak ada menu yang cocok dengan filter.
           </td>
         </tr>
       `;
@@ -815,7 +1360,7 @@
               <img src="${p.image_url}" class="w-10 h-10 rounded-xl object-cover bg-slate-100 border border-slate-200 shrink-0" />
               <div>
                 <span class="font-bold text-slate-800 block">${p.product_name}</span>
-                <span class="text-[10px] text-slate-400 font-normal">${p.description || '-'}</span>
+                <span class="text-[10px] text-slate-400 font-normal line-clamp-1">${p.description || '-'}</span>
               </div>
             </div>
           </td>
@@ -828,13 +1373,13 @@
             <span class="font-mono font-black text-sm ${isLow ? 'text-red-600' : 'text-emerald-700'}">
               ${p.current_stock}
             </span>
-            <span class="text-[10px] text-slate-400 font-normal block">${p.unit_measure || 'pcs'}</span>
+            <span class="text-[10px] text-slate-400 font-normal block">${p.unit_measure || 'porsi'}</span>
           </td>
           <td class="p-3.5 text-center">
             <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
               isLow ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
             }">
-              ${isLow ? '⚠️ Stok Menipis' : '✅ Aman'}
+              ${isLow ? '⚠️ Menipis' : '✅ Aman'}
             </span>
           </td>
           <td class="p-3.5 text-center">
@@ -846,10 +1391,10 @@
           </td>
           <td class="p-3.5 text-center">
             <div class="flex items-center justify-center gap-1">
-              <button onclick="window.openQuickEditProduct('${p.barcode_sku}')" title="Edit Harga & Nama" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-600 flex items-center justify-center transition-colors">
+              <button onclick="window.openQuickEditProduct('${p.barcode_sku}')" title="Edit Harga Menu" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-600 flex items-center justify-center transition-colors">
                 <span class="material-symbols-outlined text-[16px]">edit</span>
               </button>
-              <button onclick="window.deleteProduct('${p.barcode_sku}')" title="Hapus Produk" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 flex items-center justify-center transition-colors">
+              <button onclick="window.deleteProduct('${p.barcode_sku}')" title="Hapus Menu" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 flex items-center justify-center transition-colors">
                 <span class="material-symbols-outlined text-[16px]">delete</span>
               </button>
             </div>
@@ -870,7 +1415,7 @@
     savePersistedProducts(State.products);
     renderInventoryTable();
     renderPosCatalog();
-    showToast(`📦 Stok ${p.product_name}: ${p.current_stock}`);
+    showToast(`📦 Stok "${p.product_name}": ${p.current_stock}`);
   };
 
   window.openQuickEditProduct = function (sku) {
@@ -891,12 +1436,12 @@
     const p = State.products.find(prod => prod.barcode_sku === sku);
     if (!p) return;
 
-    if (confirm(`Yakin ingin menghapus produk "${p.product_name}" (${sku}) dari katalog?`)) {
+    if (confirm(`Hapus "${p.product_name}" (${sku}) dari katalog resto?`)) {
       State.products = State.products.filter(prod => prod.barcode_sku !== sku);
       savePersistedProducts(State.products);
       renderInventoryTable();
       renderPosCatalog();
-      showToast(`🗑️ Produk ${p.product_name} telah dihapus.`);
+      showToast(`🗑️ Menu ${p.product_name} telah dihapus.`);
     }
   };
 
@@ -913,20 +1458,20 @@
   window.submitNewProduct = function () {
     const name = (document.getElementById('newProdName')?.value || '').trim();
     const sku = (document.getElementById('newProdSku')?.value || '').trim().toUpperCase();
-    const cat = document.getElementById('newProdCategory')?.value || 'Burritos';
+    const cat = document.getElementById('newProdCategory')?.value || 'Nasi Rempah Arab';
     const cost = Number(document.getElementById('newProdCostPrice')?.value) || 0;
     const price = Number(document.getElementById('newProdSellingPrice')?.value) || 0;
     const stock = Number(document.getElementById('newProdStock')?.value) || 0;
     const unit = (document.getElementById('newProdUnit')?.value || 'porsi').trim();
-    const imgUrl = (document.getElementById('newProdImageUrl')?.value || '').trim() || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600';
+    const imgUrl = (document.getElementById('newProdImageUrl')?.value || '').trim() || 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600';
 
     if (!name || !sku) {
-      showToast('⚠️ Nama produk dan SKU wajib diisi!');
+      showToast('⚠️ Nama menu dan SKU wajib diisi!');
       return;
     }
 
     if (State.products.some(p => p.barcode_sku === sku)) {
-      showToast('⚠️ SKU tersebut sudah digunakan oleh produk lain!');
+      showToast('⚠️ SKU tersebut sudah digunakan oleh menu lain!');
       return;
     }
 
@@ -940,9 +1485,9 @@
       current_stock: stock,
       min_stock_alert: 5,
       unit_measure: unit,
-      vertical: State.currentVertical,
+      vertical: 'RESTO',
       image_url: imgUrl,
-      description: 'Menu produk baru.'
+      description: 'Menu masakan Timur Tengah lezat.'
     };
 
     State.products.unshift(newProd);
@@ -951,11 +1496,11 @@
     window.closeAddProductModal();
     renderInventoryTable();
     renderPosCatalog();
-    showToast(`✅ Produk baru "${name}" berhasil ditambahkan!`);
+    showToast(`✅ Menu baru "${name}" berhasil ditambahkan!`);
   };
 
   // ============================================================================
-  // 7. ANTREAN & LACAK PESANAN (ORDER TRACKER & KASIR ACTIONS)
+  // 7. ANTREAN PESANAN MEJA (KITCHEN QUEUE & ACTIONS)
   // ============================================================================
   function renderOrdersQueueTable() {
     const tbody = document.getElementById('ordersQueueTableBody');
@@ -977,9 +1522,9 @@
       tbody.innerHTML = `
         <tr>
           <td colspan="6" class="p-10 text-center text-slate-400">
-            <span class="material-symbols-outlined text-4xl mb-1">receipt_long</span>
-            <p class="text-xs font-semibold">Belum ada antrean pesanan.</p>
-            <p class="text-[10px] text-slate-400">Pesanan dari katalog mandiri pelanggan akan otomatis muncul di sini.</p>
+            <span class="material-symbols-outlined text-4xl mb-1">restaurant</span>
+            <p class="text-xs font-semibold">Belum ada antrean pesanan dari meja resto.</p>
+            <p class="text-[10px] text-slate-400">Pesanan dari scan QR meja akan otomatis muncul di sini.</p>
           </td>
         </tr>
       `;
@@ -998,16 +1543,24 @@
             <span class="text-[10px] text-slate-400 font-mono">${o.timestamp}</span>
           </td>
           <td class="p-3.5">
-            <div class="font-bold text-slate-900">${o.customer_name}</div>
-            <div class="flex items-center gap-1.5 mt-0.5">
-              ${o.table_number ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">🍽️ ${o.table_number}</span>` : ''}
-              ${o.customer_phone ? `<span class="text-[10px] text-emerald-600 font-mono font-bold">WA: ${o.customer_phone}</span>` : ''}
+            <div class="font-black text-slate-900 flex items-center gap-1.5">
+              <span class="px-2.5 py-0.5 rounded-lg text-xs font-black bg-blue-100 text-blue-800 border border-blue-200">
+                🍽️ ${o.table_number || 'Meja Umum'}
+              </span>
             </div>
+            <div class="text-xs font-bold text-slate-700 mt-1">${o.customer_name}</div>
+            ${o.notes ? `<div class="text-[10px] text-amber-700 bg-amber-50 rounded px-1.5 py-0.5 mt-0.5 border border-amber-200">Catatan: ${o.notes}</div>` : ''}
           </td>
           <td class="p-3.5 text-slate-700">
             <div class="space-y-0.5 max-w-xs">${itemsText}</div>
           </td>
-          <td class="p-3.5 font-mono font-black text-slate-900">${formatIDR(o.total_amount)}</td>
+          <td class="p-3.5 font-mono font-black text-slate-900">
+            <div>${formatIDR(o.total_amount)}</div>
+            <div class="text-[10px] text-slate-500 font-sans font-normal">
+              ${o.payment_method || 'Kasir'}
+              ${o.cash_tendered ? `<span class="block text-[9px] text-emerald-700 font-mono font-bold">Tunai: ${formatIDR(o.cash_tendered)} | Kembalian: ${formatIDR(o.cash_change || 0)}</span>` : ''}
+            </div>
+          </td>
           <td class="p-3.5 text-center">
             <span class="px-3 py-1 rounded-full text-[11px] font-bold ${getOrderStatusBadgeClass(o.status)}">
               ${o.status_label || o.status}
@@ -1017,12 +1570,18 @@
             <div class="inline-flex items-center gap-1.5">
               <select onchange="window.updateOrderStatus('${o.order_id}', this.value)" class="text-xs font-bold rounded-xl border-slate-200 p-1.5 bg-white focus:ring-2 focus:ring-blue-500 shadow-xs">
                 <option value="RECEIVED" ${o.status === 'RECEIVED' || o.status === 'PENDING' ? 'selected' : ''}>1. Diterima Kasir</option>
-                <option value="COOKING" ${o.status === 'COOKING' || o.status === 'WASHING' ? 'selected' : ''}>2. Sedang Dimasak</option>
-                <option value="READY" ${o.status === 'READY' ? 'selected' : ''}>3. Siap Saji / Diantar</option>
+                <option value="COOKING" ${o.status === 'COOKING' ? 'selected' : ''}>2. Dimasak Dapur</option>
+                <option value="READY" ${o.status === 'READY' ? 'selected' : ''}>3. Siap Diantar Meja</option>
                 <option value="COMPLETED" ${o.status === 'COMPLETED' ? 'selected' : ''}>4. Selesai (Lunas)</option>
               </select>
+              <button onclick="window.reprintCustomerReceipt('${o.order_id}')" class="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white flex items-center justify-center transition-colors shadow-xs" title="Lihat / Cetak Struk Kasir">
+                <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+              </button>
+              <button onclick="window.printKitchenTicket('${o.order_id}')" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors shadow-xs" title="Cetak Tiket Koki Dapur">
+                <span class="material-symbols-outlined text-[16px]">skillet</span>
+              </button>
               ${o.customer_phone ? `
-                <a href="https://wa.me/${o.customer_phone.replace(/\D/g, '')}?text=Halo%20${encodeURIComponent(o.customer_name)},%20pesanan%20Anda%20${o.order_id}%20statusnya:%20${encodeURIComponent(o.status_label || o.status)}" target="_blank" class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white flex items-center justify-center transition-colors shadow-xs" title="Chat WhatsApp Pelanggan">
+                <a href="${window.formatWhatsAppUrl(o.customer_phone, `Halo ${o.customer_name}, pesanan Anda di ${o.table_number} statusnya: ${o.status_label || o.status}`)}" target="_blank" class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white flex items-center justify-center transition-colors shadow-xs" title="Chat WhatsApp Pelanggan">
                   <span class="material-symbols-outlined text-[16px]">chat</span>
                 </a>
               ` : ''}
@@ -1036,7 +1595,7 @@
   function getOrderStatusBadgeClass(st) {
     if (st === 'READY') return 'bg-amber-100 text-amber-800 border border-amber-300';
     if (st === 'COMPLETED') return 'bg-emerald-100 text-emerald-800 border border-emerald-300';
-    if (st === 'COOKING' || st === 'WASHING') return 'bg-blue-100 text-blue-800 border border-blue-300';
+    if (st === 'COOKING') return 'bg-blue-100 text-blue-800 border border-blue-300';
     return 'bg-slate-100 text-slate-700 border border-slate-200';
   }
 
@@ -1045,71 +1604,444 @@
     if (!ord) return;
 
     ord.status = newStatus;
-    if (newStatus === 'RECEIVED') ord.status_label = 'Pesanan Diterima';
-    if (newStatus === 'COOKING') ord.status_label = State.currentVertical === 'LAUNDRY' ? 'Sedang Dicuci' : 'Sedang Dimasak Dapur';
-    if (newStatus === 'READY') ord.status_label = State.currentVertical === 'LAUNDRY' ? 'Siap Diambil' : 'Siap Diantar ke Meja';
+    if (newStatus === 'RECEIVED') ord.status_label = 'Pesanan Diterima Kasir';
+    if (newStatus === 'COOKING') ord.status_label = 'Sedang Dimasak Dapur';
+    if (newStatus === 'READY') ord.status_label = 'Siap Diantar ke Meja';
     if (newStatus === 'COMPLETED') ord.status_label = 'Selesai (Lunas)';
 
     savePersistedOrders(State.orders);
     renderOrdersQueueTable();
     updatePendingOrderBadge();
-    showToast(`📋 Status pesanan ${orderId} diubah: ${ord.status_label}`);
+    renderActiveModelUI();
+    showToast(`📋 Status pesanan ${orderId} (${ord.table_number}): ${ord.status_label}`);
   };
 
   window.handleOrderSearch = function (val) {
     renderOrdersQueueTable();
   };
 
-  // ============================================================================
-  // 8. CETAK STRUK THERMAL 58MM
-  // ============================================================================
-  function showThermalReceipt(orderData) {
-    const container = document.getElementById('thermalPrintContainer');
-    if (!container) return;
+  // Cetak Tiket Koki Dapur (Kitchen Order Ticket - KOT 58mm)
+  window.printKitchenTicket = function (orderId) {
+    const ord = State.orders.find(o => o.order_id === orderId);
+    if (!ord) return;
 
+    const itemsHtml = Array.isArray(ord.items)
+      ? ord.items.map(i => `
+          <div class="row" style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">
+            <span class="item-name">${i.name}</span>
+            <span class="font-bold">x${i.qty}</span>
+          </div>
+        `).join('')
+      : `<div>${ord.items}</div>`;
+
+    const kotHtml = `
+      <div class="text-center">
+        <div style="font-size: 13px; font-weight: 900; letter-spacing: 1px;">*** TIKET DAPUR / KOT ***</div>
+        <div style="font-size: 16px; font-weight: 900; margin: 6px 0; border: 2px solid #000; padding: 4px;">${ord.table_number || 'MEJA UMUM'}</div>
+        <div class="row" style="font-size: 10px;">
+          <span>No: ${ord.order_id}</span>
+          <span>${ord.timestamp}</span>
+        </div>
+        <div class="row" style="font-size: 10px; margin-top: 2px;">
+          <span>Tamu: <strong>${ord.customer_name}</strong></span>
+          <span>Dine-in</span>
+        </div>
+        <div class="divider"></div>
+        ${itemsHtml}
+        ${ord.notes ? `<div style="border-top: 1px dashed #000; margin: 6px 0; padding-top: 4px; font-size: 11px; font-weight: bold; text-align: left;">CATATAN: ${ord.notes}</div>` : ''}
+        <div class="double-divider"></div>
+        <div style="font-size: 9px; text-align: center;">Segera dimasak panas & disajikan!</div>
+      </div>
+    `;
+
+    const container = document.getElementById('thermalPrintContainer');
+    if (container) container.innerHTML = kotHtml;
+
+    window.printReceiptHtml(kotHtml, `KOT-${ord.order_id}`);
+  };
+
+  // ============================================================================
+  // 8. MODAL PRATINJAU & CETAK STRUK THERMAL 58MM (BILLING KASIR)
+  // ============================================================================
+  window.currentReceiptOrder = null;
+
+  function buildReceiptHtml(orderData) {
     const itemsHtml = Array.isArray(orderData.items)
       ? orderData.items.map(i => `
-          <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
-            <span>${i.name} x${i.qty}</span>
-            <span>${formatIDR(i.price * i.qty)}</span>
+          <div class="row" style="margin-bottom: 3px;">
+            <span class="item-name">${i.name} x${i.qty}</span>
+            <span class="item-price font-bold">${formatIDR(i.price * i.qty)}</span>
           </div>
         `).join('')
       : `<div>${orderData.items}</div>`;
 
-    container.innerHTML = `
-      <div style="text-align:center; margin-bottom:8px;">
-        <div style="font-weight:bold; font-size:13px;">${State.settings.STORE_NAME || 'RASH MITRA POS'}</div>
-        <div style="font-size:10px;">${State.settings.STORE_ADDRESS || 'Smart POS System'}</div>
-        <div style="font-size:10px; margin-top:4px;">No: ${orderData.order_id}</div>
-        <div style="font-size:10px;">Waktu: ${orderData.timestamp}</div>
+    const storeName = State.settings.STORE_NAME || 'RASH RESTO TIMUR TENGAH';
+    const storeAddress = State.settings.STORE_ADDRESS || 'Jl. Raden Saleh No. 18, Cikini, Jakarta Pusat';
+    const footerMsg = State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda!';
+    const tableNo = orderData.table_number || 'MEJA KASIR';
+    const invoiceNo = orderData.order_id || '#INV-001';
+    const orderTime = orderData.timestamp || new Date().toLocaleTimeString('id-ID');
+    const payMethod = orderData.payment_method || 'TUNAI';
+
+    return `
+      <div class="text-center" style="margin-bottom: 6px;">
+        <div style="font-weight: 900; font-size: 13px; letter-spacing: 0.5px;">${storeName}</div>
+        <div style="font-size: 10px; color: #444; margin-top: 1px;">${storeAddress}</div>
+        <div class="divider"></div>
+        <div class="row" style="font-size: 10px;">
+          <span>No: ${invoiceNo}</span>
+          <span>${orderTime}</span>
+        </div>
+        <div class="row" style="font-size: 10px;">
+          <span>Kasir: ${State.user?.name || 'Kasir Resto'}</span>
+          <span>Dine-in</span>
+        </div>
       </div>
-      ${orderData.table_number ? `<div style="font-weight:bold; margin-bottom:4px;">MEJA: ${orderData.table_number}</div>` : ''}
-      <div style="border-top:1px dashed #000; margin:6px 0;"></div>
-      ${itemsHtml}
-      <div style="border-top:1px dashed #000; margin:6px 0;"></div>
-      <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:12px;">
+
+      <div class="text-center" style="font-weight: 900; font-size: 13px; margin: 4px 0; padding: 2px 0; border: 1px solid #000;">
+        ${tableNo}
+      </div>
+
+      <div class="divider"></div>
+      <div style="margin: 4px 0;">
+        ${itemsHtml}
+      </div>
+      <div class="divider"></div>
+
+      <div class="row" style="font-size: 12px; font-weight: 900; margin-top: 3px;">
         <span>TOTAL:</span>
         <span>${formatIDR(orderData.total_amount)}</span>
       </div>
-      <div style="display:flex; justify-content:space-between; font-size:10px; margin-top:2px;">
-        <span>Metode:</span>
-        <span>${orderData.payment_method || 'TUNAI'}</span>
+
+      <div class="row" style="font-size: 10px; margin-top: 2px;">
+        <span>Pembayaran:</span>
+        <span class="font-bold">${payMethod}</span>
       </div>
-      <div style="border-top:1px dashed #000; margin:6px 0;"></div>
-      <div style="text-align:center; font-size:9px; margin-top:6px;">
-        <div>${State.settings.THERMAL_FOOTER || 'Terima kasih atas kunjungan Anda!'}</div>
-        <div style="margin-top:4px; font-weight:bold;">Powered by RASH Mitra</div>
+
+      ${orderData.cash_tendered ? `
+        <div class="row" style="font-size: 10px; margin-top: 1px;">
+          <span>Tunai:</span>
+          <span style="font-family: monospace; font-weight: bold;">${formatIDR(orderData.cash_tendered)}</span>
+        </div>
+        <div class="row" style="font-size: 10px; margin-top: 1px; font-weight: bold;">
+          <span>Kembalian:</span>
+          <span style="font-family: monospace; font-weight: bold;">${formatIDR(orderData.cash_change || 0)}</span>
+        </div>
+      ` : ''}
+
+      ${orderData.notes ? `
+        <div class="divider"></div>
+        <div style="font-size: 10px; text-align: left;"><em>Catatan: ${orderData.notes}</em></div>
+      ` : ''}
+
+      <div class="divider"></div>
+      <div class="text-center" style="font-size: 9px; margin-top: 6px; line-height: 1.3;">
+        <div>${footerMsg}</div>
+        <div style="margin-top: 3px; font-weight: bold;">*** LUNAS ***</div>
+        <div style="margin-top: 2px; color: #666;">RASH Mitra Smart Cloud POS</div>
       </div>
     `;
+  }
 
-    // Tampilkan notifikasi & opsi cetak
-    if (confirm(`Transaksi ${orderData.order_id} berhasil!\n\nCetak struk thermal 58mm sekarang?`)) {
-      window.print();
+  function showThermalReceipt(orderData) {
+    window.currentReceiptOrder = orderData;
+    const receiptHtml = buildReceiptHtml(orderData);
+
+    // Update pratinjau visual di modal struk
+    const previewPaper = document.getElementById('receiptPreviewPaper');
+    if (previewPaper) previewPaper.innerHTML = receiptHtml;
+
+    // Pasang juga di kontainer cetak DOM
+    const printContainer = document.getElementById('thermalPrintContainer');
+    if (printContainer) printContainer.innerHTML = receiptHtml;
+
+    // Tampilkan modal struk kasir
+    const modal = document.getElementById('receiptModal');
+    if (modal) {
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+    } else {
+      window.printReceiptHtml(receiptHtml, `Struk-${orderData.order_id}`);
     }
   }
 
+  window.closeReceiptModal = function () {
+    const modal = document.getElementById('receiptModal');
+    if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+    window.currentReceiptOrder = null;
+  };
+
+  window.printCurrentReceipt = function () {
+    if (!window.currentReceiptOrder) return;
+    const receiptHtml = buildReceiptHtml(window.currentReceiptOrder);
+    window.printReceiptHtml(receiptHtml, `Struk-${window.currentReceiptOrder.order_id}`);
+  };
+
+  window.printCurrentKitchenTicket = function () {
+    if (!window.currentReceiptOrder) return;
+    window.printKitchenTicket(window.currentReceiptOrder.order_id);
+  };
+
+  window.sendCurrentReceiptWhatsApp = function () {
+    if (!window.currentReceiptOrder) return;
+    const ord = window.currentReceiptOrder;
+    let targetPhone = ord.customer_phone && ord.customer_phone !== '-' ? ord.customer_phone : '';
+
+    if (!targetPhone) {
+      targetPhone = prompt('Masukkan Nomor WhatsApp Pelanggan (contoh: 08123456789):');
+    }
+    if (!targetPhone) return;
+
+    const itemsText = Array.isArray(ord.items)
+      ? ord.items.map(i => `• ${i.qty}x ${i.name} (${formatIDR(i.price * i.qty)})`).join('\n')
+      : ord.items;
+
+    const cashInfo = ord.cash_tendered 
+      ? `\nTunai Diterima: ${formatIDR(ord.cash_tendered)}\nKembalian: ${formatIDR(ord.cash_change || 0)}` 
+      : '';
+
+    const text = 
+`*STRUK PEMBAYARAN RESMI* 🧾
+*${State.settings.STORE_NAME || 'RASH RESTO TIMUR TENGAH'}*
+-----------------------------------
+No. Transaksi: *${ord.order_id}*
+Waktu: ${ord.timestamp}
+Meja: *${ord.table_number || 'Dine-in'}*
+Pembayaran: *${ord.payment_method || 'TUNAI'} (LUNAS)*
+-----------------------------------
+*Rincian Menu:*
+${itemsText}
+-----------------------------------
+*Total Pembayaran: ${formatIDR(ord.total_amount)}*${cashInfo}
+
+_${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selamat menikmati.'}_`;
+
+    const url = window.formatWhatsAppUrl(targetPhone, text);
+    if (!url || url === '#') {
+      showToast('⚠️ Nomor WhatsApp pelanggan tidak valid.');
+      return;
+    }
+    window.open(url, '_blank');
+  };
+
+  window.reprintCustomerReceipt = function (orderId) {
+    const ord = State.orders.find(o => o.order_id === orderId);
+    if (!ord) {
+      showToast('⚠️ Pesanan tidak ditemukan');
+      return;
+    }
+    showThermalReceipt(ord);
+  };
+
   // ============================================================================
-  // 9. SUPER ADMIN SETTINGS
+  // 9. DATA PELANGGAN & CRM RESTO (RESI WHATSAPP OTOMATIS)
+  // ============================================================================
+  window.renderCustomersTable = function () {
+    const tbody = document.getElementById('customersTableBody');
+    if (!tbody) return;
+
+    const countEl = document.getElementById('totalCustomersCount');
+    if (countEl) countEl.textContent = State.customers.length;
+
+    const searchVal = (document.getElementById('customerSearchInput')?.value || '').toLowerCase().trim();
+
+    let items = State.customers;
+    if (searchVal) {
+      items = items.filter(c =>
+        c.name.toLowerCase().includes(searchVal) ||
+        c.phone.includes(searchVal) ||
+        (c.favorite_table && c.favorite_table.toLowerCase().includes(searchVal)) ||
+        (c.notes && c.notes.toLowerCase().includes(searchVal))
+      );
+    }
+
+    if (items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="p-8 text-center text-slate-400">
+            <span class="material-symbols-outlined text-3xl mb-1 text-slate-300">contacts</span>
+            <p class="font-bold text-xs">Belum ada data pelanggan yang cocok.</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Kontak pelanggan otomatis tersimpan saat pemesanan kasir atau katalog mandiri.</p>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = items.map(c => {
+      const cleanPhone = c.phone.replace(/\D/g, '');
+      const isVip = (c.total_orders || 0) >= 5;
+
+      return `
+        <tr class="hover:bg-slate-50/80 transition-colors border-b border-slate-100">
+          <td class="p-3.5">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-xs shrink-0">
+                ${c.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div class="font-bold text-slate-900 flex items-center gap-1.5">
+                  <span>${c.name}</span>
+                  ${isVip ? '<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-100 text-amber-800 border border-amber-200">👑 VIP</span>' : ''}
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono">${c.customer_id}</span>
+              </div>
+            </div>
+          </td>
+          <td class="p-3.5">
+            <a href="${window.formatWhatsAppUrl(c.phone)}" target="_blank" class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-mono font-bold hover:underline" title="Chat WhatsApp">
+              <span class="material-symbols-outlined text-[15px]">chat</span>
+              <span>${c.phone}</span>
+            </a>
+          </td>
+          <td class="p-3.5 text-center font-bold font-mono text-slate-800">
+            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs">
+              ${c.total_orders || 0}x Kunjungan
+            </span>
+          </td>
+          <td class="p-3.5 font-bold font-mono text-blue-700">
+            ${formatIDR(c.total_spent || 0)}
+          </td>
+          <td class="p-3.5">
+            <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+              🍽️ ${c.favorite_table || 'Meja Umum'}
+            </span>
+          </td>
+          <td class="p-3.5 text-slate-600 max-w-xs truncate text-[11px]" title="${c.notes || '-'}">
+            ${c.notes || '-'}
+          </td>
+          <td class="p-3.5 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="window.sendWhatsAppToCustomer('${c.phone}', '${c.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold text-[11px] flex items-center gap-1 transition-all" title="Kirim Resi/Pesan WA">
+                <span class="material-symbols-outlined text-[15px]">send</span>
+                <span>Kirim WA</span>
+              </button>
+              <button onclick="window.editCustomer('${c.customer_id}')" class="w-7 h-7 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors" title="Edit Kontak">
+                <span class="material-symbols-outlined text-[16px]">edit</span>
+              </button>
+              <button onclick="window.deleteCustomer('${c.customer_id}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors" title="Hapus Kontak">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  };
+
+  window.handleCustomerSearch = function () {
+    renderCustomersTable();
+  };
+
+  window.openCustomerModal = function (custId = null) {
+    const modal = document.getElementById('customerModal');
+    if (!modal) return;
+
+    State.editingCustomerId = custId;
+    const tableSelect = document.getElementById('custModalTable');
+    if (tableSelect) {
+      tableSelect.innerHTML = State.tables.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+
+    if (custId) {
+      const c = State.customers.find(item => item.customer_id === custId);
+      if (c) {
+        document.getElementById('customerModalTitle').textContent = 'Edit Data Pelanggan';
+        document.getElementById('custModalName').value = c.name;
+        document.getElementById('custModalPhone').value = c.phone;
+        document.getElementById('custModalEmail').value = c.email || '';
+        document.getElementById('custModalTable').value = c.favorite_table || State.tables[0];
+        document.getElementById('custModalNotes').value = c.notes || '';
+      }
+    } else {
+      document.getElementById('customerModalTitle').textContent = 'Tambah Data Pelanggan Baru';
+      document.getElementById('custModalName').value = '';
+      document.getElementById('custModalPhone').value = '';
+      document.getElementById('custModalEmail').value = '';
+      document.getElementById('custModalNotes').value = '';
+    }
+
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+  };
+
+  window.closeCustomerModal = function () {
+    const modal = document.getElementById('customerModal');
+    if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+    State.editingCustomerId = null;
+  };
+
+  window.submitCustomerModal = function () {
+    const name = (document.getElementById('custModalName')?.value || '').trim();
+    const phone = (document.getElementById('custModalPhone')?.value || '').trim();
+    const email = (document.getElementById('custModalEmail')?.value || '').trim();
+    const table = document.getElementById('custModalTable')?.value;
+    const notes = (document.getElementById('custModalNotes')?.value || '').trim();
+
+    if (!name || !phone) {
+      showToast('⚠️ Nama dan Nomor WhatsApp wajib diisi!');
+      return;
+    }
+
+    if (State.editingCustomerId) {
+      const c = State.customers.find(item => item.customer_id === State.editingCustomerId);
+      if (c) {
+        c.name = name;
+        c.phone = phone;
+        c.email = email;
+        c.favorite_table = table;
+        c.notes = notes;
+        showToast(`✅ Kontak ${name} berhasil diperbarui!`);
+      }
+    } else {
+      const newCust = {
+        customer_id: 'CUST-' + String(State.customers.length + 1).padStart(3, '0'),
+        name: name,
+        phone: phone,
+        email: email,
+        total_orders: 0,
+        total_spent: 0,
+        favorite_table: table,
+        notes: notes,
+        created_at: new Date().toISOString().split('T')[0]
+      };
+      State.customers.unshift(newCust);
+      showToast(`✅ Pelanggan baru ${name} berhasil ditambahkan!`);
+    }
+
+    savePersistedCustomers(State.customers);
+    window.closeCustomerModal();
+    renderCustomersTable();
+    renderActiveModelUI();
+  };
+
+  window.editCustomer = function (custId) {
+    window.openCustomerModal(custId);
+  };
+
+  window.deleteCustomer = function (custId) {
+    const c = State.customers.find(item => item.customer_id === custId);
+    if (!c) return;
+
+    if (confirm(`Hapus data pelanggan ${c.name} (${c.phone})?`)) {
+      State.customers = State.customers.filter(item => item.customer_id !== custId);
+      savePersistedCustomers(State.customers);
+      renderCustomersTable();
+      renderActiveModelUI();
+      showToast(`🗑️ Data pelanggan ${c.name} telah dihapus.`);
+    }
+  };
+
+  window.sendWhatsAppToCustomer = function (phone, name) {
+    const msg = `Halo Bapak/Ibu *${name}*, salam hangat dari *${State.settings.STORE_NAME || 'RASH Resto Timur Tengah'}*! 🙏\n\nTerima kasih telah menjadi pelanggan setia kami. Kami siap melayani hidangan Timur Tengah otentik favorit Anda. Ada yang bisa kami bantu seputar reservasi meja atau pesanan hari ini?`;
+    const url = window.formatWhatsAppUrl(phone, msg);
+    if (!url || url === '#') {
+      showToast('⚠️ Nomor WhatsApp pelanggan tidak valid.');
+      return;
+    }
+    window.open(url, '_blank');
+  };
+
+  // ============================================================================
+  // 10. SUPER ADMIN SETTINGS
   // ============================================================================
   window.saveAdminSettings = function () {
     const store = (document.getElementById('settStoreName')?.value || '').trim();
@@ -1123,12 +2055,11 @@
     if (qris) State.settings.QRIS_MERCHANT_ID = qris;
 
     document.getElementById('appStoreName').textContent = State.settings.STORE_NAME;
-    showToast('💾 Pengaturan toko berhasil disimpan!');
+    showToast('💾 Pengaturan resto berhasil disimpan!');
   };
 
   // Event Listeners Umum
   function setupEventListeners() {
-    // Barcode Search F2 Shortcut
     window.addEventListener('keydown', (e) => {
       if (e.key === 'F2') {
         e.preventDefault();
@@ -1157,6 +2088,5 @@
     }
   }
 
-  // Jalankan saat dokumen siap
   document.addEventListener('DOMContentLoaded', initApp);
 })();

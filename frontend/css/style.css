@@ -294,25 +294,72 @@ body {
   animation: pulseSubtle 2s ease-in-out infinite;
 }
 
-/* Thermal Receipt Print Styles 58mm */
+/* ========================================================================== */
+/* THERMAL RECEIPT (58MM) & PRINT OPTIMIZATION (SAFARI & CHROME COMPATIBLE)   */
+/* ========================================================================== */
+@page {
+  size: 58mm auto;
+  margin: 0mm;
+}
+
 @media print {
-  body * {
-    visibility: hidden !important;
+  /* Reset document flow */
+  html, body {
+    width: 58mm !important;
+    max-width: 58mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
-  #thermalPrintContainer, #thermalPrintContainer * {
-    visibility: visible !important;
+
+  /* Sembunyikan SEMUA elemen web app dengan display:none agar tidak makan tinggi kertas */
+  body > *:not(#thermalPrintContainer):not(#tableQrPrintContainer) {
+    display: none !important;
   }
+
+  /* Paksa kontainer struk thermal tampil */
   #thermalPrintContainer {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 58mm;
-    margin: 0;
-    padding: 4mm;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    line-height: 1.25;
-    color: #000;
-    background: #fff;
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 58mm !important;
+    max-width: 58mm !important;
+    margin: 0 auto !important;
+    padding: 3mm 2mm !important;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    color: #000 !important;
+    background: #fff !important;
+    box-sizing: border-box !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  #thermalPrintContainer * {
+    visibility: visible !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  #tableQrPrintContainer {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 120mm !important;
+    margin: 0 auto !important;
+    padding: 6mm !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  #tableQrPrintContainer * {
+    visibility: visible !important;
+    color: #000 !important;
   }
 }

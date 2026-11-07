@@ -74,31 +74,51 @@
         </div>
       </div>
 
-      <!-- Action Controls -->
-      <div class="flex items-center space-x-2">
-        <button onclick="openCustomerTrackModal()" aria-label="Lacak Pesanan" class="px-3.5 py-2 rounded-full bg-white hover:bg-slate-100 border border-slate-200 shadow-xs flex items-center gap-1.5 text-xs font-bold text-blue-600 active:scale-95 transition-transform" title="Lacak Pesanan Realtime">
-          <span class="material-symbols-outlined text-[18px]">moped</span>
-          <span class="hidden sm:inline">Lacak Pesanan</span>
+      <!-- Action Controls: Tombol Lacak Pesanan (Besar & Jelas, Tanpa Tombol Kasir) -->
+      <div class="flex items-center">
+        <button onclick="openCustomerTrackModal()" aria-label="Lacak Pesanan" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 flex items-center gap-2 text-xs sm:text-sm font-extrabold active:scale-95 transition-all" title="Lacak Status Pesanan Realtime">
+          <span class="material-symbols-outlined text-[19px] sm:text-[21px]">moped</span>
+          <span>Lacak Pesanan</span>
         </button>
-        <a href="index.html" class="px-3.5 py-2 rounded-full bg-white hover:bg-slate-100 border border-slate-200 shadow-xs flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-blue-600 active:scale-95 transition-transform" title="Masuk ke Mesin Kasir">
-          <span class="material-symbols-outlined text-[18px]">badge</span>
-          <span class="hidden sm:inline">Kasir</span>
-        </a>
       </div>
     </header>
 
+    <!-- Welcome Table Status Banner (Scan Barcode Feedback) -->
+    <div id="tableWelcomeBanner" class="my-3 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-300 rounded-2xl p-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+          🍽️
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span id="bannerQrBadge" class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              QR Meja Terhubung
+            </span>
+            <span class="text-[11px] text-slate-500 font-medium">Self-Order Resto</span>
+          </div>
+          <p class="text-sm font-extrabold text-slate-900 mt-0.5">
+            Anda memesan dari <span id="bannerTableName" class="text-emerald-700 font-black">Meja 01</span>
+          </p>
+        </div>
+      </div>
+      <button onclick="openTablePickerModal()" class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-emerald-700 border border-slate-200 text-xs font-bold transition-all shadow-xs shrink-0 flex items-center gap-1">
+        <span class="material-symbols-outlined text-[15px]">sync_alt</span>
+        <span>Ganti Meja</span>
+      </button>
+    </div>
+
     <!-- Table & Service Bar -->
-    <div class="my-3">
+    <div class="mb-3">
       <div class="bg-white rounded-2xl py-2.5 px-4 shadow-xs flex items-center justify-between border border-slate-200">
         <div class="flex items-center space-x-2.5 overflow-hidden">
           <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[20px]">restaurant</span>
+            <span class="material-symbols-outlined text-[20px]">table_restaurant</span>
           </div>
           <div class="text-left truncate">
             <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Layanan Meja</p>
             <p class="text-xs font-bold text-slate-800 truncate">
-              <span id="activeTableLabel">Meja No. 04 • Dine-in</span> 
-              <button onclick="changeTablePrompt()" class="text-blue-600 hover:underline font-semibold ml-1">(Ubah)</button>
+              <span id="activeTableLabel">Meja 01 • Dine-in</span> 
+              <button onclick="openTablePickerModal()" class="text-blue-600 hover:underline font-semibold ml-1">(Pilih)</button>
             </p>
           </div>
         </div>
@@ -106,7 +126,7 @@
         <!-- Search Field -->
         <div class="flex items-center gap-1">
           <div class="relative">
-            <input type="text" id="catalogSearchInput" oninput="filterCatalog()" placeholder="Cari menu favorit..." class="text-xs rounded-full py-1.5 pl-8 pr-3 bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-blue-500 w-36 sm:w-56" />
+            <input type="text" id="catalogSearchInput" oninput="filterCatalog()" placeholder="Cari kebuli, mandi, sambosa..." class="text-xs rounded-full py-1.5 pl-8 pr-3 bg-slate-50 border border-slate-200 focus:bg-white focus:ring-2 focus:ring-blue-500 w-36 sm:w-56" />
             <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">search</span>
           </div>
         </div>
@@ -125,10 +145,10 @@
               <span>Pesan Mandiri Cepat</span>
             </span>
             <h2 class="text-2xl sm:text-3xl leading-tight font-black tracking-tight text-white mb-2 uppercase font-sans">
-              Segar. Enak.<br>Langsung ke Dapur.
+              Otentik. Nikmat.<br>Khas Timur Tengah.
             </h2>
             <p class="text-xs sm:text-sm text-blue-100 leading-relaxed mb-4 max-w-sm">
-              Pesan langsung dari mejamu. Pesanan otomatis terkirim ke WhatsApp kasir dan layar dapur secara realtime.
+              Pesan langsung dari mejamu. Nasi Mandi, Kebuli & Briyani hangat langsung disiapkan dan diantar ke meja Anda.
             </p>
             <button onclick="scrollToMenu()" class="inline-flex items-center space-x-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-full shadow-md active:scale-95 transition-all">
               <span>Pilih Menu Sekarang</span>
@@ -138,7 +158,7 @@
           <!-- Right Visual Graphic -->
           <div class="col-span-4 sm:col-span-5 flex items-center justify-center">
             <div class="relative w-28 h-28 sm:w-40 sm:h-40 rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 transform hover:scale-105 transition-transform">
-              <img alt="Menu Rekomendasi" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600" />
+              <img alt="Nasi Mandi Rempah Signature" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600" />
             </div>
           </div>
         </div>
@@ -148,7 +168,7 @@
     <!-- Category Switcher (Horizontal Scroll) -->
     <section class="mb-5" id="menuSection">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-extrabold text-slate-900">Kategori Pilihan</h3>
+        <h3 class="text-sm font-extrabold text-slate-900">Kategori Menu Resto</h3>
         <span class="text-xs text-slate-500 font-semibold">Geser untuk melihat</span>
       </div>
       
@@ -158,39 +178,24 @@
           <span>Semua Menu</span>
         </button>
 
-        <button onclick="filterCategory('Burritos', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
-          <span>🌯</span>
-          <span>Burritos</span>
+        <button onclick="filterCategory('Nasi Rempah Arab', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
+          <span>🍛</span>
+          <span>Nasi Rempah Arab</span>
         </button>
 
-        <button onclick="filterCategory('Bowls', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
-          <span>🥗</span>
-          <span>Bowls</span>
+        <button onclick="filterCategory('Camilan & Roti Arab', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
+          <span>🥟</span>
+          <span>Camilan & Roti Arab</span>
         </button>
 
-        <button onclick="filterCategory('Tacos', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
-          <span>🌮</span>
-          <span>Tacos</span>
+        <button onclick="filterCategory('Minuman & Teh Rempah', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
+          <span>☕</span>
+          <span>Minuman & Teh Rempah</span>
         </button>
 
-        <button onclick="filterCategory('Quesadillas', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
-          <span>🍕</span>
-          <span>Quesadilla</span>
-        </button>
-
-        <button onclick="filterCategory('Minuman', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
-          <span>🥤</span>
-          <span>Minuman</span>
-        </button>
-
-        <button onclick="filterCategory('Sembako', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
-          <span>🛍️</span>
-          <span>Sembako</span>
-        </button>
-
-        <button onclick="filterCategory('Laundry Kiloan', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
-          <span>🧺</span>
-          <span>Laundry</span>
+        <button onclick="filterCategory('Penutup & Dessert', this)" class="cat-pill flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs shrink-0 transition-all">
+          <span>🍯</span>
+          <span>Penutup & Dessert</span>
         </button>
       </div>
     </section>
@@ -235,17 +240,17 @@
         </button>
       </div>
 
-      <!-- Track -->
-      <button onclick="openCustomerTrackModal()" class="flex flex-col items-center text-slate-500 hover:text-slate-800 font-semibold text-[10px] py-1 px-3">
+      <!-- Ganti Meja -->
+      <button onclick="openTablePickerModal()" class="flex flex-col items-center text-slate-500 hover:text-slate-800 font-semibold text-[10px] py-1 px-3" title="Ganti Nomor Meja">
+        <span class="material-symbols-outlined text-[20px]">table_restaurant</span>
+        <span>Meja</span>
+      </button>
+
+      <!-- Lacak Pesanan -->
+      <button onclick="openCustomerTrackModal()" class="flex flex-col items-center text-blue-600 hover:text-blue-700 font-bold text-[10px] py-1 px-3" title="Lacak Status Pesanan">
         <span class="material-symbols-outlined text-[20px]">moped</span>
         <span>Lacak</span>
       </button>
-
-      <!-- Login Kasir -->
-      <a href="index.html" class="flex flex-col items-center text-slate-500 hover:text-slate-800 font-semibold text-[10px] py-1 px-3">
-        <span class="material-symbols-outlined text-[20px]">badge</span>
-        <span>Kasir</span>
-      </a>
     </nav>
 
   </div>
@@ -274,14 +279,19 @@
 
       <!-- Customer Contact Form -->
       <div class="space-y-3 py-3 border-t border-slate-200">
+        <div id="custWelcomeBadge" class="hidden px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">verified</span>
+          <span id="custWelcomeText">Selamat datang kembali!</span>
+        </div>
+
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-1">Nama Pemesan:</label>
-            <input type="text" id="custNameInput" placeholder="Contoh: Rian" class="w-full text-xs rounded-xl border-slate-200 bg-slate-50 p-2.5 focus:ring-2 focus:ring-blue-500" />
+            <input type="text" id="custNameInput" placeholder="Contoh: Rian" class="w-full text-xs rounded-xl border-slate-200 bg-slate-50 p-2.5 focus:ring-2 focus:ring-blue-500 font-medium" />
           </div>
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-1">No. WhatsApp Anda:</label>
-            <input type="tel" id="custPhoneInput" placeholder="08123456789" class="w-full text-xs rounded-xl border-slate-200 bg-slate-50 p-2.5 focus:ring-2 focus:ring-blue-500 font-mono" />
+            <input type="tel" id="custPhoneInput" oninput="handleCustomerPhoneAutoLookup(this.value)" placeholder="08123456789" class="w-full text-xs rounded-xl border-slate-200 bg-slate-50 p-2.5 focus:ring-2 focus:ring-blue-500 font-mono" />
           </div>
         </div>
 
@@ -321,6 +331,35 @@
         <span>KIRIM PESANAN & NOTIFIKASI WA KASIR</span>
       </button>
 
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL PILIH / GANTI NOMOR MEJA (MEJA 01 S/D 10+)                          -->
+  <!-- ========================================================================= -->
+  <div id="tablePickerModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative text-left">
+      <button onclick="closeTablePickerModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-800">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+
+      <div class="flex items-center gap-2.5 mb-1">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-[22px]">table_restaurant</span>
+        </div>
+        <div>
+          <h3 class="text-base font-black text-slate-900">Pilih Nomor Meja Anda</h3>
+          <p class="text-[11px] text-slate-500">Pilih meja tempat Anda duduk</p>
+        </div>
+      </div>
+
+      <div id="tablePickerGrid" class="grid grid-cols-2 gap-2 my-4 max-h-64 overflow-y-auto custom-scroll pr-1">
+        <!-- Rendered by renderTablePickerOptions() -->
+      </div>
+
+      <p class="text-[10px] text-slate-400 text-center font-medium">
+        💡 Nomor meja juga tertera pada stiker barcode stand akrilik di meja Anda.
+      </p>
     </div>
   </div>
 
@@ -365,7 +404,7 @@
   <script>
     let cart = [];
     let currentCategory = 'all';
-    let currentTable = 'Meja No. 04 • Dine-in';
+    let currentTable = 'Meja 01';
     let selectedTender = 'CASH';
 
     // Helper Format Rupiah
@@ -373,13 +412,43 @@
       return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
     }
 
-    // Persistensi Produk & Orders
+    // Helper Format Nomor & URL WhatsApp Resmi (Konversi 08... / 8... -> 628... Standar Internasional)
+    function formatWhatsAppUrl(phone, message = '') {
+      if (!phone || phone === '-') return '#';
+      let clean = String(phone).replace(/\D/g, '');
+      if (!clean) return '#';
+
+      // Konversi format lokal Indonesia (08... atau 8...) ke format internasional resmi (628...)
+      if (clean.startsWith('0')) {
+        clean = '62' + clean.slice(1);
+      } else if (clean.startsWith('8')) {
+        clean = '62' + clean;
+      }
+
+      const encodedMsg = message ? encodeURIComponent(message) : '';
+      return encodedMsg 
+        ? `https://api.whatsapp.com/send?phone=${clean}&text=${encodedMsg}`
+        : `https://api.whatsapp.com/send?phone=${clean}`;
+    }
+
+    // Persistensi Produk, Meja, & Orders
     function getStoredProducts() {
       try {
         const p = localStorage.getItem('RASH_MITRA_PRODUCTS');
         if (p) return JSON.parse(p);
       } catch (e) {}
       return (window.APP_CONFIG && window.APP_CONFIG.MOCK_PRODUCTS) ? window.APP_CONFIG.MOCK_PRODUCTS : [];
+    }
+
+    function getStoredTables() {
+      try {
+        const t = localStorage.getItem('RASH_MITRA_TABLES');
+        if (t) return JSON.parse(t);
+      } catch (e) {}
+      return (window.APP_CONFIG && window.APP_CONFIG.DEFAULT_TABLES) ? window.APP_CONFIG.DEFAULT_TABLES : [
+        'Meja 01', 'Meja 02', 'Meja 03', 'Meja 04', 'Meja 05',
+        'Meja 06', 'Meja 07', 'Meja 08', 'Meja 09', 'Meja 10'
+      ];
     }
 
     function getStoredOrders() {
@@ -396,6 +465,67 @@
       } catch (e) {}
     }
 
+    // Atur Meja Aktif
+    function setTable(tableName, isFromQr = false) {
+      currentTable = tableName;
+      try {
+        localStorage.setItem('RASH_MITRA_CUSTOMER_TABLE', tableName);
+      } catch (e) {}
+
+      const labelEl = document.getElementById('activeTableLabel');
+      if (labelEl) labelEl.textContent = `${tableName} • Dine-in`;
+
+      const bannerName = document.getElementById('bannerTableName');
+      if (bannerName) bannerName.textContent = tableName;
+
+      const subTitle = document.getElementById('checkoutTableSubtitle');
+      if (subTitle) subTitle.textContent = `${tableName} • Pesanan langsung masuk kasir & WA`;
+
+      const qrBadge = document.getElementById('bannerQrBadge');
+      if (qrBadge) {
+        qrBadge.textContent = isFromQr ? 'QR Meja Terhubung' : 'Pemesanan Mandiri Meja';
+      }
+    }
+
+    // Modal Pilih Meja
+    function openTablePickerModal() {
+      const modal = document.getElementById('tablePickerModal');
+      const container = document.getElementById('tablePickerGrid');
+      const tables = getStoredTables();
+
+      container.innerHTML = tables.map(t => {
+        const isCurrent = t === currentTable;
+        return `
+          <button onclick="selectPickedTable('${t}')" class="p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1 ${
+            isCurrent 
+              ? 'border-blue-600 bg-blue-50 text-blue-700 font-extrabold shadow-xs' 
+              : 'border-slate-200 bg-slate-50 hover:bg-white text-slate-700 font-bold hover:border-slate-300'
+          }">
+            <span class="material-symbols-outlined text-[22px] ${isCurrent ? 'text-blue-600' : 'text-slate-400'}">table_restaurant</span>
+            <span class="text-xs">${t}</span>
+            <span class="text-[9px] font-mono ${isCurrent ? 'text-blue-600 font-bold' : 'text-slate-400'}">${isCurrent ? '● Terpilih' : 'Dine-in'}</span>
+          </button>
+        `;
+      }).join('');
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeTablePickerModal() {
+      const modal = document.getElementById('tablePickerModal');
+      if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function selectPickedTable(t) {
+      setTable(t, false);
+      closeTablePickerModal();
+      showToast(`Meja diubah ke ${t}`);
+    }
+
+    function changeTablePrompt() {
+      openTablePickerModal();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       // Set Store Name
       if (window.APP_CONFIG && window.APP_CONFIG.MOCK_SETTINGS) {
@@ -403,11 +533,24 @@
         if (sName) document.getElementById('catalogStoreName').textContent = sName;
       }
 
+      // Deteksi parameter meja dari scan QR barcode (?meja=Meja%2001 atau ?table=Meja%2001)
+      const urlParams = new URLSearchParams(window.location.search);
+      const mejaParam = urlParams.get('meja') || urlParams.get('table');
+
+      if (mejaParam) {
+        setTable(decodeURIComponent(mejaParam), true);
+      } else {
+        let cached = null;
+        try {
+          cached = localStorage.getItem('RASH_MITRA_CUSTOMER_TABLE');
+        } catch (e) {}
+        setTable(cached || 'Meja 01', false);
+      }
+
       renderProducts();
       updateCartDisplay();
 
       // Cek apakah ada parameter url ?track=ORD-XXX
-      const urlParams = new URLSearchParams(window.location.search);
       const trackParam = urlParams.get('track');
       if (trackParam) {
         openCustomerTrackModal();
@@ -422,6 +565,12 @@
           if (currentQuery) {
             searchOrderTimeline();
           }
+        }
+        if (e.key === 'RASH_MITRA_PRODUCTS') {
+          renderProducts();
+        }
+        if (e.key === 'RASH_MITRA_TABLES') {
+          // Update data meja bila diubah admin
         }
       });
     });
@@ -562,6 +711,34 @@
       btn.className = 'tender-btn active p-2.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs';
     }
 
+    function handleCustomerPhoneAutoLookup(val) {
+      const clean = val.replace(/\D/g, '');
+      const badge = document.getElementById('custWelcomeBadge');
+      const text = document.getElementById('custWelcomeText');
+      const nameInput = document.getElementById('custNameInput');
+
+      if (clean.length >= 8) {
+        let customers = [];
+        try {
+          const stored = localStorage.getItem('RASH_MITRA_CUSTOMERS');
+          customers = stored ? JSON.parse(stored) : (window.APP_CONFIG?.DEFAULT_CUSTOMERS || []);
+        } catch (e) {}
+
+        const match = customers.find(c => c.phone && c.phone.replace(/\D/g, '').includes(clean));
+        if (match) {
+          if (nameInput && !nameInput.value) {
+            nameInput.value = match.name;
+          }
+          if (badge && text) {
+            text.textContent = `Selamat datang kembali, ${match.name}!`;
+            badge.classList.remove('hidden');
+          }
+          return;
+        }
+      }
+      if (badge) badge.classList.add('hidden');
+    }
+
     // =========================================================================
     // SUBMIT ORDER & INTEGRASI WHATSAPP KASIR
     // =========================================================================
@@ -575,6 +752,40 @@
       const notes = document.getElementById('custNotesInput').value.trim();
       const orderId = 'ORD-' + Date.now().toString().slice(-6);
       const grandTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      // Simpan atau perbarui otomatis ke database pelanggan (CRM)
+      if (phone && phone !== '-') {
+        try {
+          let customers = [];
+          const stored = localStorage.getItem('RASH_MITRA_CUSTOMERS');
+          customers = stored ? JSON.parse(stored) : (window.APP_CONFIG?.DEFAULT_CUSTOMERS ? [...window.APP_CONFIG.DEFAULT_CUSTOMERS] : []);
+          const cleanPhone = phone.replace(/\D/g, '');
+          let existing = customers.find(c => c.phone && c.phone.replace(/\D/g, '') === cleanPhone);
+
+          if (existing) {
+            if (name && name !== 'Pelanggan Meja') existing.name = name;
+            existing.total_orders = (existing.total_orders || 0) + 1;
+            existing.total_spent = (existing.total_spent || 0) + grandTotal;
+            existing.favorite_table = currentTable;
+            existing.last_visit = new Date().toISOString();
+          } else {
+            customers.push({
+              customer_id: 'CUST-' + Date.now().toString().slice(-4),
+              name: name || 'Tamu Meja',
+              phone: phone,
+              email: '',
+              total_orders: 1,
+              total_spent: grandTotal,
+              favorite_table: currentTable,
+              notes: 'Pemesanan Mandiri Meja',
+              created_at: new Date().toISOString().split('T')[0]
+            });
+          }
+          localStorage.setItem('RASH_MITRA_CUSTOMERS', JSON.stringify(customers));
+        } catch (e) {
+          console.warn('Gagal sync pelanggan:', e);
+        }
+      }
 
       // Simpan ke daftar antrean terpadu (localStorage)
       const currentOrders = getStoredOrders();
@@ -600,22 +811,27 @@
       const kasirPhone = (window.APP_CONFIG && (window.APP_CONFIG.KASIR_WA_NUMBER || window.APP_CONFIG.MOCK_SETTINGS?.KASIR_WA_NUMBER)) || '6281234567890';
       const itemsListText = cart.map(i => `• ${i.qty}x ${i.name} (${formatIDR(i.price * i.qty)})`).join('\n');
       
+      const restoName = (window.APP_CONFIG && window.APP_CONFIG.MOCK_SETTINGS?.STORE_NAME) || 'RASH RESTO TIMUR TENGAH';
       const waMessage = 
-`*PESANAN BARU (SELF-ORDER) - RASH MITRA* 🔔
+`*PESANAN MEJA: ${currentTable.toUpperCase()}* 🍽️
+*${restoName.toUpperCase()}*
+-----------------------------------
 No. Order: *${orderId}*
-Nama: *${name}*
-Layanan: *${currentTable}*
+Nama Tamu: *${name}*
+Layanan: *${currentTable} (Dine-in)*
 Pembayaran: *${newOrder.payment_method}*
 ${notes ? `Catatan: _${notes}_\n` : ''}-----------------------------------
-*Daftar Pesanan:*
+*Daftar Menu Dipesan:*
 ${itemsListText}
 -----------------------------------
-*Total Pembayaran: ${formatIDR(grandTotal)}*
+*Total Tagihan: ${formatIDR(grandTotal)}*
 
-Lacak status pesanan secara realtime di:
-${window.location.origin}${window.location.pathname}?track=${orderId}`;
+Lacak proses masak & antar di:
+${window.location.origin}${window.location.pathname}?track=${orderId}
 
-      const waUrl = `https://wa.me/${kasirPhone.replace(/\D/g, '')}?text=${encodeURIComponent(waMessage)}`;
+_Pesanan ini otomatis masuk ke sistem kasir & antrean dapur resto._`;
+
+      const waUrl = formatWhatsAppUrl(kasirPhone, waMessage);
 
       // Reset keranjang
       cart = [];
@@ -627,8 +843,10 @@ ${window.location.origin}${window.location.pathname}?track=${orderId}`;
       document.getElementById('trackInputQuery').value = orderId;
       searchOrderTimeline();
 
-      // Buka WhatsApp Kasir di tab baru
-      window.open(waUrl, '_blank');
+      // Buka WhatsApp Kasir di tab baru tanpa error tautan
+      if (waUrl && waUrl !== '#') {
+        window.open(waUrl, '_blank');
+      }
       showToast(`✅ Pesanan ${orderId} terkirim ke dapur & kasir!`);
     }
 

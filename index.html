@@ -218,15 +218,6 @@
 
         <!-- Right: Business Model Selector & Controls -->
         <div class="flex items-center gap-2.5">
-          <!-- Switcher Vertikal (Hanya untuk Super Admin / Demo) -->
-          <div id="demoModelSelectorBox" class="flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200">
-            <span class="text-[10px] font-bold text-slate-500 pl-2 hidden sm:inline">Model:</span>
-            <select id="activeModelSelect" onchange="window.changeBusinessModel(this.value)" class="text-xs font-bold bg-white rounded-full py-1 px-3 border-none focus:ring-2 focus:ring-blue-500 text-slate-800 shadow-xs">
-              <option value="RESTO">🍽️ Restoran / Kafe</option>
-              <option value="RETAIL">🏬 Retail / Toko</option>
-              <option value="LAUNDRY">🧺 Laundry / Jasa</option>
-            </select>
-          </div>
 
           <!-- Link ke Katalog Pelanggan -->
           <a href="katalog.html" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200 transition-colors" title="Buka Katalog Self-Order Pelanggan">
@@ -263,9 +254,14 @@
           <span id="pendingOrdersBadge" class="hidden px-1.5 py-0.2 rounded-full bg-emerald-500 text-white text-[10px] font-bold">0</span>
         </button>
 
+        <button id="navTabPelanggan" onclick="window.switchAppTab('pelanggan')" class="nav-app-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 flex items-center gap-2 transition-all shrink-0">
+          <span class="material-symbols-outlined text-[18px]">contacts</span>
+          <span>4. Data Pelanggan (CRM)</span>
+        </button>
+
         <button id="navTabAdmin" onclick="window.switchAppTab('admin')" class="nav-app-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 flex items-center gap-2 transition-all shrink-0">
           <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-          <span>4. Pengaturan Super Admin</span>
+          <span>5. Pengaturan Super Admin</span>
         </button>
 
       </div>
@@ -361,13 +357,58 @@
               </div>
             </div>
 
-            <!-- Quick Cash Pills -->
-            <div id="quickCashPillsBox" class="pt-2">
-              <div class="grid grid-cols-4 gap-1 text-[11px] font-mono font-bold">
-                <button onclick="window.setQuickCash('EXACT')" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">Pas</button>
-                <button onclick="window.setQuickCash(50000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">50rb</button>
-                <button onclick="window.setQuickCash(100000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">100rb</button>
-                <button onclick="window.setQuickCash(200000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center">200rb</button>
+            <!-- Cash Tender Input & Change Calculator (Tunai) -->
+            <div id="quickCashPillsBox" class="pt-2.5 space-y-2">
+              <!-- Input Uang Diterima -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[15px] text-emerald-600">payments</span>
+                    <span>Uang Tunai Diterima:</span>
+                  </label>
+                  <button type="button" onclick="window.setQuickCash('EXACT')" class="text-[10px] font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                    Bayar Uang Pas
+                  </button>
+                </div>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-slate-400 text-xs">Rp</span>
+                  <input 
+                    type="text" 
+                    id="posCashTenderedInput" 
+                    inputmode="numeric"
+                    placeholder="0"
+                    oninput="window.handleCashTenderInput(this.value)"
+                    class="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm font-mono font-bold text-slate-900 bg-white transition-all shadow-2xs" 
+                  />
+                  <button 
+                    type="button" 
+                    onclick="window.clearCashTenderInput()" 
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors" 
+                    title="Kosongkan"
+                  >
+                    <span class="material-symbols-outlined text-[15px]">cancel</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Cash Preset Pills -->
+              <div class="grid grid-cols-4 gap-1.5 text-[11px] font-mono font-bold">
+                <button type="button" onclick="window.setQuickCash('EXACT')" class="py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-center border border-blue-200 transition-colors shadow-2xs">Uang Pas</button>
+                <button type="button" onclick="window.setQuickCash(50000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center border border-slate-200 transition-colors shadow-2xs">50rb</button>
+                <button type="button" onclick="window.setQuickCash(100000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center border border-slate-200 transition-colors shadow-2xs">100rb</button>
+                <button type="button" onclick="window.setQuickCash(200000)" class="py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-center border border-slate-200 transition-colors shadow-2xs">200rb</button>
+              </div>
+
+              <!-- Live Change Calculation Card -->
+              <div id="posChangeCard" class="p-2.5 rounded-xl border transition-all flex items-center justify-between bg-emerald-50 border-emerald-200 text-emerald-800">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[22px] text-emerald-600" id="posChangeIcon">change_circle</span>
+                  <div>
+                    <div class="text-[9px] font-bold uppercase tracking-wider text-slate-500" id="posChangeLabel">Kembalian Kasir:</div>
+                    <div class="font-mono text-base font-black leading-tight text-emerald-700" id="posChangeText">Rp 0</div>
+                  </div>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200" id="posChangeBadge">Uang Pas</span>
               </div>
             </div>
 
@@ -413,13 +454,10 @@
           <div class="flex items-center gap-2 w-full sm:w-auto">
             <select id="inventoryCategoryFilter" onchange="window.handleInventoryFilter()" class="text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500">
               <option value="ALL">Semua Kategori</option>
-              <option value="Burritos">Burritos</option>
-              <option value="Bowls">Bowls</option>
-              <option value="Tacos">Tacos</option>
-              <option value="Quesadillas">Quesadillas</option>
-              <option value="Minuman">Minuman</option>
-              <option value="Sembako">Sembako</option>
-              <option value="Laundry">Laundry</option>
+              <option value="Nasi Rempah Arab">Nasi Rempah Arab</option>
+              <option value="Camilan & Roti Arab">Camilan & Roti Arab</option>
+              <option value="Minuman & Teh Rempah">Minuman & Teh Rempah</option>
+              <option value="Penutup & Dessert">Penutup & Dessert</option>
             </select>
 
             <select id="inventoryStockAlertFilter" onchange="window.handleInventoryFilter()" class="text-xs font-semibold rounded-xl border-slate-200 p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500">
@@ -497,60 +535,130 @@
       </section>
 
       <!-- ===================================================================== -->
-      <!-- TAB 4: PENGATURAN SUPER ADMIN & MODEL BISNIS                          -->
+      <!-- TAB 4: DATA PELANGGAN & CRM RESTO (RESI WA OTOMATIS)                  -->
+      <!-- ===================================================================== -->
+      <section id="panelTabPelanggan" class="app-panel hidden flex-1 flex flex-col gap-3">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black uppercase">CRM Resto</span>
+              <h2 class="text-base font-extrabold text-slate-900">Database Pelanggan & Resi WhatsApp</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola data tamu, riwayat pesanan, kirim resi WA otomatis 1-klik, dan loyalitas pelanggan.</p>
+          </div>
+          
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="window.openCustomerModal()" class="w-full sm:w-auto px-4 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all">
+              <span class="material-symbols-outlined text-[18px]">person_add</span>
+              <span>Tambah Pelanggan Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="bg-white rounded-2xl p-3 shadow-xs border border-slate-200 flex flex-col sm:flex-row items-center gap-3">
+          <div class="relative flex-1 w-full">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+            <input type="text" id="customerSearchInput" oninput="window.handleCustomerSearch(this.value)" placeholder="Cari nama pelanggan, nomor WhatsApp, atau meja..." class="w-full pl-10 pr-3 py-2 text-xs rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700">
+              Total: <strong id="totalCustomersCount" class="text-blue-600 font-extrabold">0</strong> Pelanggan
+            </span>
+          </div>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden flex-1">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
+                <tr>
+                  <th class="p-3.5">ID / Nama Pelanggan</th>
+                  <th class="p-3.5">No. WhatsApp</th>
+                  <th class="p-3.5 text-center">Total Kunjungan</th>
+                  <th class="p-3.5">Total Belanja</th>
+                  <th class="p-3.5">Meja Favorit</th>
+                  <th class="p-3.5">Catatan Khusus</th>
+                  <th class="p-3.5 text-center">Aksi Resi WA & Kelola</th>
+                </tr>
+              </thead>
+              <tbody id="customersTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Rendered by renderCustomersTable() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- TAB 5: PENGATURAN SUPER ADMIN & MEJA RESTO                            -->
       <!-- ===================================================================== -->
       <section id="panelTabAdmin" class="app-panel hidden flex-1 flex flex-col gap-4">
         
-        <!-- Model Switcher Cards -->
+        <!-- Manajemen Meja Restoran (Meja 01 s/d 10+) & QR Barcode Pemesanan Mandiri -->
         <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200">
-          <h3 class="text-sm font-extrabold text-slate-900 mb-1">Model Bisnis Operasional (Multi-Vertikal)</h3>
-          <p class="text-xs text-slate-500 mb-4">Pilih model usaha untuk menyesuaikan alur kasir, cetakan struk, dan katalog.</p>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-            <!-- Resto -->
-            <div data-val="RESTO" onclick="window.changeBusinessModel('RESTO')" class="model-card-option p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/70 shadow-sm cursor-pointer transition-all">
-              <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl mb-2">
-                🍽️
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-200 gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-700 text-xs font-black">KASIR RESTO</span>
+                <h3 class="text-base font-extrabold text-slate-900">Manajemen Meja & QR Code Mandiri</h3>
               </div>
-              <h4 class="font-bold text-sm text-slate-900">Restoran & Kafe</h4>
-              <p class="text-[11px] text-slate-600 mt-1">Dine-in, nomor meja, takeaway, tiket antrean dapur, dan split bill.</p>
+              <p class="text-xs text-slate-500 mt-1">
+                Kelola Meja 01–10 (atau tambah meja baru). Setiap meja memiliki QR Code unik yang dapat dicetak untuk stand akrilik meja tamu.
+              </p>
             </div>
 
-            <!-- Retail -->
-            <div data-val="RETAIL" onclick="window.changeBusinessModel('RETAIL')" class="model-card-option p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all">
-              <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-2xl mb-2">
-                🏬
-              </div>
-              <h4 class="font-bold text-sm text-slate-900">Retail & Warung Toko</h4>
-              <p class="text-[11px] text-slate-600 mt-1">Pencarian barcode cepat [F2], harga grosir, dan notifikasi stok minimum.</p>
+            <!-- Total Tables Badge & Batch Print -->
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-blue-600">table_restaurant</span>
+                Total: <strong id="totalTablesCount" class="font-mono text-blue-700 font-extrabold">10</strong> Meja
+              </span>
+              <button onclick="window.printAllTableQrStands()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all" title="Cetak Semua QR Stand Meja">
+                <span class="material-symbols-outlined text-[16px]">print</span>
+                <span>Cetak Semua Stand QR</span>
+              </button>
             </div>
+          </div>
 
-            <!-- Laundry -->
-            <div data-val="LAUNDRY" onclick="window.changeBusinessModel('LAUNDRY')" class="model-card-option p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all">
-              <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-2xl mb-2">
-                🧺
-              </div>
-              <h4 class="font-bold text-sm text-slate-900">Laundry & Jasa Kiloan</h4>
-              <p class="text-[11px] text-slate-600 mt-1">Timbangan berat Kg, tracking status cuci/setrika, dan tanggal ambil.</p>
+          <!-- Tambah Meja Form -->
+          <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 mb-5 flex flex-col sm:flex-row items-center gap-2.5">
+            <div class="relative flex-1 w-full">
+              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">add_circle</span>
+              <input type="text" id="newTableNameInput" placeholder="Ketik nama meja baru (Contoh: Meja 11, Meja VIP 1, Saung 1)..." class="w-full pl-10 pr-3 py-2.5 text-xs rounded-xl border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 font-medium" />
             </div>
+            <button onclick="window.addNewTable()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all shrink-0">
+              <span class="material-symbols-outlined text-[18px]">add</span>
+              <span>Tambah Meja Baru</span>
+            </button>
+          </div>
+
+          <!-- Grid Daftar Meja & Barcode (Meja 01 s/d 10 + Tambahan) -->
+          <div id="tablesGridContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
+            <!-- Rendered by renderTablesManager() in app.js -->
           </div>
         </div>
 
         <!-- Store Profile & WhatsApp Settings -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200 space-y-3">
-            <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Identitas Usaha & Struk</h4>
+            <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Identitas Resto & Struk</h4>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Nama Usaha / Toko:</label>
-              <input type="text" id="settStoreName" value="RASH Smart POS & Cafe" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+              <input type="text" id="settStoreName" value="RASH Resto Timur Tengah" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Alamat Outlet:</label>
-              <input type="text" id="settStoreAddress" value="Jl. Merdeka No. 45, Jakarta Pusat" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+              <input type="text" id="settStoreAddress" value="Jl. Raden Saleh No. 18, Cikini, Jakarta Pusat" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Catatan Kaki Struk Thermal 58mm:</label>
-              <input type="text" id="settThermalFooter" value="Barang yang dibeli tidak dapat ditukar. Terima kasih!" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
+              <input type="text" id="settThermalFooter" value="Syukron katsiran atas kunjungan Anda. Selamat menikmati!" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
 
@@ -590,25 +698,22 @@
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Nama Produk:</label>
-          <input type="text" id="newProdName" placeholder="Contoh: Burrito Ayam Spesial" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+          <label class="block font-bold text-slate-700 mb-1">Nama Produk / Menu:</label>
+          <input type="text" id="newProdName" placeholder="Contoh: Nasi Kebuli Kambing Spesial" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
         </div>
         
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-bold text-slate-700 mb-1">SKU / Barcode:</label>
-            <input type="text" id="newProdSku" placeholder="BUR-99" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+            <input type="text" id="newProdSku" placeholder="KBL-010" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Kategori:</label>
             <select id="newProdCategory" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50">
-              <option value="Burritos">Burritos</option>
-              <option value="Bowls">Bowls</option>
-              <option value="Tacos">Tacos</option>
-              <option value="Quesadillas">Quesadillas</option>
-              <option value="Minuman">Minuman</option>
-              <option value="Sembako">Sembako</option>
-              <option value="Laundry Kiloan">Laundry Kiloan</option>
+              <option value="Nasi Rempah Arab">Nasi Rempah Arab</option>
+              <option value="Camilan & Roti Arab">Camilan & Roti Arab</option>
+              <option value="Minuman & Teh Rempah">Minuman & Teh Rempah</option>
+              <option value="Penutup & Dessert">Penutup & Dessert</option>
             </select>
           </div>
         </div>
@@ -616,18 +721,18 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Harga Modal (Rp):</label>
-            <input type="number" id="newProdCostPrice" value="15000" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+            <input type="number" id="newProdCostPrice" value="30000" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Harga Jual (Rp):</label>
-            <input type="number" id="newProdSellingPrice" value="28000" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+            <input type="number" id="newProdSellingPrice" value="50000" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Stok Awal:</label>
-            <input type="number" id="newProdStock" value="20" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+            <input type="number" id="newProdStock" value="25" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Satuan Unit:</label>
@@ -647,6 +752,156 @@
       </div>
     </div>
   </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL TAMBAH / EDIT DATA PELANGGAN (CRM RESTO)                            -->
+  <!-- ========================================================================= -->
+  <div id="customerModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative">
+      <button onclick="window.closeCustomerModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <div class="flex items-center gap-2 mb-1">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-[22px]">contacts</span>
+        </div>
+        <div>
+          <h3 class="text-base font-black text-slate-900" id="customerModalTitle">Tambah Data Pelanggan</h3>
+          <p class="text-xs text-slate-500">Lengkapi data kontak tamu untuk pengiriman resi WA otomatis</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 mt-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Lengkap Tamu:</label>
+          <input type="text" id="custModalName" placeholder="Contoh: H. Sulaiman" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 font-medium" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nomor WhatsApp (Aktif):</label>
+          <input type="tel" id="custModalPhone" placeholder="Contoh: 081234567890" class="w-full text-xs font-mono rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Meja Favorit:</label>
+            <select id="custModalTable" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50">
+              <!-- Rendered with State.tables -->
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Email (Opsional):</label>
+            <input type="email" id="custModalEmail" placeholder="nama@email.com" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Catatan Khusus / Preferensi Menu:</label>
+          <textarea id="custModalNotes" rows="2" placeholder="Contoh: Langganan Nasi Mandi Kambing, sambal dhabah dipisah, VIP" class="w-full text-xs rounded-xl border-slate-200 p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+      </div>
+
+      <div class="mt-5 flex gap-2">
+        <button onclick="window.closeCustomerModal()" class="flex-1 py-2.5 rounded-full border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors">Batal</button>
+        <button onclick="window.submitCustomerModal()" class="flex-1 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-all">Simpan Kontak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL CETAK STAND QR MEJA SATUAN (PREVIEW & CETAK)                        -->
+  <!-- ========================================================================= -->
+  <div id="tableQrModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative text-center">
+      <button onclick="window.closeTableQrModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 mx-auto flex items-center justify-center mb-2">
+        <span class="material-symbols-outlined text-[26px]">table_restaurant</span>
+      </div>
+
+      <h3 class="text-lg font-black text-slate-900" id="tableQrModalTitle">Meja 01</h3>
+      <p class="text-xs text-slate-500 mb-4">QR Code Stand Pemesanan Mandiri Resto</p>
+
+      <!-- QR Code Image Preview -->
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 inline-block mb-3 shadow-inner">
+        <img id="tableQrModalImg" src="" alt="QR Stand Meja" class="w-48 h-48 object-contain mx-auto" />
+      </div>
+
+      <p class="text-[10px] text-slate-500 font-mono break-all px-2 py-1.5 bg-slate-50 rounded-lg border border-slate-200 mb-4" id="tableQrModalUrl">
+        ...
+      </p>
+
+      <div class="space-y-2">
+        <button id="tableQrModalBtnPrint" class="w-full py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-[18px]">print</span>
+          <span>Cetak Stand Akrilik Meja (A6/58mm)</span>
+        </button>
+        <a id="tableQrModalBtnTest" href="#" target="_blank" class="w-full py-2 rounded-full border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
+          <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+          <span>Uji Buka Menu Sebagai Tamu</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL STRUK PEMBAYARAN KASIR & PRATINJAU THERMAL 58MM                     -->
+  <!-- ========================================================================= -->
+  <div id="receiptModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 relative flex flex-col max-h-[92vh]">
+      <!-- Close Button -->
+      <button onclick="window.closeReceiptModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-800">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center gap-2.5 mb-3">
+        <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-[20px]">check_circle</span>
+        </div>
+        <div>
+          <h3 class="text-sm font-extrabold text-slate-900">Transaksi Berhasil</h3>
+          <p class="text-[11px] text-slate-500">Pratinjau Struk Kasir 58mm</p>
+        </div>
+      </div>
+
+      <!-- Thermal Paper Receipt Preview Container -->
+      <div class="flex-1 overflow-y-auto custom-scroll bg-slate-100 p-2.5 rounded-2xl border border-slate-200 mb-3.5">
+        <div id="receiptPreviewPaper" class="bg-white p-3.5 rounded-xl shadow-xs font-mono text-[11px] text-slate-900 leading-relaxed border border-slate-200">
+          <!-- Dynamically populated by buildReceiptHtml() -->
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 shrink-0">
+        <button onclick="window.printCurrentReceipt()" class="w-full py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-[18px]">print</span>
+          <span>Cetak Struk Thermal (58mm)</span>
+        </button>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="window.printCurrentKitchenTicket()" class="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors">
+            <span class="material-symbols-outlined text-[16px]">restaurant</span>
+            <span>Tiket Koki</span>
+          </button>
+          <button onclick="window.sendCurrentReceiptWhatsApp()" class="py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors">
+            <span class="material-symbols-outlined text-[16px]">chat</span>
+            <span>Kirim ke WA</span>
+          </button>
+        </div>
+
+        <button onclick="window.closeReceiptModal()" class="w-full py-2 rounded-xl text-slate-500 hover:text-slate-800 font-bold text-xs transition-colors">
+          Selesai / Transaksi Baru
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER PRINT QR STAND AKRILIK MEJA (TERSEMBUNYI SAAT TIDAK DICETAK) -->
+  <div id="tableQrPrintContainer" class="hidden"></div>
 
   <!-- CONTAINER STRUK THERMAL CETAK 58MM (TERSEMBUNYI SAAT TIDAK DICETAK) -->
   <div id="thermalPrintContainer" class="hidden"></div>

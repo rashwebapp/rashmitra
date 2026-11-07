@@ -1,9 +1,8 @@
 /**
  * ============================================================================
- * RASH MITRA — KONFIGURASI FRONTEND
- * Standar: gas-pro-api & gas-rahasia-script-properties
- * Catatan Keamanan: HANYA URL /exec yang disimpan di sini.
- * Token API, Secret Key, dan Kredensial tersimpan di Script Properties Google.
+ * RASH MITRA — KONFIGURASI FRONTEND (KASIR RESTORAN TIMUR TENGAH)
+ * Spesialisasi: Restoran & Kafe Kuliner Arab & Timur Tengah
+ * Fitur: Meja 1-10 (+ Kelola Meja Admin & QR Scan Meja Mandiri)
  * ============================================================================
  */
 
@@ -11,289 +10,349 @@ window.APP_CONFIG = {
   // Ganti nilai ini dengan URL /exec Web App Apps Script setelah di-deploy
   GAS_URL: 'https://script.google.com/macros/s/AKfycbwYOUR_DEPLOYMENT_ID/exec',
   
-  // Informasi Toko & Brand
-  BRAND_NAME: 'RASH Mitra',
+  // Informasi Toko & Brand Restoran
+  BRAND_NAME: 'RASH Mitra Resto',
   BUILDER_NAME: 'RASH WebApp Builder',
-  VERSION: '1.2.0-blue',
-  KASIR_WA_NUMBER: '6281234567890', // Nomor WhatsApp Kasir untuk Self-Order
+  VERSION: '2.0.0-resto-arab',
+  KASIR_WA_NUMBER: '6281234567890', // Nomor WhatsApp Kasir Resto untuk Terima Pesanan Meja
   
-  // Master Settings Default Toko
+  // Master Settings Default Restoran
   MOCK_SETTINGS: {
-    STORE_NAME: 'RASH Smart POS & Cafe',
-    BUSINESS_VERTICAL: 'RESTO', // RESTO | RETAIL | LAUNDRY
-    STORE_ADDRESS: 'Jl. Merdeka No. 45, Jakarta Pusat',
+    STORE_NAME: 'RASH Resto Timur Tengah',
+    BUSINESS_VERTICAL: 'RESTO',
+    STORE_ADDRESS: 'Jl. Raden Saleh No. 18, Cikini, Jakarta Pusat',
     KASIR_WA_NUMBER: '6281234567890',
-    QRIS_MERCHANT_ID: 'NMID-RASH-99887766',
-    BANK_ACCOUNT_INFO: 'BCA 8735123456 a.n. RASH Mitra',
-    THERMAL_FOOTER: 'Barang yang dibeli tidak dapat ditukar. Terima kasih!',
+    QRIS_MERCHANT_ID: 'NMID-RASH-ARAB-7788',
+    BANK_ACCOUNT_INFO: 'BCA 8735123456 a.n. RASH Resto',
+    THERMAL_FOOTER: 'Syukron katsiran atas kunjungan Anda. Selamat menikmati hidangan!',
     FONNTE_CONNECTED: true,
     FONNTE_TOKEN_MASKED: 'fonn••••••xyz'
   },
 
-  // Fallback Mock Data Produk Multi-Vertikal
+  // Daftar Meja Restoran Default (Meja 01 s/d Meja 10 - Bisa ditambah/dihapus oleh Admin)
+  DEFAULT_TABLES: [
+    'Meja 01',
+    'Meja 02',
+    'Meja 03',
+    'Meja 04',
+    'Meja 05',
+    'Meja 06',
+    'Meja 07',
+    'Meja 08',
+    'Meja 09',
+    'Meja 10'
+  ],
+
+  // Data Master Pelanggan Restoran (CRM Kontak & Resi WA Otomatis)
+  DEFAULT_CUSTOMERS: [
+    {
+      customer_id: 'CUST-001',
+      name: 'H. Sulaiman Al-Habsyi',
+      phone: '081234567890',
+      email: 'sulaiman@gmail.com',
+      total_orders: 8,
+      total_spent: 980000,
+      favorite_table: 'Meja 03',
+      notes: 'Pelanggan VIP - Suka Nasi Mandi Kambing & Teh Adeni manis',
+      created_at: '2026-10-15'
+    },
+    {
+      customer_id: 'CUST-002',
+      name: 'dr. Faisal Basalamah',
+      phone: '081398765432',
+      email: 'faisal@yahoo.com',
+      total_orders: 5,
+      total_spent: 540000,
+      favorite_table: 'Meja 01',
+      notes: 'Porsi sambal dhabah dipisah',
+      created_at: '2026-10-20'
+    },
+    {
+      customer_id: 'CUST-003',
+      name: 'Ustadz Ahmad Farhan',
+      phone: '085712349988',
+      email: 'ahmadfarhan@gmail.com',
+      total_orders: 3,
+      total_spent: 315000,
+      favorite_table: 'Meja 05',
+      notes: 'Langganan Nasi Kebuli Kambing',
+      created_at: '2026-11-01'
+    }
+  ],
+
+  // Katalog Kuliner Timur Tengah & Makanan Arab Otentik
   MOCK_PRODUCTS: [
-    // Mode Restoran / Kafe (Warm California & Burrito Aesthetic)
+    // 1. Kategori: Nasi Rempah Arab Signature
     {
       product_id: 'P001',
-      barcode_sku: 'BUR-001',
-      product_name: 'Chicken California Burrito',
-      category: 'Burritos',
-      cost_price: 18000,
-      selling_price: 32000,
-      current_stock: 24,
+      barcode_sku: 'MND-001',
+      product_name: 'Nasi Mandi Kambing Muda (Signature)',
+      category: 'Nasi Rempah Arab',
+      cost_price: 35000,
+      selling_price: 58000,
+      current_stock: 35,
       min_stock_alert: 5,
       unit_measure: 'porsi',
       vertical: 'RESTO',
-      badge: '🔥 Hot Seller',
-      image_url: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600',
-      description: 'Ayam panggang rempah, nasi herba, salsa fresca, dan creamy guacamole.'
+      badge: '👑 Terlaris',
+      image_url: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600',
+      description: 'Beras basmati aromatik dimasak rempah mandi khas Hadramaut dengan potongan daging kambing panggang lembut & sambal dhabah.'
     },
     {
       product_id: 'P002',
-      barcode_sku: 'BWL-014',
-      product_name: 'Korean BBQ Chicken Bowl',
-      category: 'Bowls',
-      cost_price: 16000,
-      selling_price: 28000,
-      current_stock: 18,
+      barcode_sku: 'KBL-002',
+      product_name: 'Nasi Kebuli Daging Kambing Spesial',
+      category: 'Nasi Rempah Arab',
+      cost_price: 32000,
+      selling_price: 55000,
+      current_stock: 28,
       min_stock_alert: 5,
       unit_measure: 'porsi',
       vertical: 'RESTO',
       badge: '⭐ Favorit',
-      image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600',
-      description: 'Nasi hangat, ayam saus gochujang, sayuran segar, dan biji wijen panggang.'
+      image_url: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=600',
+      description: 'Nasi kebuli gurih minyak samin, rempah kapulaga & cengkeh, taburan kismis manis serta acar nanas segar.'
     },
     {
       product_id: 'P003',
-      barcode_sku: 'TAC-005',
-      product_name: 'Spicy Chicken Tacos (3 pcs)',
-      category: 'Tacos',
-      cost_price: 14000,
-      selling_price: 26000,
-      current_stock: 15,
+      barcode_sku: 'BRY-003',
+      product_name: 'Nasi Briyani Ayam Panggang Rempah',
+      category: 'Nasi Rempah Arab',
+      cost_price: 24000,
+      selling_price: 42000,
+      current_stock: 30,
       min_stock_alert: 5,
       unit_measure: 'porsi',
       vertical: 'RESTO',
-      badge: '🌶️ Pedas',
-      image_url: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600',
-      description: 'Kulit taco renyah, suwiran ayam pedas saus habanero, selada, dan parutan keju.'
+      badge: '🔥 Populer',
+      image_url: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=600',
+      description: 'Beras basmati saffron harum bertingkat dengan paha ayam panggang rempah khas Mughlai yang empuk meresap.'
     },
     {
       product_id: 'P004',
-      barcode_sku: 'DRN-008',
-      product_name: 'Agua Fresca Berry Hibiscus',
-      category: 'Minuman',
-      cost_price: 6000,
-      selling_price: 15000,
-      current_stock: 30,
-      min_stock_alert: 8,
-      unit_measure: 'cup',
+      barcode_sku: 'MND-004',
+      product_name: 'Nasi Mandi Ayam Asap (Half Chicken)',
+      category: 'Nasi Rempah Arab',
+      cost_price: 26000,
+      selling_price: 45000,
+      current_stock: 22,
+      min_stock_alert: 5,
+      unit_measure: 'porsi',
       vertical: 'RESTO',
-      badge: '🌱 Segar',
-      image_url: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600',
-      description: 'Seduhan kembang sepatu dingin dengan sari buah beri segar dan daun mint.'
+      badge: '🍗 Porsi Kenyang',
+      image_url: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=600',
+      description: 'Setengah ekor ayam bakar aroma asap arang khas Arab di atas hamparan nasi basmati harum kuning keemasan.'
     },
     {
       product_id: 'P005',
-      barcode_sku: 'COF-002',
-      product_name: 'Caramel Macchiato Oat Milk',
-      category: 'Minuman',
+      barcode_sku: 'BRY-005',
+      product_name: 'Nasi Briyani Kambing Kismis Kacang Kenari',
+      category: 'Nasi Rempah Arab',
+      cost_price: 36000,
+      selling_price: 60000,
+      current_stock: 20,
+      min_stock_alert: 5,
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '✨ Premium',
+      image_url: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600',
+      description: 'Paduan daging kambing empuk berbumbu kari pekat dengan taburan kenari panggang gurih dan kismis manis.'
+    },
+
+    // 2. Kategori: Camilan & Roti Arab
+    {
+      product_id: 'P006',
+      barcode_sku: 'SNK-001',
+      product_name: 'Sambosa Daging Kari Keju (Isi 4)',
+      category: 'Camilan & Roti Arab',
+      cost_price: 14000,
+      selling_price: 28000,
+      current_stock: 40,
+      min_stock_alert: 8,
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '🥟 Renyah',
+      image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600',
+      description: 'Pastry segitiga renyah isi cincangan daging sapi berbumbu kari gurih dan lelehan keju mozzarella.'
+    },
+    {
+      product_id: 'P007',
+      barcode_sku: 'MRY-002',
+      product_name: 'Roti Maryam Coklat Keju Susu',
+      category: 'Camilan & Roti Arab',
       cost_price: 10000,
       selling_price: 22000,
-      current_stock: 40,
-      min_stock_alert: 10,
-      unit_measure: 'cup',
-      vertical: 'RESTO',
-      badge: '☕ Kopi',
-      image_url: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=600',
-      description: 'Espresso blend mantap berpadu susu oat kental dan drizzle karamel gurih.'
-    },
-    {
-      product_id: 'P006',
-      barcode_sku: 'QSD-003',
-      product_name: 'Cheesy Quesadilla Melt',
-      category: 'Quesadillas',
-      cost_price: 12000,
-      selling_price: 25000,
-      current_stock: 12,
-      min_stock_alert: 4,
-      unit_measure: 'porsi',
-      vertical: 'RESTO',
-      badge: '🧀 Keju',
-      image_url: 'https://images.unsplash.com/photo-1618040996337-56904b7850b9?w=600',
-      description: 'Tortilla panggang isi keju mozzarella leleh, paprika, dan saus cocolan salsa.'
-    },
-    {
-      product_id: 'P007',
-      barcode_sku: 'BWL-022',
-      product_name: 'Signature Beef Birria Bowl',
-      category: 'Bowls',
-      cost_price: 22000,
-      selling_price: 38000,
-      current_stock: 10,
-      min_stock_alert: 3,
-      unit_measure: 'porsi',
-      vertical: 'RESTO',
-      badge: '👑 Chef Rec',
-      image_url: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=600',
-      description: 'Daging sapi braised empuk kaya rempah dengan kuah birria kaldu sedap.'
-    },
-    {
-      product_id: 'P008',
-      barcode_sku: 'SNK-007',
-      product_name: 'Crispy Tortilla Chips & Guac',
-      category: 'Quesadillas',
-      cost_price: 8000,
-      selling_price: 18000,
-      current_stock: 8,
-      min_stock_alert: 4,
-      unit_measure: 'porsi',
-      vertical: 'RESTO',
-      badge: '⚠️ Sisa 8',
-      image_url: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=600',
-      description: 'Keripik jagung panggang renyah disajikan dengan guacamole alpukat murni.'
-    },
-    // Mode Retail / Warung
-    {
-      product_id: 'P005',
-      barcode_sku: 'RETAIL-01',
-      product_name: 'Beras Premium Ramos 5 Kg',
-      category: 'Sembako',
-      cost_price: 62000,
-      selling_price: 72000,
-      current_stock: 28,
+      current_stock: 35,
       min_stock_alert: 5,
-      unit_measure: 'pack',
-      vertical: 'RETAIL',
-      image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500',
-      description: 'Beras pulen pilihan tanpa pemutih dan tanpa pengawet.'
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '🧀 Manis Gurih',
+      image_url: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600',
+      description: 'Roti canai/maryam berlapis mentega garing di luar lembut di dalam dengan parutan keju cheddar & susu coklat kental manis.'
     },
-    {
-      product_id: 'P006',
-      barcode_sku: 'RETAIL-02',
-      product_name: 'Minyak Goreng Pouch 2 Liter',
-      category: 'Sembako',
-      cost_price: 31000,
-      selling_price: 36000,
-      current_stock: 40,
-      min_stock_alert: 10,
-      unit_measure: 'pouch',
-      vertical: 'RETAIL',
-      image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500',
-      description: 'Minyak kelapa sawit murni berkualitas tinggi 2x penyaringan.'
-    },
-    {
-      product_id: 'P007',
-      barcode_sku: 'RETAIL-03',
-      product_name: 'Gula Pasir Kristal 1 Kg',
-      category: 'Sembako',
-      cost_price: 15000,
-      selling_price: 18000,
-      current_stock: 50,
-      min_stock_alert: 15,
-      unit_measure: 'pack',
-      vertical: 'RETAIL',
-      image_url: 'https://images.unsplash.com/photo-1581447109200-bf276912b649?w=500',
-      description: 'Gula tebu murni manis alami butiran kristal putih.'
-    },
-    // Mode Laundry / Jasa
     {
       product_id: 'P008',
-      barcode_sku: 'LND-01',
-      product_name: 'Cuci Kering Setrika Reguler (2 Hari)',
-      category: 'Laundry Kiloan',
-      cost_price: 3000,
-      selling_price: 7000,
-      current_stock: 999,
-      min_stock_alert: 0,
-      unit_measure: 'kg',
-      vertical: 'LAUNDRY',
-      image_url: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?w=500',
-      description: 'Pencucian higienis + pelembut parfum sakura + setrika uap rapi.'
+      barcode_sku: 'SWR-003',
+      product_name: 'Shawarma Kebab Daging Sapi Arab',
+      category: 'Camilan & Roti Arab',
+      cost_price: 16000,
+      selling_price: 30000,
+      current_stock: 25,
+      min_stock_alert: 5,
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '🌯 Best Snack',
+      image_url: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600',
+      description: 'Irisan daging sapi panggang berbumbu khas Timur Tengah digulung roti pita tipis dengan garlic sauce dan selada segar.'
     },
     {
       product_id: 'P009',
-      barcode_sku: 'LND-02',
-      product_name: 'Cuci Kilat Express (6 Jam)',
-      category: 'Laundry Express',
-      cost_price: 5000,
-      selling_price: 14000,
-      current_stock: 999,
-      min_stock_alert: 0,
-      unit_measure: 'kg',
-      vertical: 'LAUNDRY',
-      image_url: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=500',
-      description: 'Selesai dalam 6 jam. Prioritas mesin tanpa antrean.'
+      barcode_sku: 'HMS-004',
+      product_name: 'Hummus Creamy & Roti Pita Hangat',
+      category: 'Camilan & Roti Arab',
+      cost_price: 12000,
+      selling_price: 25000,
+      current_stock: 18,
+      min_stock_alert: 4,
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '🌱 Otentik',
+      image_url: 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=600',
+      description: 'Puree kacang arab lembut berpadu pasta wijen tahini, minyak zaitun extra virgin, disajikan dengan 2 roti pita hangat.'
     },
+
+    // 3. Kategori: Minuman & Teh Rempah
     {
       product_id: 'P010',
-      barcode_sku: 'LND-03',
-      product_name: 'Cuci Bedcover Besar / Selimut Tebal',
-      category: 'Laundry Satuan',
+      barcode_sku: 'DRN-001',
+      product_name: 'Teh Adeni Susu Rempah (Shahi Adani)',
+      category: 'Minuman & Teh Rempah',
+      cost_price: 7000,
+      selling_price: 18000,
+      current_stock: 50,
+      min_stock_alert: 10,
+      unit_measure: 'cup',
+      vertical: 'RESTO',
+      badge: '☕ Best Seller',
+      image_url: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=600',
+      description: 'Seduhan teh hitam khas Yaman dengan rebusan susu kental, kapulaga, kayu manis, dan cengkeh hangat penenang badan.'
+    },
+    {
+      product_id: 'P011',
+      barcode_sku: 'DRN-002',
+      product_name: 'Kopi Gahwa Arabica Cardamom (Ceret Kecil)',
+      category: 'Minuman & Teh Rempah',
       cost_price: 10000,
       selling_price: 25000,
-      current_stock: 999,
-      min_stock_alert: 0,
-      unit_measure: 'pcs',
-      vertical: 'LAUNDRY',
-      image_url: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500',
-      description: 'Pencucian dry clean khusus bahan tebal dan wangi tahan lama.'
+      current_stock: 30,
+      min_stock_alert: 5,
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '✨ Tradisional',
+      image_url: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600',
+      description: 'Kopi arabica sangrai ringan beraroma rempah kapulaga, disajikan hangat dengan 3 butir kurma ajwa manis legit.'
+    },
+    {
+      product_id: 'P012',
+      barcode_sku: 'DRN-003',
+      product_name: 'Es Karkadeh Segar (Hibiscus Cooler)',
+      category: 'Minuman & Teh Rempah',
+      cost_price: 6000,
+      selling_price: 16000,
+      current_stock: 45,
+      min_stock_alert: 10,
+      unit_measure: 'cup',
+      vertical: 'RESTO',
+      badge: '❄️ Dingin Segar',
+      image_url: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600',
+      description: 'Minuman sari bunga rosela dingin khas Mesir dengan rasa asam manis segar alami yang melegakan dahaga.'
+    },
+
+    // 4. Kategori: Penutup & Dessert
+    {
+      product_id: 'P013',
+      barcode_sku: 'DST-001',
+      product_name: 'Umm Ali Puff Pastry Pudding',
+      category: 'Penutup & Dessert',
+      cost_price: 13000,
+      selling_price: 28000,
+      current_stock: 15,
+      min_stock_alert: 4,
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '🍮 Manis Lembut',
+      image_url: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600',
+      description: 'Dessert tradisional Timur Tengah dari lapisan puff pastry, susu vanila kental manis panggang, almond, dan kismis.'
+    },
+    {
+      product_id: 'P014',
+      barcode_sku: 'DST-002',
+      product_name: 'Baklava Pistachio Crispy (Isi 3)',
+      category: 'Penutup & Dessert',
+      cost_price: 16000,
+      selling_price: 32000,
+      current_stock: 18,
+      min_stock_alert: 5,
+      unit_measure: 'porsi',
+      vertical: 'RESTO',
+      badge: '🍯 Madu Gurih',
+      image_url: 'https://images.unsplash.com/photo-1519869325930-281384150729?w=600',
+      description: 'Kue filo pastry renyah berlapis cincangan kacang pistachio dan disiram sirup madu wangi air mawar.'
     }
   ],
 
-  // Mock Antrean Pesanan untuk Fitur Pelacakan (Order Tracking)
+  // Mock Antrean Pesanan Resto Awal
   MOCK_ORDERS: [
     {
       order_id: 'ORD-20261107-101',
-      timestamp: '2026-11-07 09:42:00',
-      customer_name: 'Rian Prasetyo',
+      timestamp: '11:42',
+      customer_name: 'Ahmad Faiz',
       customer_phone: '081234567890',
       vertical: 'RESTO',
       table_number: 'Meja 03',
-      laundry_weight: '',
       items: [
-        { name: 'Kopi Susu Gula Aren Signature', qty: 2, price: 18000 },
-        { name: 'Croissant Butter Artisan', qty: 1, price: 24000 }
+        { name: 'Nasi Mandi Kambing Muda (Signature)', qty: 2, price: 58000 },
+        { name: 'Teh Adeni Susu Rempah', qty: 2, price: 18000 }
       ],
-      total_amount: 60000,
-      payment_method: 'DYNAMIC_QRIS',
-      status: 'COOKING', // PENDING | COOKING | READY | COMPLETED
+      total_amount: 152000,
+      payment_method: 'QRIS Dinamis',
+      status: 'COOKING',
       status_label: 'Sedang Dimasak Dapur',
-      estimated_time: '15 Menit'
+      notes: 'Sambal dhabah dipisah ya'
     },
     {
       order_id: 'ORD-20261107-102',
-      timestamp: '2026-11-07 09:30:00',
-      customer_name: 'Siti Rahma',
+      timestamp: '11:35',
+      customer_name: 'Fatimah Az-Zahra',
       customer_phone: '085678912345',
       vertical: 'RESTO',
       table_number: 'Meja 07',
-      laundry_weight: '',
       items: [
-        { name: 'Matcha Latte Green Tea', qty: 1, price: 22000 }
+        { name: 'Nasi Kebuli Daging Kambing Spesial', qty: 1, price: 55000 },
+        { name: 'Sambosa Daging Kari Keju (Isi 4)', qty: 1, price: 28000 }
       ],
-      total_amount: 22000,
-      payment_method: 'CASH',
+      total_amount: 83000,
+      payment_method: 'Tunai di Kasir',
       status: 'READY',
       status_label: 'Siap Diantar ke Meja',
-      estimated_time: 'Siap Saji'
+      notes: 'Acar nanas ditambah'
     },
     {
       order_id: 'ORD-20261107-103',
-      timestamp: '2026-11-07 08:15:00',
-      customer_name: 'Budi Santoso',
+      timestamp: '11:20',
+      customer_name: 'Habib Umar',
       customer_phone: '087712345678',
-      vertical: 'LAUNDRY',
-      table_number: '',
-      laundry_weight: '4.5 Kg',
+      vertical: 'RESTO',
+      table_number: 'Meja 01',
       items: [
-        { name: 'Cuci Kering Setrika Reguler', qty: 4.5, price: 7000 }
+        { name: 'Nasi Briyani Ayam Panggang Rempah', qty: 2, price: 42000 },
+        { name: 'Es Karkadeh Segar', qty: 2, price: 16000 }
       ],
-      total_amount: 31500,
-      payment_method: 'BANK_TRANSFER',
-      status: 'WASHING', // RECEIVED | WASHING | IRONING | READY | COMPLETED
-      status_label: 'Sedang Dicuci & Dikeringkan',
-      estimated_time: '08 Nov 2026 (16:00 WIB)'
+      total_amount: 116000,
+      payment_method: 'QRIS Dinamis',
+      status: 'COMPLETED',
+      status_label: 'Selesai (Lunas)',
+      notes: ''
     }
   ]
 };
