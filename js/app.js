@@ -118,6 +118,25 @@
     } catch (e) {}
   }
 
+  function loadPersistedSettings() {
+    try {
+      const s = localStorage.getItem('RASH_MITRA_SETTINGS');
+      if (s) {
+        return Object.assign({}, window.APP_CONFIG.MOCK_SETTINGS || {}, JSON.parse(s));
+      }
+    } catch (e) {}
+    return Object.assign({}, window.APP_CONFIG.MOCK_SETTINGS || {});
+  }
+
+  function savePersistedSettings(settingsObj) {
+    try {
+      localStorage.setItem('RASH_MITRA_SETTINGS', JSON.stringify(settingsObj));
+      if (settingsObj.KASIR_WA_NUMBER) {
+        localStorage.setItem('RASH_MITRA_KASIR_WA', settingsObj.KASIR_WA_NUMBER);
+      }
+    } catch (e) {}
+  }
+
   const RESTO_MENU_VERSION = '20261107_ARAB_V3';
 
   function loadPersistedProducts() {
@@ -248,12 +267,14 @@
   // 1. INISIALISASI APLIKASI
   // ============================================================================
   async function initApp() {
-    State.settings = window.APP_CONFIG.MOCK_SETTINGS || {};
+    State.settings = loadPersistedSettings();
     State.products = loadPersistedProducts();
     State.orders = loadPersistedOrders();
     State.tables = loadPersistedTables();
     State.customers = loadPersistedCustomers();
     State.currentVertical = 'RESTO';
+
+    populateAdminSettingsUI();
 
     // Cek Sesi Login
     const savedSession = SafeStorage.getItem('RASH_USER_SESSION');
@@ -276,11 +297,25 @@
 
     // Sinkronisasi realtime saat tamu memesan dari katalog meja
     window.addEventListener('storage', (e) => {
-      if (e.key === 'RASH_MITRA_ORDERS') {
+      if (e.key === 'RASH_MITRA_ORDERS' || e.key === 'RASH_MITRA_NEW_ORDER_EVENT') {
         State.orders = loadPersistedOrders();
         renderOrdersQueueTable();
         updatePendingOrderBadge();
-        showToast('🔔 Pesanan baru masuk dari Meja Tamu!');
+
+        let incomingOrder = null;
+        if (e.key === 'RASH_MITRA_NEW_ORDER_EVENT' && e.newValue) {
+          try {
+            const parsed = JSON.parse(e.newValue);
+            incomingOrder = parsed.order;
+          } catch (err) {}
+        }
+        if (!incomingOrder && State.orders.length > 0) {
+          incomingOrder = State.orders[0];
+        }
+
+        if (incomingOrder) {
+          window.showNewIncomingOrderPopup(incomingOrder);
+        }
       }
       if (e.key === 'RASH_MITRA_PRODUCTS') {
         State.products = loadPersistedProducts();
@@ -296,6 +331,10 @@
         State.customers = loadPersistedCustomers();
         renderActiveModelUI();
         if (State.currentAppTab === 'pelanggan') renderCustomersTable();
+      }
+      if (e.key === 'RASH_MITRA_SETTINGS') {
+        State.settings = loadPersistedSettings();
+        populateAdminSettingsUI();
       }
     });
   }
@@ -2081,21 +2120,224 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
   };
 
   // ============================================================================
-  // 10. SUPER ADMIN SETTINGS
+  // 10. SUPER ADMIN SETTINGS & NOMOR WA KASIR
   // ============================================================================
+  function populateAdminSettingsUI() {
+    if (document.getElementById('settStoreName')) {
+      document.getElementById('settStoreName').value = State.settings.STORE_NAME || 'RASH Resto Timur Tengah';
+    }
+    if (document.getElementById('settStoreAddress')) {
+      document.getElementById('settStoreAddress').value = State.settings.STORE_ADDRESS || 'Jl. Raden Saleh No. 18, Cikini, Jakarta Pusat';
+    }
+    if (document.getElementById('settThermalFooter')) {
+      document.getElementById('settThermalFooter').value = State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda. Selamat menikmati!';
+    }
+    if (document.getElementById('settQrisNmid')) {
+      document.getElementById('settQrisNmid').value = State.settings.QRIS_MERCHANT_ID || 'NMID-RASH-99887766';
+    }
+    if (document.getElementById('settKasirPhone')) {
+      document.getElementById('settKasirPhone').value = State.settings.KASIR_WA_NUMBER || '081234567890';
+    }
+  }
+
   window.saveAdminSettings = function () {
     const store = (document.getElementById('settStoreName')?.value || '').trim();
     const addr = (document.getElementById('settStoreAddress')?.value || '').trim();
     const footer = (document.getElementById('settThermalFooter')?.value || '').trim();
     const qris = (document.getElementById('settQrisNmid')?.value || '').trim();
+    const kasirPhone = (document.getElementById('settKasirPhone')?.value || '').trim();
 
     if (store) State.settings.STORE_NAME = store;
     if (addr) State.settings.STORE_ADDRESS = addr;
     if (footer) State.settings.THERMAL_FOOTER = footer;
     if (qris) State.settings.QRIS_MERCHANT_ID = qris;
+    if (kasirPhone) State.settings.KASIR_WA_NUMBER = kasirPhone;
 
-    document.getElementById('appStoreName').textContent = State.settings.STORE_NAME;
-    showToast('💾 Pengaturan resto berhasil disimpan!');
+    savePersistedSettings(State.settings);
+
+    const storeTitleEl = document.getElementById('appStoreName');
+    if (storeTitleEl) storeTitleEl.textContent = State.settings.STORE_NAME;
+
+    showToast('💾 Pengaturan resto & Nomor WA Kasir berhasil disimpan!');
+  };
+
+  // ============================================================================
+  // 11. NOTIFIKASI LONCENG & POPUP PESANAN MASUK DARI KATALOG MEJA
+  // ============================================================================
+  // Suara Lonceng Notifikasi Kasir (Ding-Dong-Ding via Web Audio API, tanpa file eksternal)
+  function playOrderBell() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const now = ctx.currentTime;
+
+      // Nada 1: E5 (659Hz)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(659.25, now);
+      gain1.gain.setValueAtTime(0.3, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.45);
+
+      // Nada 2: G#5 (830Hz)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(830.61, now + 0.12);
+      gain2.gain.setValueAtTime(0.35, now + 0.12);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.12);
+      osc2.stop(now + 0.7);
+
+      // Nada 3: B5 (987Hz - Ding!)
+      const osc3 = ctx.createOscillator();
+      const gain3 = ctx.createGain();
+      osc3.type = 'sine';
+      osc3.frequency.setValueAtTime(987.77, now + 0.25);
+      gain3.gain.setValueAtTime(0.4, now + 0.25);
+      gain3.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+      osc3.connect(gain3);
+      gain3.connect(ctx.destination);
+      osc3.start(now + 0.25);
+      osc3.stop(now + 1.2);
+    } catch (err) {
+      console.warn('Audio bell:', err);
+    }
+  }
+
+  window.showNewIncomingOrderPopup = function (order) {
+    if (!order) return;
+    window.activeIncomingOrder = order;
+
+    // Bunyikan lonceng resto
+    playOrderBell();
+
+    const modal = document.getElementById('newIncomingOrderModal');
+    if (!modal) return;
+
+    // Isi rincian data ke modal popup
+    const tableTitle = document.getElementById('popupOrderTableTitle');
+    if (tableTitle) tableTitle.textContent = `Pesanan dari ${order.table_number || 'Meja Tamu'}`;
+
+    const timeMeta = document.getElementById('popupOrderTimeMeta');
+    if (timeMeta) timeMeta.textContent = `No. Order: #${order.order_id} • Waktu: ${order.timestamp || 'Baru Saja'}`;
+
+    const custName = document.getElementById('popupOrderCustomerName');
+    if (custName) custName.textContent = order.customer_name || 'Pelanggan Meja';
+
+    const custPhone = document.getElementById('popupOrderCustomerPhone');
+    if (custPhone) custPhone.textContent = order.customer_phone || '-';
+
+    const payMethod = document.getElementById('popupOrderPaymentMethod');
+    if (payMethod) payMethod.textContent = order.payment_method || 'Tunai di Kasir';
+
+    const notesBox = document.getElementById('popupOrderNotesBox');
+    const notesText = document.getElementById('popupOrderNotesText');
+    if (notesBox && notesText) {
+      if (order.notes) {
+        notesText.textContent = order.notes;
+        notesBox.classList.remove('hidden');
+      } else {
+        notesBox.classList.add('hidden');
+      }
+    }
+
+    const itemsContainer = document.getElementById('popupOrderItemsList');
+    if (itemsContainer) {
+      if (Array.isArray(order.items)) {
+        itemsContainer.innerHTML = order.items.map(it => `
+          <div class="flex items-center justify-between text-xs py-1 border-b border-slate-100 last:border-0">
+            <span class="font-bold text-slate-800">${it.qty}x ${it.name}</span>
+            <span class="font-mono text-slate-600">${formatIDR(it.price * it.qty)}</span>
+          </div>
+        `).join('');
+      } else {
+        itemsContainer.innerHTML = `<div class="text-xs text-slate-800">${order.items}</div>`;
+      }
+    }
+
+    const grandEl = document.getElementById('popupOrderGrandTotal');
+    if (grandEl) grandEl.textContent = formatIDR(order.total_amount);
+
+    const chatBtn = document.getElementById('popupChatWaBtn');
+    if (chatBtn) {
+      if (order.customer_phone && order.customer_phone !== '-') {
+        chatBtn.classList.remove('hidden');
+      } else {
+        chatBtn.classList.add('hidden');
+      }
+    }
+
+    // Tampilkan modal secara langsung
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+  };
+
+  window.closeNewIncomingOrderModal = function () {
+    const modal = document.getElementById('newIncomingOrderModal');
+    if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+    window.activeIncomingOrder = null;
+  };
+
+  window.acceptAndSendToKitchen = function () {
+    if (!window.activeIncomingOrder) return;
+    const ord = window.activeIncomingOrder;
+    window.updateOrderStatus(ord.order_id, 'COOKING');
+    window.printKitchenTicket(ord.order_id);
+    window.closeNewIncomingOrderModal();
+    showToast(`👨‍🍳 Pesanan #${ord.order_id} (${ord.table_number}) diteruskan ke dapur!`);
+  };
+
+  window.printPopupKitchenTicket = function () {
+    if (!window.activeIncomingOrder) return;
+    window.printKitchenTicket(window.activeIncomingOrder.order_id);
+  };
+
+  window.chatPopupCustomerWhatsApp = function () {
+    if (!window.activeIncomingOrder || !window.activeIncomingOrder.customer_phone) return;
+    const ord = window.activeIncomingOrder;
+    const msg = `Halo Bapak/Ibu *${ord.customer_name}*, pesanan Anda untuk *${ord.table_number}* (No: ${ord.order_id}) telah diterima kasir dan sedang disiapkan dapur resto. Mohon ditunggu ya! 🙏`;
+    const url = window.formatWhatsAppUrl(ord.customer_phone, msg);
+    if (url && url !== '#') {
+      window.open(url, '_blank');
+    }
+  };
+
+  window.testIncomingOrderNotification = function () {
+    const demoOrder = {
+      order_id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+      timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      customer_name: 'Ahmad Al-Attas',
+      customer_phone: '081298765432',
+      table_number: 'Meja 03',
+      notes: 'Sambal dhabah dipisah, ekstra acar nanas',
+      items: [
+        { name: 'Nasi Mandi Kambing Muda (Signature)', qty: 2, price: 58000 },
+        { name: 'Sambal Dhabah & Acar Nanas Khas Hadramaut', qty: 1, price: 8000 },
+        { name: 'Shahi Adeni (Teh Rempah Susu Khas Yaman)', qty: 2, price: 18000 }
+      ],
+      total_amount: 160000,
+      payment_method: 'Tunai di Kasir',
+      status: 'RECEIVED',
+      status_label: 'Pesanan Diterima Kasir'
+    };
+
+    State.orders.unshift(demoOrder);
+    savePersistedOrders(State.orders);
+    renderOrdersQueueTable();
+    updatePendingOrderBadge();
+
+    window.showNewIncomingOrderPopup(demoOrder);
+    showToast('🔔 Simulasi pesanan baru masuk dari Meja 03!');
   };
 
   // Event Listeners Umum

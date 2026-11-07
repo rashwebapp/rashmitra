@@ -833,11 +833,39 @@
       currentOrders.unshift(newOrder);
       saveStoredOrders(currentOrders);
 
-      // Siapkan teks pesan WhatsApp untuk Kasir
-      const kasirPhone = (window.APP_CONFIG && (window.APP_CONFIG.KASIR_WA_NUMBER || window.APP_CONFIG.MOCK_SETTINGS?.KASIR_WA_NUMBER)) || '6281234567890';
+      // Trigger event notifikasi realtime ke tab kasir (refresh antrean & munculkan popup)
+      try {
+        localStorage.setItem('RASH_MITRA_NEW_ORDER_EVENT', JSON.stringify({
+          order: newOrder,
+          timestamp: Date.now()
+        }));
+      } catch (e) {}
+
+      // Siapkan nomor WhatsApp Kasir dari Pengaturan Admin
+      let kasirPhone = (window.APP_CONFIG && (window.APP_CONFIG.KASIR_WA_NUMBER || window.APP_CONFIG.MOCK_SETTINGS?.KASIR_WA_NUMBER)) || '6281234567890';
+      try {
+        const storedWa = localStorage.getItem('RASH_MITRA_KASIR_WA');
+        if (storedWa) {
+          kasirPhone = storedWa;
+        } else {
+          const s = localStorage.getItem('RASH_MITRA_SETTINGS');
+          if (s) {
+            const parsed = JSON.parse(s);
+            if (parsed.KASIR_WA_NUMBER) kasirPhone = parsed.KASIR_WA_NUMBER;
+          }
+        }
+      } catch (e) {}
+
       const itemsListText = cart.map(i => `• ${i.qty}x ${i.name} (${formatIDR(i.price * i.qty)})`).join('\n');
       
-      const restoName = (window.APP_CONFIG && window.APP_CONFIG.MOCK_SETTINGS?.STORE_NAME) || 'RASH RESTO TIMUR TENGAH';
+      let restoName = (window.APP_CONFIG && window.APP_CONFIG.MOCK_SETTINGS?.STORE_NAME) || 'RASH RESTO TIMUR TENGAH';
+      try {
+        const s = localStorage.getItem('RASH_MITRA_SETTINGS');
+        if (s) {
+          const parsed = JSON.parse(s);
+          if (parsed.STORE_NAME) restoName = parsed.STORE_NAME;
+        }
+      } catch (e) {}
       const waMessage = 
 `*PESANAN MEJA: ${currentTable.toUpperCase()}* 🍽️
 *${restoName.toUpperCase()}*
