@@ -145,4 +145,109 @@ broadcastStoredOrdersToCloud();
 assert(broadcastedOrders.length === 8, "Expected 8 orders to be broadcasted to cloud from HP! Found: " + broadcastedOrders.length);
 print("✅ TEST 3 PASSED: All 8 orders from HP successfully broadcasted to cloud channel!");
 
+// ----------------------------------------------------------------------------
+// TEST 4: Komputer Kasir Handling of Waiter Additional Order
+// ----------------------------------------------------------------------------
+print("TEST 4: Verifying Komputer Kasir handles Waiter additional orders for existing dining tables...");
+
+// Prepare an existing active order on Meja 03
+State.orders = [
+  {
+    order_id: "ORD-TABLE3-ACTIVE",
+    table_number: "Meja 03",
+    customer_name: "Umar Al-Khattab",
+    status: "COOKING",
+    status_label: "Sedang Dimasak Dapur",
+    items: [{ name: "Nasi Mandi Kambing", qty: 2, price: 58000 }],
+    total_amount: 116000
+  }
+];
+
+// Waiter submits an additional order for Meja 03 (e.g., guest adds drinks)
+var waiterAdditionalOrder = {
+  order_id: "ADD-991122",
+  parent_order_id: "ORD-TABLE3-ACTIVE",
+  is_additional: true,
+  sender: "waiter",
+  waiter_name: "Doni (Waiter 1)",
+  table_number: "Meja 03",
+  customer_name: "Umar Al-Khattab",
+  items: [{ name: "Shahi Adeni (Teh Rempah)", qty: 2, price: 18000 }],
+  total_amount: 36000,
+  timestamp: "10:30",
+  notes: "Tambah teh adeni 2 gelas manis sedang"
+};
+
+var modalTitleResult = "";
+var modalBadgeResult = "";
+
+// Mock popup elements to verify title & badge
+document.getElementById = function (id) {
+  return {
+    classList: { add: function () {}, remove: function () {} },
+    textContent: "",
+    set innerHTML(val) {},
+    set textContent(val) {
+      if (id === "popupOrderTableTitle") modalTitleResult = val;
+      if (id === "popupOrderSenderBadge") modalBadgeResult = val;
+    }
+  };
+};
+
+assert(typeof window.processIncomingOrder === "function", "window.processIncomingOrder must exist!");
+window.processIncomingOrder(waiterAdditionalOrder, "waiter");
+
+// Verify that the order queue updated
+var foundOrder = State.orders.find(function (o) { return o.order_id === "ADD-991122"; });
+assert(foundOrder !== undefined, "Waiter additional order ADD-991122 was not found in State.orders!");
+assert(foundOrder.is_additional === true, "Order must be marked as is_additional = true");
+assert(foundOrder.sender === "waiter", "Order sender must be 'waiter'");
+
+// Verify popup displayed Waiter-specific identification
+assert(modalTitleResult.indexOf("Meja 03") !== -1, "Modal table title must contain Meja 03! Found: " + modalTitleResult);
+assert(
+  modalTitleResult.indexOf("Pramusaji") !== -1 || modalTitleResult.indexOf("Waiter") !== -1 || modalBadgeResult.indexOf("Waiter") !== -1 || modalBadgeResult.indexOf("Pramusaji") !== -1,
+  "Modal must clearly identify the order as coming from Waiter / Pramusaji! Title: " + modalTitleResult + ", Badge: " + modalBadgeResult
+);
+print("✅ TEST 4 PASSED: Waiter additional order correctly processed with Waiter attribution & Meja identification!");
+
+// ----------------------------------------------------------------------------
+print("TEST 5: Verifying Waiter device order builder generates standard cloud payload...");
+
+assert(typeof window.buildWaiterOrderPayload === "function", "window.buildWaiterOrderPayload must exist!");
+
+var waiterItems = [
+  { name: "Kambing Bakar Madu", qty: 1, price: 65000 },
+  { name: "Es Teh Manis", qty: 2, price: 6000 }
+];
+var createdPayload = window.buildWaiterOrderPayload({
+  table_number: "Meja 05",
+  is_additional: true,
+  waiter_name: "Rian (Pramusaji 2)",
+  items: waiterItems,
+  notes: "Jangan terlalu manis es tehnya"
+});
+
+assert(createdPayload.type === "RASH_NEW_ORDER", "Payload type must be 'RASH_NEW_ORDER'");
+assert(createdPayload.sender === "waiter", "Payload sender must be 'waiter'");
+assert(createdPayload.is_additional === true, "Payload is_additional must be true");
+assert(createdPayload.waiter_name === "Rian (Pramusaji 2)", "Payload waiter_name must match");
+assert(createdPayload.order !== undefined, "Payload order object must exist");
+assert(createdPayload.order.table_number === "Meja 05", "Order table number must be Meja 05");
+assert(createdPayload.order.total_amount === 77000, "Order total amount must be 77000 (65000 + 12000)");
+assert(createdPayload.order.notes === "Jangan terlalu manis es tehnya", "Order notes must match");
+print("✅ TEST 5 PASSED: Waiter device payload builder generates valid structure!");
+
+// ----------------------------------------------------------------------------
+print("TEST 6: Verifying WhatsApp order message builder includes complete table and item details...");
+
+assert(typeof window.formatOrderWhatsAppMessage === "function", "window.formatOrderWhatsAppMessage must exist!");
+
+var waText = window.formatOrderWhatsAppMessage(createdPayload.order, "RASH RESTO");
+assert(waText.indexOf("MEJA: MEJA 05") !== -1 || waText.indexOf("Meja 05") !== -1, "WhatsApp message must contain table number");
+assert(waText.indexOf("Kambing Bakar Madu") !== -1, "WhatsApp message must list items");
+assert(waText.indexOf("77.000") !== -1, "WhatsApp message must format total amount");
+assert(waText.indexOf("Rian (Pramusaji 2)") !== -1, "WhatsApp message must mention waiter name");
+print("✅ TEST 6 PASSED: WhatsApp message correctly formatted for Kasir notification!");
+
 print("=== ALL TESTS PASSED SUCCESSFULLY! ===");

@@ -380,6 +380,17 @@
         <p class="text-xs text-slate-500">Pantau proses pesanan dari dapur hingga siap disajikan.</p>
       </div>
 
+      <!-- Tombol Akses WhatsApp Kasir (Pasti Terbuka di Seluruh Smartphone) -->
+      <div id="trackWaKasirBox" class="mb-4 hidden">
+        <a id="trackWaKasirBtn" href="#" target="_blank" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md shadow-emerald-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all text-center">
+          <span class="material-symbols-outlined text-[20px]">chat</span>
+          <span>📱 Buka Chat WhatsApp Kasir (Kirim Rincian)</span>
+        </a>
+        <p class="text-[10px] text-emerald-700 text-center mt-1 font-semibold">
+          💡 Klik tombol hijau di atas jika WhatsApp belum terbuka otomatis.
+        </p>
+      </div>
+
       <div class="flex gap-2 mb-4">
         <input type="text" id="trackInputQuery" placeholder="Ketik No. Order atau No. WA..." class="flex-1 text-xs rounded-xl border-slate-200 px-4 py-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-mono" />
         <button onclick="searchOrderTimeline()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all">
@@ -957,6 +968,14 @@ _Pesanan ini otomatis masuk ke sistem kasir & antrean dapur resto._`;
       openCustomerTrackModal();
       document.getElementById('trackInputQuery').value = orderId;
       searchOrderTimeline();
+
+      // Aktifkan tombol WhatsApp Kasir di modal pelacakan
+      const trackWaBox = document.getElementById('trackWaKasirBox');
+      const trackWaBtn = document.getElementById('trackWaKasirBtn');
+      if (trackWaBox && trackWaBtn && waUrl && waUrl !== '#') {
+        trackWaBtn.href = waUrl;
+        trackWaBox.classList.remove('hidden');
+      }
 
       // Buka WhatsApp Kasir di tab baru tanpa error tautan
       if (waUrl && waUrl !== '#') {

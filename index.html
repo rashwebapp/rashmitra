@@ -160,11 +160,15 @@
         </div>
       </div>
 
-      <!-- Tombol Buka Katalog Pelanggan (Besar & Jelas di Layar HP) -->
+      <!-- Tombol Buka Katalog Pelanggan & Mode Waiter HP -->
       <div class="mt-6 pt-4 border-t border-slate-200 space-y-2.5">
         <a href="katalog.html" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-blue-600 via-blue-700 to-emerald-600 hover:opacity-95 text-white font-black text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all">
           <span class="material-symbols-outlined text-[19px]">restaurant_menu</span>
           <span>BUKA KATALOG PELANGGAN (SELF-ORDER) ↗</span>
+        </a>
+        <a href="waiter.html" class="w-full py-3 px-4 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs shadow-md shadow-amber-500/25 flex items-center justify-center gap-2 active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-[19px]">room_service</span>
+          <span>🧑‍🍳 MODE WAITER / PRAMUSAJI HP (PESANAN MEJA) ↗</span>
         </a>
         <div class="text-center">
           <a href="landing.html" class="text-[11px] text-slate-400 hover:text-slate-700 font-medium">
@@ -221,7 +225,12 @@
         <!-- Right: Business Model Selector & Controls -->
         <div class="flex items-center gap-2.5">
 
-          <!-- Link ke Katalog Pelanggan (Terlihat Jelas di HP & Desktop) -->
+          <!-- Link ke Mode Waiter & Katalog Pelanggan -->
+          <a href="waiter.html" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold shadow-sm active:scale-95 transition-all" title="Buka Mode Waiter / Pramusaji HP">
+            <span class="material-symbols-outlined text-[15px]">room_service</span>
+            <span>Mode Waiter ↗</span>
+          </a>
+
           <a href="katalog.html" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-sm active:scale-95 transition-all" title="Buka Katalog Self-Order Pelanggan">
             <span class="material-symbols-outlined text-[15px]">restaurant_menu</span>
             <span>Katalog Meja ↗</span>
@@ -985,9 +994,14 @@
           <span class="material-symbols-outlined text-[28px]">notifications_active</span>
         </div>
         <div>
-          <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black border border-emerald-300 uppercase tracking-wider">
-            🔔 Pesanan Baru Masuk
-          </span>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black border border-emerald-300 uppercase tracking-wider">
+              🔔 Pesanan Masuk
+            </span>
+            <span id="popupOrderSenderBadge" class="hidden text-[10px] font-black px-2.5 py-0.5 rounded-full">
+              📱 Scan QR Meja Tamu
+            </span>
+          </div>
           <h3 class="text-base font-black text-slate-900 mt-0.5" id="popupOrderTableTitle">Pesanan dari Meja 02</h3>
           <p class="text-[11px] text-slate-500 font-mono" id="popupOrderTimeMeta">No. Order: ORD-xxx • Baru saja</p>
         </div>

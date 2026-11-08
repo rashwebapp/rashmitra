@@ -396,6 +396,12 @@
     try { updatePosCartUI(); } catch (e) { console.error('Error updatePosCartUI:', e); }
     try { updatePendingOrderBadge(); } catch (e) { console.error('Error updatePendingOrderBadge:', e); }
     try { generateInvoiceNumber(); } catch (e) { console.error('Error generateInvoiceNumber:', e); }
+    try {
+      initCloudOrderSync();
+      window.syncAllOrdersFromCloud(true);
+    } catch (e) {
+      console.warn('Error starting cloud sync in enterMainApplication:', e);
+    }
   }
 
   function updatePendingOrderBadge() {
@@ -2383,6 +2389,77 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
     return addedCount;
   };
 
+  // ============================================================================
+  // FORMATTER & BUILDER PESANAN WAITER & WHATSAPP
+  // ============================================================================
+  window.buildWaiterOrderPayload = function (options) {
+    if (!options) options = {};
+    const items = Array.isArray(options.items) ? options.items : [];
+    const totalAmount = items.reduce((sum, item) => sum + (Number(item.price || 0) * Number(item.qty || 1)), 0);
+    const isAdditional = Boolean(options.is_additional);
+    const tableNum = options.table_number || 'Meja 01';
+    const waiterName = options.waiter_name || 'Pramusaji Resto';
+    const orderId = (isAdditional ? 'ADD-' : 'ORD-') + Date.now().toString().slice(-6);
+
+    const orderObj = {
+      order_id: orderId,
+      parent_order_id: options.parent_order_id || null,
+      timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      customer_name: options.customer_name || `Tamu ${tableNum} (via Waiter)`,
+      customer_phone: options.customer_phone || '-',
+      vertical: 'RESTO',
+      table_number: tableNum,
+      status: 'COOKING',
+      status_label: isAdditional ? 'Pesanan Tambahan Waiter' : 'Pesanan Masuk via Waiter',
+      total_amount: totalAmount,
+      payment_method: options.payment_method || 'Bayar di Kasir',
+      notes: options.notes || '',
+      is_additional: isAdditional,
+      sender: 'waiter',
+      waiter_name: waiterName,
+      items: items.map(it => ({
+        name: it.name,
+        qty: Number(it.qty || 1),
+        price: Number(it.price || 0)
+      }))
+    };
+
+    return {
+      type: 'RASH_NEW_ORDER',
+      sender: 'waiter',
+      is_additional: isAdditional,
+      waiter_name: waiterName,
+      order: orderObj,
+      timestamp: Date.now()
+    };
+  };
+
+  window.formatOrderWhatsAppMessage = function (order, restoName) {
+    if (!order) return '';
+    const table = (order.table_number || 'Meja Tamu').toUpperCase();
+    const rName = (restoName || (State.settings && State.settings.STORE_NAME) || 'RASH RESTO TIMUR TENGAH').toUpperCase();
+    const itemsText = (order.items || []).map(i => `• ${i.qty}x ${i.name} (${formatIDR(i.price * i.qty)})`).join('\n');
+    const senderDesc = order.sender === 'waiter' 
+      ? `Pramusaji (${order.waiter_name || 'Waiter'})` 
+      : 'Scan QR Meja Tamu';
+
+    return `*PESANAN MEJA: ${table}* 🍽️
+*${rName}*
+-----------------------------------
+${order.is_additional ? '⚡ *PESANAN TAMBAHAN (EXTRA MEJA)*\n' : ''}No. Order: *#${order.order_id}*
+Pengirim: *${senderDesc}*
+Nama Tamu: *${order.customer_name || 'Pelanggan Meja'}*
+Layanan: *${order.table_number || 'Dine-in'} (Dine-in)*
+Pembayaran: *${order.payment_method || 'Bayar di Kasir'}*
+${order.notes ? `Catatan Dapur: _${order.notes}_\n` : ''}-----------------------------------
+*Rincian Menu:*
+${itemsText}
+-----------------------------------
+*Total Tagihan: ${formatIDR(order.total_amount)}*
+
+_Pesanan ini otomatis tersinkronisasi ke komputer kasir & dapur._`;
+  };
+
   // Mengambil dan mensinkronkan seluruh riwayat antrean pesanan dari cloud (Catch-up)
   window.syncAllOrdersFromCloud = async function (silent) {
     const channel = getCloudSyncChannel();
@@ -2615,9 +2692,30 @@ _${State.settings.THERMAL_FOOTER || 'Syukron katsiran atas kunjungan Anda! Selam
     const modal = document.getElementById('newIncomingOrderModal');
     if (!modal) return;
 
+    const isWaiter = order.sender === 'waiter' || order.is_additional;
+
     // Isi rincian data ke modal popup
     const tableTitle = document.getElementById('popupOrderTableTitle');
-    if (tableTitle) tableTitle.textContent = `Pesanan dari ${order.table_number || 'Meja Tamu'}`;
+    if (tableTitle) {
+      if (isWaiter) {
+        tableTitle.textContent = (order.is_additional ? 'Pesanan Tambahan Meja: ' : 'Pesanan Meja: ') + (order.table_number || 'Meja') + ' (Waiter)';
+      } else {
+        tableTitle.textContent = `Pesanan dari ${order.table_number || 'Meja Tamu'}`;
+      }
+    }
+
+    const senderBadge = document.getElementById('popupOrderSenderBadge');
+    if (senderBadge) {
+      if (isWaiter) {
+        senderBadge.textContent = `🧑‍🍳 Pesanan Waiter / Pramusaji (${order.waiter_name || 'Waiter'})`;
+        senderBadge.className = 'text-[10px] font-black px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 inline-flex items-center gap-1';
+        senderBadge.classList.remove('hidden');
+      } else {
+        senderBadge.textContent = '📱 Scan QR Meja Tamu';
+        senderBadge.className = 'text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1';
+        senderBadge.classList.remove('hidden');
+      }
+    }
 
     const timeMeta = document.getElementById('popupOrderTimeMeta');
     if (timeMeta) timeMeta.textContent = `No. Order: #${order.order_id} • Waktu: ${order.timestamp || 'Baru Saja'}`;
